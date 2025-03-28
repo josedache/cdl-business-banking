@@ -6,7 +6,6 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -14,13 +13,27 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "apis/*": ["src/apis/*"],
+      "assets/*": ["src/assets/*"],
+      "components/*": ["src/components/*"],
+      "configs/*": ["src/configs/*"],
+      "constants/*": ["src/constants/*"],
+      "enums/*": ["src/enums/*"],
+      "modules/*": ["src/modules/*"],
+      "hooks/*": ["src/hooks/*"],
+      "libs/*": ["src/libs/*"],
+      "providers/*": ["src/providers/*"],
+      "utils/*": ["src/utils/*"],
+      "types/*": ["src/types/*"]
+    }
   },
   "include": ["src"]
 }
