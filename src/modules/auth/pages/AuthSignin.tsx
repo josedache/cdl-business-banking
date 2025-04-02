@@ -1,7 +1,247 @@
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
+import {
+  ButtonBase,
+  Paper,
+  TextField,
+  Typography,
+  Link as MuiLink,
+} from "@mui/material";
+import { getTextFieldProps } from "utils/formik/get-text-field-props.ts";
+import PasswordTextField from "components/PasswordTextField";
+import { AuthSigninFormikValues } from "modules/auth/types/auth-signin.ts";
+import { userApi } from "apis/user.ts";
+import * as yup from "yup";
+import useStepper from "hooks/use-stepper.ts";
+import { Fragment, useState } from "react";
+import Countdown from "components/Countdown";
+import { LoadingButton } from "@mui/lab";
+import OtpInput from "components/OtpInput";
+import NumberInput from "components/NumberInput";
+import { Link, useNavigate } from "react-router-dom";
+import { DASHBOARD, SIGNUP } from "constants/urls.ts";
+import { Icon as Iconify } from "@iconify/react";
+
 function AuthSignin() {
-  return <>AuthSignin</>;
+  const { enqueueSnackbar } = useSnackbar();
+
+  const navigate = useNavigate();
+
+  const stepper = useStepper();
+
+  const [loginUserMutation] = userApi.useLoginUserMutation();
+
+  const [countdownDate, setCountdownDate] = useState(getCountdownDate);
+
+  const formik = useFormik<AuthSigninFormikValues>({
+    initialValues: {
+      email: "",
+      password: "",
+      otp: "",
+    },
+    validationSchema: yup.object({
+      ...[
+        {
+          email: yup.string().label("Email").email().trim().required(),
+          password: yup.string().label("Password").trim().required(),
+        },
+        {
+          otp: yup.string().label("OTP").trim().required(),
+        },
+      ][stepper.step],
+    }),
+    onSubmit: async (values) => {
+      try {
+        switch (stepper.step) {
+          case 0: {
+            const data = await loginUserMutation({ body: values }).unwrap();
+            enqueueSnackbar(data?.message || "Logged In Successfully!", {
+              variant: "success",
+            });
+            setCountdownDate(getCountdownDate());
+            stepper.next();
+            break;
+          }
+          case 1: {
+            navigate(DASHBOARD);
+          }
+        }
+      } catch (error) {
+        enqueueSnackbar(
+          error?.message || error?.data?.message || "Failed to Login",
+          {
+            variant: "error",
+          }
+        );
+      }
+    },
+  });
+
+  function sendOtp() {}
+
+  return (
+    <>
+      <Paper className="p-4 md:p-8 w-full max-w-md">
+        {
+          [
+            <Fragment key={0}>
+              <form onSubmit={formik.handleSubmit}>
+                <Typography variant="h5" className="text-center">
+                  Log in to your account
+                </Typography>
+                <div className="grid gap-4 my-8">
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    placeholder="Enter your Email Address"
+                    {...getTextFieldProps(formik, "email")}
+                  />
+                  <PasswordTextField
+                    fullWidth
+                    label="Password"
+                    placeholder="Enter your password"
+                    {...getTextFieldProps(formik, "password")}
+                  />
+                </div>
+                <LoadingButton
+                  variant="gradient"
+                  type="submit"
+                  fullWidth
+                  disabled={!formik.isValid || !formik.dirty}
+                  size="large"
+                  loading={formik.isSubmitting}
+                  loadingPosition="end"
+                  endIcon={<></>}
+                >
+                  Log in
+                </LoadingButton>
+
+                <Typography className="text-center mt-8">
+                  New to Credit Direct Business{" "}
+                  <Typography
+                    color="primary"
+                    className="font-bold"
+                    component={Link}
+                    to={SIGNUP}
+                  >
+                    Sign up
+                  </Typography>
+                </Typography>
+              </form>
+            </Fragment>,
+            <Fragment key={1}>
+              <ButtonBase
+                className="flex items-center gap-2 mb-4"
+                onClick={() => stepper.previous()}
+              >
+                <Iconify icon="gravity-ui:arrow-left" fontSize={20} />
+                <Typography>Back</Typography>
+              </ButtonBase>
+              <div className="space-y-4">
+                <Typography variant="h5" className="text-center">
+                  Verification Required
+                </Typography>
+                <Typography variant="body2">
+                  A 6-digit OTP has been sent to{" "}
+                  {formik.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                    "*******@***"}
+                  . Input the code here to continue
+                </Typography>
+              </div>
+              <div className="grid gap-4 my-8">
+                <OtpInput
+                  value={formik.values.otp}
+                  onChange={(otp) => {
+                    formik.setFieldValue("otp", otp);
+                  }}
+                  numInputs={6}
+                  shouldAutoFocus
+                  // inputType="password"
+                  slot={{ input: NumberInput }}
+                  slotProps={{
+                    input: {
+                      style: { opacity: formik.isSubmitting ? 0.5 : 1 },
+                      disabled: formik.isSubmitting,
+                    },
+                  }}
+                />
+                <Countdown date={countdownDate}>
+                  {(countdown) => {
+                    const isCodeSent =
+                      countdown.days ||
+                      countdown.minutes ||
+                      countdown.seconds ||
+                      countdown.seconds;
+
+                    return (
+                      <>
+                        <div className="flex items-center justify-center">
+                          <Typography className="text-center">
+                            Didn’t receive code?{" "}
+                            {isCodeSent ? (
+                              <Typography
+                                variant="body2"
+                                color="primary"
+                                className="text-center"
+                              >
+                                Resend OTP in{" "}
+                                <Typography
+                                  component="span"
+                                  color="primary"
+                                  className=""
+                                >
+                                  {countdown.minutes}:
+                                  {countdown.seconds < 10
+                                    ? `0${countdown.seconds}`
+                                    : countdown.seconds}
+                                </Typography>
+                              </Typography>
+                            ) : (
+                              <ButtonBase
+                                disableRipple
+                                color="primary"
+                                // disabled={
+                                //   signupYieldUserMutationResult?.isLoading
+                                // }
+                                component={MuiLink}
+                                onClick={sendOtp}
+                                className=""
+                              >
+                                Resend OTP
+                              </ButtonBase>
+                            )}
+                          </Typography>
+                        </div>
+                      </>
+                    );
+                  }}
+                </Countdown>
+              </div>
+              <LoadingButton
+                type="submit"
+                fullWidth
+                disabled={!formik.isValid || !formik.dirty}
+                size="large"
+                loading={formik.isSubmitting}
+                loadingPosition="end"
+                endIcon={<></>}
+              >
+                Verify Email Address
+              </LoadingButton>
+            </Fragment>,
+          ][stepper.step]
+        }
+      </Paper>
+    </>
+  );
 }
 
 export default AuthSignin;
 
 export const Component = AuthSignin;
+
+function getCountdownDate() {
+  const date = new Date();
+  date.setTime(date.getTime() + 1000 * 60 * 10);
+  return date;
+}

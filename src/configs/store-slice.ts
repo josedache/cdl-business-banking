@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logout } from "./store-actions";
-import { User } from "../types/user.ts";
+import { AuthUser } from "../types/user.ts";
+import { userApi } from "apis/user.ts";
+import { addSeconds } from "utils/date/add-seconds.ts";
 
 type InitialState = {
-  authUser: User;
+  authUser: AuthUser;
   isSideNavigation: boolean;
 };
 
@@ -25,41 +27,44 @@ export const slice = createSlice({
     },
   },
   extraReducers: (builder) =>
-    builder.addCase(logout, () => ({ ...initialState })),
-  // .addMatcher(
-  //   userApi.endpoints.signupYieldUser.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser = { token: payload.data.token } as User;
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.signupYieldSecondStageUser.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser = { token: payload.data.token } as User;
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.iAgreeUser.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser = { token: payload.data.token } as User;
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.loginUser.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser = {
-  //       // kyc_validation: getKyc(payload.data?.user),
-  //       ...payload.data?.user,
-  //       ...payload.data?.profile,
-  //       token: payload?.data?.token,
-  //       expiresIn: String(
-  //         addSeconds(new Date(), payload?.data?.login_expiry)
-  //       ),
-  //       refreshToken: payload?.data?.refreshToken,
-  //       isAuthenticated: true,
-  //     } as User;
-  //   }
-  // )
+    builder
+      .addCase(logout, () => ({ ...initialState }))
+      // .addMatcher(
+      //   userApi.endpoints.signupYieldUser.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser = { token: payload.data.token } as User;
+      //   }
+      // )
+      // .addMatcher(
+      //   userApi.endpoints.signupYieldSecondStageUser.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser = { token: payload.data.token } as User;
+      //   }
+      // )
+      // .addMatcher(
+      //   userApi.endpoints.iAgreeUser.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser = { token: payload.data.token } as User;
+      //   }
+      // )
+      .addMatcher(
+        userApi.endpoints.loginUser.matchFulfilled,
+        (state, { payload }) => {
+          const { user, ...restPayload } = payload;
+          state.authUser = {
+            // kyc_validation: getKyc(payload.data?.user),
+            ...restPayload,
+            ...user,
+            token: payload?.token,
+            expiresIn: String(addSeconds(new Date(), payload?.login_expiry)),
+            refreshToken: payload?.refreshToken,
+            refreshExpiresIn: String(
+              addSeconds(new Date(), payload?.refresh_expiry)
+            ),
+            isAuthenticated: true,
+          } as AuthUser;
+        }
+      ),
   // .addMatcher(
   //   userApi.endpoints.userRefreshToken.matchFulfilled,
   //   (state, { payload }) => {

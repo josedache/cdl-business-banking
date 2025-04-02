@@ -47,7 +47,6 @@ function AppProtected() {
     return () => clearInterval(timer);
   });
 
-  
   return (
     <LoadingContent
       // loading={userClientKycQueryResult.isLoading}
@@ -87,14 +86,9 @@ export const Component = AppProtected;
 export function loader() {
   const { authUser } = store.getState().global;
 
-  console.log('AppProtected')
-
   if (!authUser?.isAuthenticated) {
     return redirect(SIGNIN);
   }
-
-  console.log('AppProtected after')
-
 
   return null;
 }

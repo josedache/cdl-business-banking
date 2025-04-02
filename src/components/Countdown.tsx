@@ -1,4 +1,4 @@
-import useCountdown, { UseCountdownOptions } from "hooks/useCountdown";
+import useCountdown, { UseCountdownOptions } from "hooks/use-countdown";
 
 /**
  * @param {CountdownProps} props

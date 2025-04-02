@@ -4,9 +4,11 @@ import Logo from "components/Logo";
 
 function Auth() {
   return (
-    <div className="flex justify-center items-center">
-      <div>
-        <Logo className="mb-4 lg:hidden block" />
+    <div className="h-full flex justify-center items-center">
+      <div className="w-full max-w-md">
+        <div className="flex justify-center items-center mb-8">
+          <Logo />
+        </div>
         <Outlet />
       </div>
     </div>
