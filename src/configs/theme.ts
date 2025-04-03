@@ -321,6 +321,11 @@ export const theme = responsiveFontSizes(
                       ?.contrastText,
                     ":disabled": {
                       opacity: ".5",
+                      background: (theme.vars || theme).palette[
+                        ownerState.color
+                      ]?.[100],
+                      color: (theme.vars || theme).palette[ownerState.color]
+                        ?.main,
                     },
                   }
                 : {}),
@@ -328,6 +333,11 @@ export const theme = responsiveFontSizes(
               (ownerState.color === "primary" || !ownerState.color)
                 ? {
                     background: `linear-gradient(111.6deg, #FF6630 46.77%, #F89130 76.64%, #EFC531 119.62%)`,
+                    ":disabled": {
+                      opacity: ".5",
+                      background: (theme.vars || theme).palette.primary[100],
+                      color: (theme.vars || theme).palette.primary?.main,
+                    },
                   }
                 : {}),
               ...(ownerState.variant === "soft"
@@ -495,15 +505,15 @@ export const theme = responsiveFontSizes(
                 ? {
                     paddingTop: ownerState.label
                       ? ownerState.size === "small"
-                        ? 14
-                        : 20
+                        ? 18
+                        : 24
                       : undefined,
 
                     "& .MuiInputLabel-shrink": {
                       transform:
                         ownerState.size === "small"
-                          ? "translate(0px, 0px) scale(0.60)"
-                          : "translate(0px, 0px) scale(0.80)",
+                          ? "translate(0px, 0px) scale(0.70)"
+                          : "translate(0px, 0px) scale(0.90)",
                     },
 
                     "& .MuiInputBase-root": {

@@ -18,7 +18,7 @@ function OtpInput(props: OtpInputProps) {
         <Input
           {...props}
           placeholder="*"
-          className="w-full  h-[48px] md:h-14 text-center outline-none border border-[#E5E7EB] rounded-lg bg-[#F9FAFB]"
+          className="w-full  h-[48px] md:h-14 text-center outline-none border border-[#E5E7EB] rounded-lg"
           {...slotProps?.input}
         />
       )}
