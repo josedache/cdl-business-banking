@@ -18,7 +18,7 @@ const commonPaletteOptions: PaletteOptions = {
     // "200": "#B0C6FF",
     // "300": "#89A9FE",
     // "400": "#628DFE",
-    "500": "#7DA851",
+    "500": "#FF6731",
     // "600": "#1046D4",
     // "700": "#0D38A9",
     // "800": "#0A2A7F",
@@ -35,7 +35,7 @@ const commonPaletteOptions: PaletteOptions = {
     "200": "#E5E7EB",
     "300": "#D1D5DB",
     "400": "#9CA3AF",
-    "500": "#6B7280",
+    "500": "#686A71",
     "600": "#4B5563",
     "700": "#374151",
     "800": "#1F2937",
@@ -286,6 +286,9 @@ export const theme = responsiveFontSizes(
             return {
               ...(ownerState.variant === "contained"
                 ? {
+                    backgroundImage: "linear-gradient(111.6deg, #FF6630 46.77%, #F89130 76.64%, #EFC531 119.62%)",
+                    backgroundColor: "transparent",
+                    color: "#fff", 
                     "&.Mui-disabled": {
                       backgroundColor: alpha(
                         theme.palette[ownerState.color]?.main,
@@ -468,7 +471,7 @@ export const theme = responsiveFontSizes(
               },
 
               "& .MuiInputBase-input": {
-                fontSize: "1rem",
+                fontSize: "0.8rem",
 
                 "&:-webkit-autofill": {
                   WebkitBoxShadow: `0 0 0 100px transparent inset`,

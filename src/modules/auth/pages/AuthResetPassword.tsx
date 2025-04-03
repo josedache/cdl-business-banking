@@ -1,39 +1,28 @@
 import {
   ButtonBase,
-  Paper,
   Typography,
-  Icon,
   Link as MuiLink,
+  TextField,
+  Paper,
 } from "@mui/material";
 import { useFormik } from "formik";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import useStepper from "hooks/use-stepper";
 import { AuthResetPasswordValues } from "../types/auth-reset-password";
 import { LoadingButton } from "@mui/lab";
-import { SIGNIN } from "constants/urls";
+import { SIGNIN, SIGNUP } from "constants/urls";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import { AuthResetPasswordStep } from "../enums/auth-reset-password-step.ts";
-import NumberTextField from "components/NumberTextField";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import OtpInput from "components/OtpInput";
 import PasswordTextField from "components/PasswordTextField";
 import NumberInput from "components/NumberInput";
-import clsx from "clsx";
-import Countdown from "components/Countdown";
-import { useState } from "react";
-import { extractSearchParams } from "utils/url/extract-search-params";
 
 function AuthResetPassword() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
-  const [searchParams] = useSearchParams();
-
-  const { yield_referral_code } = extractSearchParams(searchParams, {
-    yield_referral_code: "",
-  });
 
   // const [sendUserResetPasswordMutation, sendUserResetPasswordMutationResult] =
   //   userApi.useSendUserResetPasswordMutation();
@@ -41,7 +30,7 @@ function AuthResetPassword() {
   // const [verifyUserResetPasswordMutation] =
   //   userApi.useVerifyUserResetPasswordMutation();
 
-  const [countdownDate, setCountdownDate] = useState(getCountdownDate);
+  // const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
   // const [resetPasswordMutation] = userApi.useResetPasswordMutation();
 
@@ -62,7 +51,7 @@ function AuthResetPassword() {
     validationSchema: yup.object().shape({
       ...{
         [AuthResetPasswordStep.REQUEST]: {
-          identifier: yup.string().label("Phone Number").length(11).required(),
+          identifier: yup.string().label("Email Address").required(),
         },
         [AuthResetPasswordStep.VERIFY]: {
           otp: yup.string().label("OTP").required(),
@@ -95,7 +84,7 @@ function AuthResetPassword() {
             // const data = await sendUserResetPasswordMutation({
             //   body: { identifier: values.identifier, device_id: "kdkdkdd" },
             // }).unwrap();
-            setCountdownDate(getCountdownDate());
+            // setCountdownDate(getCountdownDate());
             // enqueueSnackbar(data?.message || "Password reset otp sent", {
             //   variant: "success",
             // });
@@ -122,7 +111,9 @@ function AuthResetPassword() {
             // enqueueSnackbar(data?.message || "Password reset successful", {
             //   variant: "success",
             // });
-
+            break;
+          }
+          case AuthResetPasswordStep.SUCCESS: {
             return navigate(SIGNIN);
           }
           default:
@@ -141,48 +132,47 @@ function AuthResetPassword() {
     },
   });
 
-  const handleResendOtpReset = async () => {
-    try {
-      // const data = await sendUserResetPasswordMutation({
-      //   body: { identifier: formik.values.identifier, device_id: "kdkdkdd" },
-      // }).unwrap();
-      // setCountdownDate(getCountdownDate());
-      // enqueueSnackbar(data?.message || "Password reset otp sent", {
-      //   variant: "success",
-      // });
-    } catch (error: any) {
-      enqueueSnackbar(
-        error?.data?.message || "Failed to resend password reset otp",
-        {
-          variant: "error",
-        }
-      );
-    }
-  };
+  // const handleResendOtpReset = async () => {
+  //   try {
+  //     const data = await sendUserResetPasswordMutation({
+  //       body: { identifier: formik.values.identifier, device_id: "kdkdkdd" },
+  //     }).unwrap();
+  //     setCountdownDate(getCountdownDate());
+  //     enqueueSnackbar("Password reset otp sent", {
+  //       variant: "success",
+  //     });
+  //   } catch (error: any) {
+  //     enqueueSnackbar(
+  //       error?.data?.message || "Failed to resend password reset otp",
+  //       {
+  //         variant: "error",
+  //       }
+  //     );
+  //   }
+  // };
 
   const contents = [
     {
-      title: "Reset Password",
-      description: "Enter your phone number to reset your password.",
+      title: "Reset your password",
+      buttonTitle: "Submit",
       body: (
         <>
-          <NumberTextField
-            freeSolo
-            maskOptions={{ max: 11 }}
+          <TextField
             fullWidth
             margin="normal"
-            label="Phone Number"
-            placeholder="Enter Phone Number"
+            label="Email Address"
+            placeholder="Enter your Email Address"
+            className="placeholder:text-sm placeholder:font-medium "
             {...getTextFieldProps(formik, "identifier")}
           />
         </>
       ),
     },
     {
-      title: "Reset Password",
-      description: `Enter the six(6) digit verification code sent to ${formik.values.identifier} to reset your password.`,
+      title: "Verification Required",
+      buttonTitle: "Verify Email Address",
       body: (
-        <>
+        <div className="flex flex-col items-center">
           <OtpInput
             value={formik.values.otp}
             onChange={(otp) => {
@@ -200,7 +190,7 @@ function AuthResetPassword() {
             }}
           />
 
-          <Countdown date={countdownDate}>
+          {/* <Countdown date={countdownDate}>
             {(countdown) => {
               const isCodeSent =
                 countdown.days ||
@@ -208,9 +198,9 @@ function AuthResetPassword() {
                 countdown.seconds ||
                 countdown.seconds;
 
-              return (
-                <>
-                  {isCodeSent ? (
+              return ( */}
+          <>
+            {/* {isSecondStep ? (
                     <Typography
                       variant="body2"
                       color="textSecondary"
@@ -228,87 +218,70 @@ function AuthResetPassword() {
                           : countdown.seconds}
                       </Typography>
                     </Typography>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <Typography className="text-center">
-                        Didn’t receive code?{" "}
-                        <ButtonBase
-                          disableRipple
-                          // disabled={
-                          //   sendUserResetPasswordMutationResult.isLoading
-                          // }
-                          component={MuiLink}
-                          onClick={handleResendOtpReset as any}
-                          className="underline text-text-primary font-bold"
-                        >
-                          Resend Code.
-                        </ButtonBase>
-                      </Typography>
-                    </div>
-                  )}
-                </>
-              );
+                  ) : ( */}
+            <div className="flex items-center justify-center mt-6">
+              <Typography className="text-center">
+                Didn’t get the code?{" "}
+                <ButtonBase
+                  disableRipple
+                  // disabled={
+                  //   sendUserResetPasswordMutationResult.isLoading
+                  // }
+                  component={MuiLink}
+                  // onClick={handleResendOtpReset as any}
+                  className="underline text-text-primary font-bold"
+                >
+                  Resend Code.
+                </ButtonBase>
+              </Typography>
+            </div>
+            {/* )} */}
+          </>
+          {/* );
             }}
-          </Countdown>
-        </>
+          </Countdown> */}
+        </div>
       ),
     },
     {
-      title: "Create Password",
-      description: "Set a password to protect and log in to your account.",
+      title: "Create new password",
+      buttonTitle: "Reset password",
       body: (
         <div className="space-y-4">
           <PasswordTextField
             fullWidth
             margin="normal"
             label="New Password"
-            placeholder="Enter Password"
             {...getTextFieldProps(formik, "password")}
           />
-          <div className="space-y-1">
-            {[
-              {
-                label: "Must be at least 8 characters long",
-                test: (value: string) => value.length >= 8,
-              },
-              {
-                label: "Must contain a number (0,1,2,3,4,5,6,7,8,9)",
-                test: (value: string) => /\d/.test(value),
-              },
-              {
-                label: "Must contain a lowercase letter (a-z)",
-                test: (value: string) => /[a-z]/.test(value),
-              },
-              {
-                label: "Must contain an uppercase letter (A-Z)",
-                test: (value: string) => /[A-Z]/.test(value),
-              },
-              {
-                label: "Must contain a special character (!,%,@,#, etc.)",
-                test: (value: string) => /[!@#$%^&*]/.test(value),
-              },
-            ].map(({ label, test }) => (
-              <div
-                className={clsx(
-                  "flex items-center gap-2",
-                  test(formik.values.password)
-                    ? "text-primary-main"
-                    : "text-text-secondary"
-                )}
-              >
-                <Icon>check_circle</Icon>
-                <Typography>{label}</Typography>
-              </div>
-            ))}
-          </div>
+
           <PasswordTextField
             fullWidth
             margin="normal"
             label="Confirm Password"
-            placeholder="Re-enter Password"
             {...getTextFieldProps(formik, "confirmPassword")}
           />
         </div>
+      ),
+    },
+    {
+      title: "",
+      buttonTitle: "Continue",
+      body: (
+        <>
+          <div className="border-b border-neutral-100 " />
+          <ButtonBase>
+            <Iconify
+              icon="mingcute:check-circle-fill"
+              fontSize={100}
+              className="text-success-500 my-6"
+            />
+          </ButtonBase>
+
+          <Typography variant="h5" className="font-semibold mt-6">
+            Password reset successfully
+          </Typography>
+        </>
       ),
     },
   ];
@@ -316,33 +289,46 @@ function AuthResetPassword() {
   const content = contents[stepper.step];
 
   const isFirstStep = enumStep === AuthResetPasswordStep.REQUEST;
-  const isLastStep = enumStep === AuthResetPasswordStep.CHANGE;
+  const isThirdStep = enumStep === AuthResetPasswordStep.CHANGE;
+  const isSecondStep = enumStep === AuthResetPasswordStep.VERIFY;
 
   return (
     <form
       onSubmit={formik.handleSubmit as any}
-      className="h-full flex flex-col justify-center items-center"
+      className="h-full w-full flex flex-col justify-center items-center bg-white mt-12 text-center"
     >
-      <Paper className="w-full max-w-[455px] min-h-0 max-h-full overflow-auto">
-        <div className="sticky top-0 z-10 bg-inherit p-5 md:p-8 pb-4">
-          {!isFirstStep ? (
-            <ButtonBase
-              className="flex items-center gap-2 mb-4"
-              onClick={() => stepper.previous()}
-            >
-              <Iconify icon="gravity-ui:arrow-left" fontSize={20} />
-              <Typography>Back</Typography>
-            </ButtonBase>
+      <Paper elevation={0} className="w-full sm:w-[520px] max-h-full overflow-auto">
+        <div className=" ">
+          {isSecondStep ? (
+            <div className=" text-start px-6 py-6 border-b border-neutral-100">
+              <ButtonBase
+                className="flex items-center gap-1 mb-4 "
+                onClick={() => stepper.previous()}
+              >
+                <Iconify
+                  icon="material-symbols-light:chevron-left-rounded"
+                  fontSize={24}
+                />
+                <Typography> Go back </Typography>
+              </ButtonBase>
+            </div>
           ) : null}
-          <Typography variant="h4" className="font-bold mb-4">
-            {content?.title}
-          </Typography>
-          <Typography className="text-text-secondary">
-            {content?.description}
-          </Typography>
+          <div className="flex flex-col justify-center items-center pt-8 pb-4 px-6">
+            <Typography variant="h5" className="font-semibold ">
+              {content?.title}
+            </Typography>
+
+            {isSecondStep ? (
+              <Typography className="text-text-secondary w-4/5 pt-4 pb-2 text-sm font-medium">
+                A 6-digit OTP has been sent to{" "}
+                <span className="text-black"> *******un50@gmail.com.</span>{" "}
+                Input the code here to continue
+              </Typography>
+            ) : null}
+          </div>
         </div>
 
-        <div className="px-5 md:px-8">{content?.body}</div>
+        <div className="px-5 md:px-8 ">{content?.body}</div>
 
         <div className="sticky bottom-0 p-5 md:p-8 bg-inherit z-10 space-y-2">
           <LoadingButton
@@ -363,23 +349,19 @@ function AuthResetPassword() {
             loadingPosition="end"
             endIcon={<></>}
           >
-            Continue
+            {content?.buttonTitle}
           </LoadingButton>
 
-          {isFirstStep || isLastStep ? (
-            <Typography color="textSecondary" className="pt-6">
-              Already have an account?{" "}
+          {isFirstStep || isThirdStep ? (
+            <Typography color="textSecondary" className="pt-12 font-medium">
+              New to Credit Direct Business?{" "}
               <Typography
                 color="primary"
                 className="font-bold"
                 component={Link}
-                to={SIGNIN.concat(
-                  yield_referral_code
-                    ? `?yield_referral_code=${yield_referral_code}`
-                    : ""
-                )}
+                to={SIGNUP}
               >
-                Log In
+                Sign Up
               </Typography>
             </Typography>
           ) : null}
@@ -408,4 +390,5 @@ const STEPS_INDEX = [
   AuthResetPasswordStep.REQUEST,
   AuthResetPasswordStep.VERIFY,
   AuthResetPasswordStep.CHANGE,
+  AuthResetPasswordStep.SUCCESS,
 ];
