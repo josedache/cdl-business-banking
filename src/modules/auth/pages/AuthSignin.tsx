@@ -19,7 +19,7 @@ import { LoadingButton } from "@mui/lab";
 import OtpInput from "components/OtpInput";
 import NumberInput from "components/NumberInput";
 import { Link, useNavigate } from "react-router-dom";
-import { DASHBOARD, SIGNUP } from "constants/urls.ts";
+import { DASHBOARD, RESET_PASSWORD, SIGNUP } from "constants/urls.ts";
 import { Icon as Iconify } from "@iconify/react";
 
 function AuthSignin() {
@@ -92,12 +92,22 @@ function AuthSignin() {
             placeholder="Enter your Email Address"
             {...getTextFieldProps(formik, "email")}
           />
-          <PasswordTextField
-            fullWidth
-            label="Password"
-            placeholder="Enter your password"
-            {...getTextFieldProps(formik, "password")}
-          />
+          <div className="relative">
+            <PasswordTextField
+              fullWidth
+              label="Password"
+              placeholder="Enter your password"
+              {...getTextFieldProps(formik, "password")}
+            />
+            <Typography
+              variant="body2"
+              component={Link}
+              to={RESET_PASSWORD}
+              className="absolute right-0 top-0 text-primary-main font-medium"
+            >
+              Forgot Password?
+            </Typography>
+          </div>
         </div>
         <LoadingButton
           variant="gradient"
