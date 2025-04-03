@@ -19,6 +19,8 @@ import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import OtpInput from "components/OtpInput";
 import PasswordTextField from "components/PasswordTextField";
 import NumberInput from "components/NumberInput";
+import Countdown from "components/Countdown.tsx";
+import { useState } from "react";
 
 function AuthResetPassword() {
   const navigate = useNavigate();
@@ -30,7 +32,8 @@ function AuthResetPassword() {
   // const [verifyUserResetPasswordMutation] =
   //   userApi.useVerifyUserResetPasswordMutation();
 
-  // const [countdownDate, setCountdownDate] = useState(getCountdownDate);
+  
+  const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
   // const [resetPasswordMutation] = userApi.useResetPasswordMutation();
 
@@ -42,7 +45,7 @@ function AuthResetPassword() {
 
   const formik = useFormik<AuthResetPasswordValues>({
     initialValues: {
-      identifier: "",
+      email: "",
       otp: "",
       password: "",
       confirmPassword: "",
@@ -51,7 +54,7 @@ function AuthResetPassword() {
     validationSchema: yup.object().shape({
       ...{
         [AuthResetPasswordStep.REQUEST]: {
-          identifier: yup.string().label("Email Address").required(),
+          email: yup.string().label("Email").email().trim().required(),
         },
         [AuthResetPasswordStep.VERIFY]: {
           otp: yup.string().label("OTP").required(),
@@ -156,23 +159,22 @@ function AuthResetPassword() {
       title: "Reset your password",
       buttonTitle: "Submit",
       body: (
-        <>
+        <div className="px-5 md:px-8 ">
           <TextField
             fullWidth
             margin="normal"
             label="Email Address"
             placeholder="Enter your Email Address"
-            className="placeholder:text-sm placeholder:font-medium "
-            {...getTextFieldProps(formik, "identifier")}
+            {...getTextFieldProps(formik, "email")}
           />
-        </>
+        </div>
       ),
     },
     {
       title: "Verification Required",
       buttonTitle: "Verify Email Address",
       body: (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center px-5 md:px-8 ">
           <OtpInput
             value={formik.values.otp}
             onChange={(otp) => {
@@ -190,7 +192,7 @@ function AuthResetPassword() {
             }}
           />
 
-          {/* <Countdown date={countdownDate}>
+          <Countdown date={countdownDate}>
             {(countdown) => {
               const isCodeSent =
                 countdown.days ||
@@ -198,9 +200,9 @@ function AuthResetPassword() {
                 countdown.seconds ||
                 countdown.seconds;
 
-              return ( */}
-          <>
-            {/* {isSecondStep ? (
+              return (
+                <div className="mt-6">
+                  {isCodeSent ? (
                     <Typography
                       variant="body2"
                       color="textSecondary"
@@ -218,28 +220,28 @@ function AuthResetPassword() {
                           : countdown.seconds}
                       </Typography>
                     </Typography>
-                  ) : ( */}
-            <div className="flex items-center justify-center mt-6">
-              <Typography className="text-center">
-                Didn’t get the code?{" "}
-                <ButtonBase
-                  disableRipple
-                  // disabled={
-                  //   sendUserResetPasswordMutationResult.isLoading
-                  // }
-                  component={MuiLink}
-                  // onClick={handleResendOtpReset as any}
-                  className="underline text-text-primary font-bold"
-                >
-                  Resend Code.
-                </ButtonBase>
-              </Typography>
-            </div>
-            {/* )} */}
-          </>
-          {/* );
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <Typography className="text-center">
+                        Didn’t get the code?{" "}
+                        <ButtonBase
+                          disableRipple
+                          // disabled={
+                          //   sendUserResetPasswordMutationResult.isLoading
+                          // }
+                          component={MuiLink}
+                          // onClick={handleResendOtpReset as any}
+                          className="underline text-text-primary font-bold"
+                        >
+                          Resend Code.
+                        </ButtonBase>
+                      </Typography>
+                    </div>
+                  )}
+                </div>
+              );
             }}
-          </Countdown> */}
+          </Countdown>
         </div>
       ),
     },
@@ -247,7 +249,7 @@ function AuthResetPassword() {
       title: "Create new password",
       buttonTitle: "Reset password",
       body: (
-        <div className="space-y-4">
+        <div className="space-y-4 px-5 md:px-8 ">
           <PasswordTextField
             fullWidth
             margin="normal"
@@ -269,12 +271,12 @@ function AuthResetPassword() {
       buttonTitle: "Continue",
       body: (
         <>
-          <div className="border-b border-neutral-100 " />
-          <ButtonBase>
+          <div className="border-b border-neutral-100 py-2 " />
+          <ButtonBase className="rounded-full p-1 mt-6 bg-success-100">
             <Iconify
               icon="mingcute:check-circle-fill"
-              fontSize={100}
-              className="text-success-500 my-6"
+              fontSize={80}
+              className="text-success-500 "
             />
           </ButtonBase>
 
@@ -297,12 +299,15 @@ function AuthResetPassword() {
       onSubmit={formik.handleSubmit as any}
       className="h-full w-full flex flex-col justify-center items-center bg-white mt-12 text-center"
     >
-      <Paper elevation={0} className="w-full sm:w-[520px] max-h-full overflow-auto">
+      <Paper
+        elevation={0}
+        className="w-full sm:w-[520px] max-h-full overflow-auto"
+      >
         <div className=" ">
           {isSecondStep ? (
             <div className=" text-start px-6 py-6 border-b border-neutral-100">
               <ButtonBase
-                className="flex items-center gap-1 mb-4 "
+                className="flex items-center gap-1 "
                 onClick={() => stepper.previous()}
               >
                 <Iconify
@@ -328,7 +333,7 @@ function AuthResetPassword() {
           </div>
         </div>
 
-        <div className="px-5 md:px-8 ">{content?.body}</div>
+        <div className="">{content?.body}</div>
 
         <div className="sticky bottom-0 p-5 md:p-8 bg-inherit z-10 space-y-2">
           <LoadingButton
@@ -338,7 +343,7 @@ function AuthResetPassword() {
             disabled={
               !formik.isValid ||
               [
-                formik.values.identifier.length < 11,
+                formik.values.email.length < 11,
                 formik.values.otp.length < 6,
                 formik.values.confirmPassword !== formik.values.password ||
                   !formik.values.password ||

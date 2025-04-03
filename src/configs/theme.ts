@@ -14,32 +14,44 @@ import DatePickerTextField from "components/DatePickerTextField";
 const commonPaletteOptions: PaletteOptions = {
   primary: {
     // "50": "#E7EEFF",
-    // "100": "#D0DDFF",
-    // "200": "#B0C6FF",
-    // "300": "#89A9FE",
-    // "400": "#628DFE",
+    "100": "#FFE8E0",
+    "200": "#FFD1C1",
+    "300": "#FFB398",
+    "400": "#FF8D65",
     "500": "#FF6731",
-    // "600": "#1046D4",
-    // "700": "#0D38A9",
-    // "800": "#0A2A7F",
-    // "900": "#061C55",
-    darker: "#042A2B",
+    "600": "#BF4D25",
+    "700": "#803419",
+    "800": "#4D1F0F",
+    "900": "#260F07",
+    darker: "#260F07",
     contrastText: "#FFFFFF",
   },
-  // secondary: {
-
-  // },
+  secondary: {
+    "50": "#F3F1F5",
+    "100": "#E7E2EA",
+    "200": "#D0C5D6",
+    "300": "#B09FBA",
+    "400": "#886F97",
+    "500": "#613F75",
+    "600": "#492F58",
+    "700": "#31203B",
+    "800": "#1D1323",
+    "900": "#1D1323",
+    main: "#613F75",
+    darker: "#1D1323",
+    contrastText: "#FFFFFF",
+  },
   neutral: {
-    "50": "#F9FAFB",
-    "100": "#F3F4F6",
-    "200": "#E5E7EB",
-    "300": "#D1D5DB",
+    "50": "#F9FAFA",
+    "100": "#F4F5F5",
+    "200": "#ECECED",
+    "300": "#CDCDD0",
     "400": "#9CA3AF",
     "500": "#686A71",
-    "600": "#4B5563",
-    "700": "#374151",
-    "800": "#1F2937",
-    "900": "#111827",
+    "600": "#4F5159",
+    "700": "#353941",
+    "800": "#1C202A",
+    "900": "#030712",
   },
   success: {
     "50": "#F0FDF4",
@@ -88,7 +100,7 @@ export const theme = responsiveFontSizes(
         palette: {
           ...commonPaletteOptions,
           background: {
-            default: "#F9FAFB",
+            default: "#F6F8FB",
           },
         },
       },
@@ -114,7 +126,7 @@ export const theme = responsiveFontSizes(
     },
     typography: {
       fontFamily: [
-        "Inter",
+        "General Sans",
         "Oxygen",
         "Ubuntu",
         "Cantarell",
@@ -304,18 +316,21 @@ export const theme = responsiveFontSizes(
               ...(!isNaN(Number(ownerState.shape))
                 ? { borderRadius: Number(ownerState.shape) }
                 : {}),
-              ...(ownerState.variant === "soft" &&
-              ownerState.color === "primary"
+
+              ...(ownerState.variant === "gradient"
                 ? {
-                    color: theme.palette[ownerState.color]?.main,
-                    backgroundColor: "#F2F6EE",
-                    "&:hover": {
-                      backgroundColor: alpha(
-                        theme.palette[ownerState.color]?.main ||
-                          theme.palette.grey[500],
-                        0.3
-                      ),
+                    background: `linear-gradient(111.6deg, ${alpha(theme.palette[ownerState.color]?.main, 1)} 46.77%, ${alpha(theme.palette[ownerState.color]?.main, 0.8)} 76.64%, ${alpha(theme.palette[ownerState.color]?.main, 0.5)} 119.62%)`,
+                    color: (theme.vars || theme).palette[ownerState.color]
+                      ?.contrastText,
+                    ":disabled": {
+                      opacity: ".5",
                     },
+                  }
+                : {}),
+              ...(ownerState.variant === "gradient" &&
+              (ownerState.color === "primary" || !ownerState.color)
+                ? {
+                    background: `linear-gradient(111.6deg, #FF6630 46.77%, #F89130 76.64%, #EFC531 119.62%)`,
                   }
                 : {}),
               ...(ownerState.variant === "soft"
@@ -609,6 +624,7 @@ declare module "@mui/material/Button" {
 
   interface ButtonPropsVariantOverrides {
     soft: true;
+    gradient: true;
   }
 }
 

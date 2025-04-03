@@ -12,7 +12,7 @@ import { logout } from "./store-actions";
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: customFetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/v1`,
+    baseUrl: `${API_BASE_URL}/v1/api`,
     prepareHeaders(headers, { getState }) {
       headers = new Headers(headers);
 
