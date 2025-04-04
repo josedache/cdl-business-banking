@@ -571,10 +571,10 @@ export const theme = responsiveFontSizes(
           shape: "circular",
         },
         styleOverrides: {
-          root: ({ theme, ownerState }) => {
+          root: ({ ownerState }) => {
             return {
               borderRadius: { square: 0, default: 8 }[ownerState.shape],
-              border: `1px solid ${theme.palette.divider}`,
+              // border: `1px solid ${theme.palette.divider}`,
             };
           },
         },
