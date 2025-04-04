@@ -7,11 +7,13 @@ import { addSeconds } from "utils/date/add-seconds.ts";
 type InitialState = {
   authUser: AuthUser;
   isSideNavigation: boolean;
+  isIconSidebar: boolean;
 };
 
 export const initialState: InitialState = {
   authUser: null,
   isSideNavigation: false,
+  isIconSidebar: true,
 };
 
 export const slice = createSlice({
@@ -24,6 +26,10 @@ export const slice = createSlice({
     toggleSideNavigation: (state, { payload }) => {
       state.isSideNavigation =
         payload !== undefined ? !!payload : !state.isSideNavigation;
+    },
+    toggleIconSidebar: (state, { payload }) => {
+      state.isIconSidebar =
+        payload !== undefined ? !!payload : !state.isIconSidebar;
     },
   },
   extraReducers: (builder) =>
@@ -116,7 +122,7 @@ export const slice = createSlice({
   // ),
 });
 
-export const { setAuthUser } = slice.actions;
+export const { setAuthUser, toggleIconSidebar } = slice.actions;
 
 export default slice;
 

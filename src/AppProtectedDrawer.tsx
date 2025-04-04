@@ -3,31 +3,31 @@ import {
   DialogContent,
   Divider,
   Drawer,
-  Icon,
   IconButton,
   List,
-  Paper,
   Toolbar,
   Typography,
   useMediaQuery,
-  Link as MuiLink,
   ListItemButton,
-  Collapse,
   Button,
   Popover,
   Avatar,
+  ListItemIcon,
+  Tooltip,
+  Card,
 } from "@mui/material";
 import clsx from "clsx";
 import Logo from "components/Logo";
 import MediaBreakpoint from "enums/media-breakpoint";
 import useSideNavigation from "hooks/use-side-navigation";
 import { Link, matchPath, useLocation } from "react-router-dom";
-import { Icon as Iconify } from "@iconify/react";
-import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
+import { Icon, Icon as Iconify } from "@iconify/react";
 import useToggle from "hooks/use-toggle";
 import { useMemo } from "react";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
+import { DASHBOARD } from "constants/urls";
+import useSidebarIcon from "hooks/use-sidebar-icon";
 
 function AppProtectedDrawer() {
   const islg = useMediaQuery(MediaBreakpoint.LG);
@@ -38,187 +38,194 @@ function AppProtectedDrawer() {
   const infoPopover = usePopover();
 
   const sideNavigation = useSideNavigation();
+  const sidebarIcon = useSidebarIcon();
 
   const [isSupport, toggleSupport] = useToggle();
 
   const NAV_LINKS = [
-    // {
-    //   links: [
-    //     {
-    //       icon: "hugeicons:dashboard-square-02",
-    //       label: "Dashboard",
-    //       to: DASHBOARD,
-    //       kycAllow: true,
-    //     },
-    //     {
-    //       icon: "ph:plant",
-    //       label: "Yields",
-    //       links: [
-    //         {
-    //           label: "Fixed Yield",
-    //           to: FIXED,
-    //         },
-    //         {
-    //           label: "Flex Yield",
-    //           to: FLEX,
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       icon: "iconoir:profile-circle",
-    //       label: "Profile",
-    //       to: PROFILE,
-    //     },
-    //   ],
-    // },
-    // {
-    //   links: [
-    //     {
-    //       icon: "ep:chat-dot-round",
-    //       label: "Support",
-    //       onClick: toggleSupport,
-    //       kycAllow: true,
-    //     },
-    //     // {
-    //     //   icon: "la:cog",
-    //     //   label: "Settings",
-    //     //   to: SETTINGS,
-    //     // },
-    //     {
-    //       icon: "ion:power-outline",
-    //       label: "Logout",
-    //       onClick: logout,
-    //       kycAllow: true,
-    //     },
-    //   ],
-    // },
+    {
+      links: [
+        {
+          icon: "hugeicons:dashboard-square-01",
+          label: "Dashboard",
+          to: DASHBOARD,
+          kycAllow: true,
+        },
+      ],
+    },
+    {
+      links: [
+        {
+          icon: "hugeicons:wallet-add-01",
+          label: "Main Wallet",
+          to: "/test",
+          kycAllow: true,
+        },
+        {
+          icon: "hugeicons:money-receive-02",
+          label: "Collections",
+          to: "/test",
+          kycAllow: true,
+        },
+      ],
+    },
+    {
+      links: [
+        {
+          icon: "hugeicons:time-02",
+          label: "Transactions",
+          to: "/test",
+          kycAllow: true,
+        },
+        {
+          icon: "hugeicons:money-exchange-03",
+          label: "Transfer funds",
+          to: "/test",
+          kycAllow: true,
+        },
+      ],
+    },
+    {
+      links: [
+        {
+          icon: "hugeicons:customer-support",
+          label: "Support",
+          onClick: toggleSupport,
+          kycAllow: true,
+        },
+      ],
+    },
   ];
 
+  const collapseToIcon = islg && !sidebarIcon.isOpen;
+
   return (
-    <>
-      <Drawer
-        open={sideNavigation.isOpen}
-        variant={islg ? "permanent" : "temporary"}
-        anchor={islg ? "left" : "right"}
-        PaperProps={{
-          rounded: "default",
-          className: clsx(
-            "flex flex-col border-r-0 w-[270px] bg-primary-darker text-primary-contrastText",
-            islg ? "" : "bg-none"
-          ),
-        }}
-        onClose={() => sideNavigation.toggle()}
-      >
-        <Toolbar className="flex items-center justify-between  mt-6">
-          {islg && <Logo variant="1" />}
-          {!islg && (
-            <div className="flex gap-4">
-              {" "}
-              <Avatar src={authUser?.avatar}>
-                {authUser?.firstname?.[0]}
-                {authUser?.lastname?.[0]}
-              </Avatar>
-              <Popover
-                open={infoPopover.isOpen}
-                anchorEl={infoPopover.anchorEl}
-                onClose={infoPopover.togglePopover}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-                className="p-2"
-              ></Popover>
-              <div className=" border rounded-full w-10 h-10 border-neutral-100 ">
-                <IconButton color="inherit" className="bg-neutral-50" disabled>
-                  {/* <Badge badgeContent={7} color="error"> */}
-                  <Iconify
-                    className="MuiIcon-root text-[#292D32]"
-                    icon="mdi:bell-outline"
+    <div>
+      {" "}
+      <div className="relative">
+        <Drawer
+          open={sideNavigation.isOpen}
+          variant={islg ? "permanent" : "temporary"}
+          anchor={islg ? "left" : "right"}
+          slotProps={{
+            paper: {
+              className: clsx(
+                collapseToIcon ? "w-[80px]" : "w-[270px]",
+                "flex flex-col border-r-1 border-[#E0E5EB]  bg-background-default text-primary-contrastText transition-all",
+                islg ? "" : "bg-none"
+              ),
+            },
+          }}
+          onClose={() => sideNavigation.toggle()}
+        >
+          <Toolbar className="flex items-center px-5 py-6 justify-between ">
+            {islg && (
+              <div className="flex items-center justify-between w-full">
+                <div>
+                  <Logo variant="1" />
+                </div>
+
+                <IconButton
+                  size="small"
+                  className={clsx(
+                    "p-1  bg-white border-neutral-200 border-1",
+                    collapseToIcon ? "opacity-0 visible" : ""
+                  )}
+                  onClick={sidebarIcon.toggle}
+                >
+                  <Icon
+                    icon="hugeicons:arrow-left-double"
+                    width="20"
+                    height="20"
                   />
-                  {/* </Badge> */}
                 </IconButton>
               </div>
-            </div>
-          )}
-          {!islg && (
-            <IconButton color="inherit" onClick={() => sideNavigation.toggle()}>
-              <Icon>close</Icon>
-            </IconButton>
-          )}
-        </Toolbar>
-        <List className="p-4 md:p-6 flex-1 min-h-0 overflow-y-auto space-y-3">
-          {NAV_LINKS.map(({ links }, index) => {
-            return (
-              <>
-                {index ? (
-                  <div className="py-10">
-                    <Divider className="bg-white " />
-                  </div>
-                ) : null}
-                {links.map((item, index) => {
-                  return <AppProtectedDrawerItem key={index} item={item} />;
-                })}
-              </>
-            );
-          })}
-        </List>
-      </Drawer>
-
-      <Dialog open={isSupport} maxWidth="xs" fullWidth>
-        <DialogTitleXCloseButton
-          onClose={() => {
-            toggleSupport();
-          }}
-          // onClose={toggleSupport}
-          className="text-center"
-        >
-          Customer Support
-        </DialogTitleXCloseButton>
-        <DialogContent>
-          <div className="space-y-4 w-full max-w-lg mx-auto">
-            {[
-              {
-                label: "Email Address",
-                icon: "lucide:mail",
-                href: "mailto:yieldsupport@creditdirect.ng",
-                hrefText: "yieldsupport@creditdirect.ng",
-              },
-              {
-                label: "Support Line 1",
-                icon: "lucide:phone",
-                href: "tel:02014482225",
-                hrefText: "02014482225",
-              },
-              {
-                label: "Support Line 2",
-                icon: "lucide:phone",
-                href: "tel:02017005120",
-                hrefText: "02017005120",
-              },
-            ].map(({ icon, label, href, hrefText }) => {
-              return (
-                <Paper
-                  key={label}
-                  className="flex items-center gap-4 p-4 border-none"
+            )}
+            {!islg && (
+              <div className="flex gap-4">
+                {" "}
+                <Card
+                  sx={{
+                    background:
+                      "linear-gradient(221deg, #C63E0E 27.25%, #FF7849 102.65%);Linear Gradient",
+                  }}
+                  className="p-1.5 w-[40px] h-[40px] rounded-full"
                 >
-                  <Iconify className="text-lg" icon={icon} />
-                  <div>
-                    <Typography variant="body2" color="textSecondary">
-                      {label}
-                    </Typography>
-                    <MuiLink
-                      className="text-[#4920AA]"
-                      color="info"
-                      href={href}
-                    >
-                      {hrefText}
-                    </MuiLink>
+                  <Avatar className="w-full h-full bg-white text-primary-500">
+                    {authUser?.firstname?.[0]}
+                    {authUser?.lastname?.[0]}
+                  </Avatar>
+                </Card>
+                <Popover
+                  open={infoPopover.isOpen}
+                  anchorEl={infoPopover.anchorEl}
+                  onClose={infoPopover.togglePopover}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  className="p-2"
+                ></Popover>
+                <div className=" border rounded-full w-10 h-10 border-neutral-100 ">
+                  <IconButton
+                    color="inherit"
+                    className="bg-neutral-50"
+                    disabled
+                  >
+                    {/* <Badge badgeContent={7} color="error"> */}
+                    <Iconify
+                      className="MuiIcon-root text-[#292D32]"
+                      icon="hugeicons:notification-02"
+                    />
+                    {/* </Badge> */}
+                  </IconButton>
+                </div>
+              </div>
+            )}
+            {!islg && (
+              <IconButton onClick={() => sideNavigation.toggle()}>
+                <Icon icon="hugeicons:cancel-02" width="24" height="24" />
+              </IconButton>
+            )}
+          </Toolbar>
+
+          <List className="flex-1 min-h-0 overflow-y-auto mt-6">
+            {NAV_LINKS.map(({ links }, index) => {
+              return (
+                <>
+                  {index ? (
+                    <div className="py-3s">
+                      <Divider className="bg-white " />
+                    </div>
+                  ) : null}
+                  <div className="p-3">
+                    {links.map((item, index) => {
+                      return (
+                        <AppProtectedDrawerItem
+                          key={index}
+                          collapseToIcon={collapseToIcon}
+                          item={item}
+                        />
+                      );
+                    })}
                   </div>
-                </Paper>
+                </>
               );
             })}
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
+          </List>
+        </Drawer>
+
+        {collapseToIcon ? (
+          <IconButton
+            size="small"
+            className="absolute top-8 p-1  bg-white border-neutral-200 border-1 left-[65px] b-10 z-[1000000]"
+            onClick={() => {
+              sidebarIcon.toggle();
+            }}
+          >
+            <Icon icon="hugeicons:arrow-right-double" width="18" height="18" />
+          </IconButton>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -226,6 +233,7 @@ export default AppProtectedDrawer;
 
 function AppProtectedDrawerItem(props: any) {
   const item = props.item;
+  const collapseToIcon = props.collapseToIcon;
   const { kycAllow, label, to, links, icon, onClick } = item;
 
   const [isKycDialog, toggleKycDialog] = useToggle();
@@ -260,54 +268,50 @@ function AppProtectedDrawerItem(props: any) {
 
   return (
     <>
-      <ListItemButton
-        className={clsx(
-          "rounded-lg flex gap-2 py-3 mb-2",
-          !!match && "bg-[#285036] text-primary-contrastText"
-        )}
-        {...(isGroup
-          ? { onClick: toggleSubMenu }
-          : isKycCompleted || kycAllow
-            ? onClick
-              ? { onClick }
-              : { component: Link, to }
-            : { onClick: toggleKycDialog, disabled: true })}
-      >
-        <Iconify icon={icon} className="text-2xl" />
-        <Typography className="font-medium flex-1">{label}</Typography>
-        {isGroup && (
-          <Iconify
-            className="text-2xl"
-            icon={isSubMenu ? "mingcute:up-line" : "mingcute:down-line"}
-          />
-        )}
-      </ListItemButton>
-      {isGroup && (
-        <Collapse in={isSubMenu} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {links?.map(({ label, to, toMatchExclude, ...rest }, index) => (
-              <ListItemButton
-                key={index}
-                selected={
-                  match?.pathnameBase === to &&
-                  !toMatchExclude?.includes(match?.pathname)
-                }
-                className={clsx(
-                  "pl-12 rounded-lg py-3 mb-2",
-                  match?.pathnameBase === to &&
-                    !toMatchExclude?.includes(match?.pathname) &&
-                    "bg-[#285036] text-primary-contrastText"
-                )}
-                component={Link}
-                to={to}
-                {...rest}
-              >
-                <Typography className="font-medium">{label}</Typography>
-              </ListItemButton>
-            ))}
-          </List>
-        </Collapse>
-      )}
+      <Tooltip title={collapseToIcon ? label : ""} arrow placement="right">
+        <ListItemButton
+          className={clsx(
+            "rounded-lg flex gap-2 py-3 my-[6px] text-[#1D2129]",
+            !!match && "bg-[#E8ECF1] "
+          )}
+          {...(isGroup
+            ? { onClick: toggleSubMenu }
+            : isKycCompleted || kycAllow
+              ? onClick
+                ? { onClick }
+                : { component: Link, to }
+              : { onClick: toggleKycDialog, disabled: true })}
+        >
+          <ListItemIcon
+            sx={[
+              {
+                color: "#1D2129",
+                minWidth: 0,
+                justifyContent: "center",
+              },
+            ]}
+          >
+            <Iconify icon={icon} className="text-2xl" />
+          </ListItemIcon>
+
+          <Typography
+            className={clsx(
+              collapseToIcon ? "opacity-0" : "",
+              "font-medium flex-1"
+            )}
+            noWrap
+          >
+            {label}
+          </Typography>
+
+          {isGroup && (
+            <Iconify
+              className="text-2xl"
+              icon={isSubMenu ? "mingcute:up-line" : "mingcute:down-line"}
+            />
+          )}
+        </ListItemButton>
+      </Tooltip>
 
       <Dialog open={isKycDialog} fullWidth onClose={toggleKycDialog}>
         <DialogContent>

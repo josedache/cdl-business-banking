@@ -1,18 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import store from "configs/store";
-import AppProtectedHeader from "./AppProtectedHeader";
-import AppProtectedDrawer from "./AppProtectedDrawer";
 import { Outlet, redirect } from "react-router-dom";
-import { SIGNIN } from "constants/urls";
-import { Container } from "@mui/material";
+import { useEffect } from "react";
+import { differenceInSeconds } from "date-fns";
 import LoadingContent from "components/LoadingContent";
 import useAuthUser from "hooks/use-auth-user";
 import AuthRefreshTokenDialog from "modules/auth/features/AuthRefreshTokenDialog";
-import { useEffect } from "react";
-import { differenceInSeconds } from "date-fns";
 import useToggle from "hooks/use-toggle";
 import useLogout from "hooks/use-logout";
 import { userApi } from "apis/user.ts";
+import store from "configs/store";
+import { SIGNIN } from "constants/urls";
 
 function AppProtected() {
   const { logout } = useLogout();
@@ -57,11 +54,7 @@ function AppProtected() {
     >
       {() => (
         <>
-          <AppProtectedDrawer />
-          <AppProtectedHeader />
-          <div className="lg:ml-[270px]">
-            <Container className="p-4 md:p-8">{<Outlet />}</Container>
-          </div>
+          <Outlet />
           {isRefreshTokenDialog && (
             <AuthRefreshTokenDialog
               open={isRefreshTokenDialog}
