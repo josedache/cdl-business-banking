@@ -50,64 +50,62 @@ export const slice = createSlice({
       .addMatcher(
         userApi.endpoints.loginUser.matchFulfilled,
         (state, { payload }) => {
-          const { user, ...restPayload } = payload;
           state.authUser = {
-            // kyc_validation: getKyc(payload.data?.user),
-            ...restPayload,
-            ...user,
-            token: payload?.token,
-            expiresIn: String(addSeconds(new Date(), payload?.login_expiry)),
-            refreshToken: payload?.refreshToken,
+            token: payload?.data?.token,
+            expiresIn: String(
+              addSeconds(new Date(), payload?.data?.expireTime)
+            ),
+          } as AuthUser;
+        }
+      )
+      .addMatcher(
+        userApi.endpoints.verifyUserOtp.matchFulfilled,
+        (state, { payload }) => {
+          state.authUser = {
+            info: payload?.data?.user,
+            token: payload?.data?.token,
+            expiresIn: String(
+              addSeconds(new Date(), payload?.data?.loginExpiry)
+            ),
+            refreshToken: payload?.data?.refreshToken,
             refreshExpiresIn: String(
-              addSeconds(new Date(), payload?.refresh_expiry)
+              addSeconds(new Date(), payload?.data?.refreshExpiry)
             ),
             isAuthenticated: true,
           } as AuthUser;
         }
+      )
+      // .addMatcher(
+      //   userApi.endpoints.userRefreshToken.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser.token = payload.data.token;
+      //     state.authUser.refreshToken = payload.data.refreshToken;
+      //     state.authUser.expiresIn = String(
+      //       addSeconds(new Date(), payload?.data?.login_expiry)
+      //     );
+      //   }
+      // )
+      // .addMatcher(
+      //   userApi.endpoints.sendUserResetPassword.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser = payload.data as User;
+      //   }
+      // )
+      // .addMatcher(
+      //   userApi.endpoints.verifyUserResetPassword.matchFulfilled,
+      //   (state, { payload }) => {
+      //     state.authUser.token = payload.data;
+      //   }
+      // )
+      // .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
+      //   state.authUser = null;
+      // })
+      .addMatcher(
+        userApi.endpoints.getUser.matchFulfilled,
+        (state, { payload }) => {
+          state.authUser.info = payload.data;
+        }
       ),
-  // .addMatcher(
-  //   userApi.endpoints.userRefreshToken.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser.token = payload.data.token;
-  //     state.authUser.refreshToken = payload.data.refreshToken;
-  //     state.authUser.expiresIn = String(
-  //       addSeconds(new Date(), payload?.data?.login_expiry)
-  //     );
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.sendUserResetPassword.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser = payload.data as User;
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.verifyUserResetPassword.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser.token = payload.data;
-  //   }
-  // )
-  // .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
-  //   state.authUser = null;
-  // })
-  // .addMatcher(
-  //   userApi.endpoints.getUserClientKyc.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser.alternate_number = payload?.data?.alternateMobileNo;
-  //     state.authUser = Object.assign(state.authUser, payload.data, {
-  //       kyc_validation: getKyc(payload.data),
-  //     });
-  //   }
-  // )
-  // .addMatcher(
-  //   userApi.endpoints.verifyUserClientKyc.matchFulfilled,
-  //   (state, { payload }) => {
-  //     state.authUser.alternate_number = payload?.data?.alternateMobileNo;
-  //     state.authUser = Object.assign(state.authUser, payload.data, {
-  //       kyc_validation: getKyc(payload.data),
-  //     });
-  //   }
-  // )
   // .addMatcher(
   //   userApi.endpoints.getUserSelfieFile.matchFulfilled,
   //   (state, { payload }) => {

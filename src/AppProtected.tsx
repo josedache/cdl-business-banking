@@ -12,11 +12,12 @@ import { useEffect } from "react";
 import { differenceInSeconds } from "date-fns";
 import useToggle from "hooks/use-toggle";
 import useLogout from "hooks/use-logout";
+import { userApi } from "apis/user.ts";
 
 function AppProtected() {
   const { logout } = useLogout();
 
-  // const userClientKycQueryResult = userApi.useGetUserClientKycQuery(undefined);
+  const userQueryResult = userApi.useGetUserQuery(undefined);
 
   const [
     isRefreshTokenDialog,
@@ -49,16 +50,10 @@ function AppProtected() {
 
   return (
     <LoadingContent
-      // loading={userClientKycQueryResult.isLoading}
-      // error={userClientKycQueryResult.isError}
-      onRetry={() => {
-        // if (userClientKycQueryResult.isError) {
-        //   userClientKycQueryResult.refetch();
-        // }
-        // if (userClientKycQueryResult.isError) {
-        //   userClientKycQueryResult.refetch();
-        // }
-      }}
+      fullHeight
+      loading={userQueryResult.isLoading}
+      error={userQueryResult.isError}
+      onRetry={userQueryResult.refetch}
     >
       {() => (
         <>
