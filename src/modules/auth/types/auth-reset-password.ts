@@ -1,5 +1,5 @@
 export interface AuthResetPasswordValues {
-  identifier: string;
+  email: string;
   otp: string;
   password: string;
   confirmPassword: string;
