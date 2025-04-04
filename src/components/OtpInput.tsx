@@ -17,7 +17,8 @@ function OtpInput(props: OtpInputProps) {
       renderInput={(props) => (
         <Input
           {...props}
-          className="w-[48px] md:w-14 h-[48px] md:h-14 text-center outline-none border border-[#E5E7EB] rounded-lg "
+          placeholder="*"
+          className="w-full  h-[48px] md:h-14 text-center outline-none border border-[#E5E7EB] rounded-lg"
           {...slotProps?.input}
         />
       )}
