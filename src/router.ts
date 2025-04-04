@@ -1,6 +1,7 @@
 import AppErrorBoundary from "./AppErrorBoundary";
 import { DASHBOARD, ENTRY } from "constants/urls";
 import AuthRoutes from "modules/auth/AuthRoutes";
+import DashboardRoutes from "modules/dashboard/DashboardRoutes";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -22,8 +23,8 @@ const router = createBrowserRouter([
         lazy: () => import("./AppProtected"),
         children: [
           {
-            path: DASHBOARD,
-            lazy: () => import("modules/dashboard/Dashboard"),
+            lazy: () => import("./modules/dashboard/Dashboard"),
+            children: DashboardRoutes,
           },
         ],
       },

@@ -139,7 +139,7 @@ export const theme = responsiveFontSizes(
       ].join(),
       // htmlFontSize: 10,
       fontSize: 12,
-      // color: "#000051",
+      // color: "#1D2129",
       button: {
         textTransform: "none",
         fontWeight: 500,
@@ -179,6 +179,26 @@ export const theme = responsiveFontSizes(
         defaultProps: {
           format: DateFormat.FORMAT,
           slots: { textField: DatePickerTextField },
+        },
+      },
+
+      MuiStepLabel: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
+          },
+          label: ({ theme }) => ({
+            color: theme.palette.neutral[500],
+            "&.MuiStepLabel-active": {
+              color: theme.palette.primary.main,
+            },
+            "&.MuiStepLabel-completed": {
+              color: theme.palette.success.main,
+            },
+          }),
+          iconContainer: {
+            padding: 1,
+          },
         },
       },
       MuiToggleButtonGroup: {
@@ -558,22 +578,23 @@ export const theme = responsiveFontSizes(
         },
       },
 
-      MuiStepLabel: {
-        styleOverrides: {
-          iconContainer: {
-            padding: 0,
-          },
-        },
-      },
+      // MuiStepLabel: {
+      //   styleOverrides: {
+      //     iconContainer: {
+      //       padding: 0,
+      //     },
+      //   },
+      // },
 
       MuiPaper: {
         defaultProps: {
           shape: "circular",
+          elevation: 0,
         },
         styleOverrides: {
           root: ({ ownerState }) => {
             return {
-              borderRadius: { square: 0, default: 8 }[ownerState.shape],
+              borderRadius: { square: 0, default: 16 }[ownerState.shape],
               // border: `1px solid ${theme.palette.divider}`,
             };
           },
