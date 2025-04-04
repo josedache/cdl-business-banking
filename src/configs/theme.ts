@@ -298,9 +298,6 @@ export const theme = responsiveFontSizes(
             return {
               ...(ownerState.variant === "contained"
                 ? {
-                    backgroundImage: "linear-gradient(111.6deg, #FF6630 46.77%, #F89130 76.64%, #EFC531 119.62%)",
-                    backgroundColor: "transparent",
-                    color: "#fff", 
                     "&.Mui-disabled": {
                       backgroundColor: alpha(
                         theme.palette[ownerState.color]?.main,
