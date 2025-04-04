@@ -32,7 +32,6 @@ function AuthResetPassword() {
   // const [verifyUserResetPasswordMutation] =
   //   userApi.useVerifyUserResetPasswordMutation();
 
-  
   const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
   // const [resetPasswordMutation] = userApi.useResetPasswordMutation();
@@ -57,7 +56,7 @@ function AuthResetPassword() {
           email: yup.string().label("Email").email().trim().required(),
         },
         [AuthResetPasswordStep.VERIFY]: {
-          otp: yup.string().label("OTP").required(),
+          otp: yup.string().label("OTP").length(6).trim().required(),
         },
         [AuthResetPasswordStep.CHANGE]: {
           password: yup
@@ -197,9 +196,7 @@ function AuthResetPassword() {
               const isCodeSent =
                 countdown.days ||
                 countdown.minutes ||
-                countdown.seconds ||
-                countdown.seconds;
-
+                countdown.seconds
               return (
                 <div className="mt-6">
                   {isCodeSent ? (
@@ -340,19 +337,9 @@ function AuthResetPassword() {
             type="submit"
             fullWidth
             size="large"
-            disabled={
-              !formik.isValid ||
-              [
-                formik.values.email.length < 11,
-                formik.values.otp.length < 6,
-                formik.values.confirmPassword !== formik.values.password ||
-                  !formik.values.password ||
-                  !formik.values.confirmPassword,
-              ][stepper.step]
-            }
+            disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting}
             loadingPosition="end"
-            endIcon={<></>}
           >
             {content?.buttonTitle}
           </LoadingButton>
