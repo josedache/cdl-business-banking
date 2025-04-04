@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import clsx from "clsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, redirect } from "react-router-dom";
 import { Container } from "@mui/material";
 import { useEffect } from "react";
 import { differenceInSeconds } from "date-fns";
@@ -13,12 +13,15 @@ import AppProtectedDrawer from "./AppProtectedDrawer";
 import useToggle from "hooks/use-toggle";
 import useLogout from "hooks/use-logout";
 import useSidebarIcon from "hooks/use-sidebar-icon";
+import { userApi } from "apis/user.ts";
+import store from "configs/store";
+import { SIGNIN } from "constants/urls";
 
 function AppProtected() {
   const { logout } = useLogout();
   const sidebarIcon = useSidebarIcon();
 
-  // const userClientKycQueryResult = userApi.useGetUserClientKycQuery(undefined);
+  const userQueryResult = userApi.useGetUserQuery(undefined);
 
   const [
     isRefreshTokenDialog,
@@ -51,16 +54,10 @@ function AppProtected() {
 
   return (
     <LoadingContent
-      // loading={userClientKycQueryResult.isLoading}
-      // error={userClientKycQueryResult.isError}
-      onRetry={() => {
-        // if (userClientKycQueryResult.isError) {
-        //   userClientKycQueryResult.refetch();
-        // }
-        // if (userClientKycQueryResult.isError) {
-        //   userClientKycQueryResult.refetch();
-        // }
-      }}
+      fullHeight
+      loading={userQueryResult.isLoading}
+      error={userQueryResult.isError}
+      onRetry={userQueryResult.refetch}
     >
       {() => (
         <>
@@ -90,11 +87,11 @@ export default AppProtected;
 export const Component = AppProtected;
 
 export function loader() {
-  // const { authUser } = store.getState().global;
+  const { authUser } = store.getState().global;
 
-  // if (!authUser?.isAuthenticated) {
-  //   return redirect(SIGNIN);
-  // }
+  if (!authUser?.isAuthenticated) {
+    return redirect(SIGNIN);
+  }
 
   return null;
 }

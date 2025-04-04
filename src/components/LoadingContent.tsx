@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { ComponentPropsWithoutRef, useEffect } from "react";
 import "./LoadingContent.css";
 import ErrorContent from "./ErrorContent";
 import LoadingIndicator from "./LoadingIndicator";
@@ -10,13 +10,13 @@ function LoadingContent(props: LoadingUIProps) {
     fullHeight,
     centered,
     onMount,
-    Component,
+    Component = "div",
     loading,
-    renderLoading,
+    renderLoading = renderLoadingDefault,
     error,
-    renderError,
+    renderError = renderErrorDefault,
     blocking,
-    renderBlocking,
+    renderBlocking = renderBlockingDefault,
     children,
     className,
     ...restProps
@@ -47,16 +47,6 @@ function LoadingContent(props: LoadingUIProps) {
   );
 }
 
-LoadingContent.defaultProps = {
-  Component: "div",
-  Loading: CustomLoading,
-  renderLoading,
-  Error: CustomError,
-  renderError,
-  Blocking: "div",
-  renderBlocking,
-};
-
 export default LoadingContent;
 
 function CustomLoading(props) {
@@ -71,8 +61,8 @@ function CustomLoading(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderLoading(props) {
-  const Loading = props.Loading;
+function renderLoadingDefault(props) {
+  const Loading = props.Loading ?? CustomLoading;
   return (
     <Loading
       {...props.LoadingProps}
@@ -89,8 +79,9 @@ function CustomError(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderError(props) {
-  const Error = props.Error;
+function renderErrorDefault(props) {
+  const Error = props.Error ?? CustomError;
+
   return (
     <Error
       onRetry={props.onRetry}
@@ -104,8 +95,8 @@ function renderError(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderBlocking(props) {
-  const Blocking = props.Blocking;
+function renderBlockingDefault(props) {
+  const Blocking = props.Blocking ?? "div";
   return (
     <Blocking
       {...props.BlockingProps}
@@ -122,18 +113,18 @@ type LoadingUIProps = {
   onMount?: () => void;
   loading?: boolean;
   LoadingProps?: any;
-  renderLoading?: (props: LoadingUIProps) => React.ReactNode;
+  renderLoading?: (props: LoadingUIProps) => any;
   error?: boolean;
   Error?: any;
   ErrorProps?: any;
-  renderError?: (props: LoadingUIProps) => React.ReactNode;
-  errorTitle?: React.ReactNode;
-  errorDescription?: React.ReactNode;
+  renderError?: (props: LoadingUIProps) => any;
+  errorTitle?: any;
+  errorDescription?: any;
   onRetry?: any;
   onCancel?: () => void;
   cancelText?: () => void;
   blocking?: boolean;
   Blocking?: any;
   BlockingProps?: any;
-  renderBlocking?: (props: LoadingUIProps) => React.ReactNode;
-} & React.ComponentPropsWithoutRef<"div">;
+  renderBlocking?: (props: LoadingUIProps) => any;
+} & Omit<ComponentPropsWithoutRef<"div">, "children">;

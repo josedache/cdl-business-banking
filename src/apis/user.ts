@@ -1,13 +1,30 @@
 import { baseApi } from "configs/store-query";
 import { USER } from "constants/tags.ts";
+import {
+  UserLoginApiRequest,
+  UserLoginApiResponse,
+  UserVerifyOtpApiRequest,
+  UserVerifyOtpApiResponse,
+} from "types/user-api.ts";
 
 export const BASE_URL = "/user";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    loginUser: builder.mutation({
+    loginUser: builder.mutation<UserLoginApiResponse, UserLoginApiRequest>({
       query: (config) => ({
         url: BASE_URL + "/login",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+    verifyUserOtp: builder.mutation<
+      UserVerifyOtpApiResponse,
+      UserVerifyOtpApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/verify-otp",
         method: "post",
         ...config,
       }),
@@ -24,6 +41,14 @@ export const userApi = baseApi.injectEndpoints({
     getReferralCodeUser: builder.query({
       query: ({ path, ...config }) => ({
         url: BASE_URL + "/get_ref_code/" + path.referral_code,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: USER }],
+    }),
+    getUser: builder.query({
+      query: (config) => ({
+        url: BASE_URL,
         method: "GET",
         ...config,
       }),

@@ -30,6 +30,7 @@ function AuthSignin() {
   const stepper = useStepper();
 
   const [loginUserMutation] = userApi.useLoginUserMutation();
+  const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
 
   const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
@@ -54,15 +55,29 @@ function AuthSignin() {
       try {
         switch (stepper.step) {
           case 0: {
-            const data = await loginUserMutation({ body: values }).unwrap();
-            enqueueSnackbar(data?.message || "Logged In Successfully!", {
-              variant: "success",
-            });
+            const data = await loginUserMutation({
+              body: {
+                email: values.email,
+                password: values.password,
+              },
+            }).unwrap();
+            enqueueSnackbar(
+              data?.message || "An OTP is sent to your email address",
+              {
+                variant: "success",
+              }
+            );
             setCountdownDate(getCountdownDate());
             stepper.next();
             break;
           }
           case 1: {
+            const data = await verifyUserOtpMutation({
+              body: { otp: values.otp, reason: "verify_login_2fa" },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "Logged In Successfully!", {
+              variant: "success",
+            });
             navigate(DASHBOARD);
           }
         }
