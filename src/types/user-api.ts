@@ -25,6 +25,24 @@ export type UserVerifyOtpApiResponse = ApiResponse<{
   user: User;
 }>;
 
+export type UserSignupApiRequest = ApiRequest<{
+  phone?: string;
+  email: string;
+  firstName?: string;
+  confirmPassword: string;
+  password: string;
+  middleName?: string;
+  lastName?: string;
+  acceptedTermsAndConditions: boolean;
+  referralCode?: string;
+}>;
+
+export type UserSignupApiResponse = ApiResponse<{
+  token: string;
+  expireTime: number;
+  message: string;
+}>;
+
 export type UserApiRequest = ApiRequest;
 
 export type UserApiResponse = ApiResponse<User>;
