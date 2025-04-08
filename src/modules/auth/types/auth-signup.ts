@@ -1,11 +1,11 @@
 export interface AuthSignupFormikValues {
-  phone: string;
+  // phone: string;
   email: string;
-  firstName: string;
+  // firstName: string;
   confirmPassword: string;
   password: string;
-  middleName: string;
-  lastName: string;
+  // middleName: string;
+  // lastName: string;
   acceptedTermsAndConditions: boolean;
   referralCode: string;
 }

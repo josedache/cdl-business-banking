@@ -26,6 +26,7 @@ import { getCheckFieldProps } from "utils/formik/get-check-field-props.ts";
 import { extractSearchParams } from "utils/url/extract-search-params.ts";
 import { cn } from "utils/cn.ts";
 import usePopover from "hooks/use-popover.ts";
+import { removeEmptyProperties } from "utils/object/remove-empty-properties.ts";
 
 function AuthSignup() {
   const { enqueueSnackbar } = useSnackbar();
@@ -46,13 +47,13 @@ function AuthSignup() {
 
   const formik = useFormik<AuthSignupFormikValues>({
     initialValues: {
-      phone: "",
+      // phone: "",
       email: "",
-      firstName: "",
+      // firstName: "",
       confirmPassword: "",
       password: "",
-      middleName: "",
-      lastName: "",
+      // middleName: "",
+      // lastName: "",
       acceptedTermsAndConditions: false,
       referralCode: yield_referral_code ?? "",
     },
@@ -83,9 +84,18 @@ function AuthSignup() {
     }),
     onSubmit: async (values) => {
       try {
+        if (!values.acceptedTermsAndConditions) {
+          enqueueSnackbar(`Read and accept terms and conditions`, {
+            variant: "warning",
+          });
+
+          return;
+        }
         switch (stepper.step) {
           case 0: {
-            const data = await signupUserMutation({ body: values }).unwrap();
+            const data = await signupUserMutation({
+              body: removeEmptyProperties(values),
+            }).unwrap();
             enqueueSnackbar(data?.message || "Signed up Successfully!", {
               variant: "success",
             });

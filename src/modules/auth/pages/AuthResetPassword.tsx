@@ -197,9 +197,7 @@ function AuthResetPassword() {
           <Countdown date={countdownDate}>
             {(countdown) => {
               const isCodeSent =
-                countdown.days ||
-                countdown.minutes ||
-                countdown.seconds
+                countdown.days || countdown.minutes || countdown.seconds;
               return (
                 <div className="mt-6">
                   {isCodeSent ? (
