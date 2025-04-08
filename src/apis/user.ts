@@ -3,6 +3,12 @@ import { USER } from "constants/tags.ts";
 import {
   UserLoginApiRequest,
   UserLoginApiResponse,
+  UserResetPasswordApiRequest,
+  UserResetPasswordApiResponse,
+  UserResetPasswordSendApiRequest,
+  UserResetPasswordSendApiResponse,
+  UserResetPasswordVerifyApiRequest,
+  UserResetPasswordVerifyApiResponse,
   UserVerifyOtpApiRequest,
   UserVerifyOtpApiResponse,
 } from "types/user-api.ts";
@@ -54,5 +60,41 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: [{ type: USER }],
     }),
+    
+    sendUserResetPassword : builder.mutation<
+    UserResetPasswordSendApiResponse,
+    UserResetPasswordSendApiRequest
+  >({
+      query: (config) => ({
+        url: BASE_URL + "/forgot-password",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    verifyUserResetPassword: builder.mutation<
+    UserResetPasswordVerifyApiResponse,
+    UserResetPasswordVerifyApiRequest
+  >({
+    query: ({ ...config }) => ({
+      url: BASE_URL + "/verify-forgot-password-otp",
+      method: "post",
+      ...config,
+    }),
+    invalidatesTags:  [{ type: USER }],
+  }),
+
+  resetPassword: builder.mutation<
+  UserResetPasswordApiResponse,
+  UserResetPasswordApiRequest
+>({
+  query: ({ ...config }) => ({
+    url: BASE_URL + "/reset-password",
+    method: "patch",
+    ...config,
+  }),
+  invalidatesTags: [{ type: USER }],
+}),
   }),
 });

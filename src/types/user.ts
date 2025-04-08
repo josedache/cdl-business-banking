@@ -40,9 +40,9 @@ export type User = {
 
 export type AuthUser = {
   token: string;
-  expiresIn: string;
-  refreshToken: string;
-  refreshExpiresIn: string;
-  isAuthenticated: boolean;
-  info: User;
+  expiresIn?: string;
+  refreshToken?: string;
+  refreshExpiresIn?: string;
+  isAuthenticated?: boolean;
+  info?: User;
 };

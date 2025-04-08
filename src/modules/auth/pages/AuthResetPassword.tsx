@@ -21,20 +21,21 @@ import PasswordTextField from "components/PasswordTextField";
 import NumberInput from "components/NumberInput";
 import Countdown from "components/Countdown.tsx";
 import { useState } from "react";
+import { userApi } from "apis/user.ts";
 
 function AuthResetPassword() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  // const [sendUserResetPasswordMutation, sendUserResetPasswordMutationResult] =
-  //   userApi.useSendUserResetPasswordMutation();
+  const [sendUserResetPasswordMutation, sendUserResetPasswordMutationResult] =
+    userApi.useSendUserResetPasswordMutation();
 
-  // const [verifyUserResetPasswordMutation] =
-  //   userApi.useVerifyUserResetPasswordMutation();
+  const [verifyUserResetPasswordMutation] =
+    userApi.useVerifyUserResetPasswordMutation();
 
   const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
-  // const [resetPasswordMutation] = userApi.useResetPasswordMutation();
+  const [resetPasswordMutation] = userApi.useResetPasswordMutation();
 
   const stepper = useStepper({
     initialStep: getEnumStepIndex(AuthResetPasswordStep.REQUEST),
@@ -79,40 +80,42 @@ function AuthResetPassword() {
         },
       }[enumStep],
     }),
-    onSubmit: async () => {
+    onSubmit: async (values) => {
       try {
         switch (enumStep) {
-          case AuthResetPasswordStep.REQUEST: {
-            // const data = await sendUserResetPasswordMutation({
-            //   body: { identifier: values.identifier, device_id: "kdkdkdd" },
-            // }).unwrap();
-            // setCountdownDate(getCountdownDate());
-            // enqueueSnackbar(data?.message || "Password reset otp sent", {
-            //   variant: "success",
-            // });
+          case AuthResetPasswordStep.REQUEST: {        
+            const data = await sendUserResetPasswordMutation({
+              body: { email: values.email},
+            }).unwrap()
+            setCountdownDate(getCountdownDate());
+            enqueueSnackbar(data?.message || "Password reset otp sent", {
+              variant: "success",
+            });            
             break;
           }
           case AuthResetPasswordStep.VERIFY: {
-            // const data = await verifyUserResetPasswordMutation({
-            //   body: {
-            //     otp: values.otp,
-            //     channel: values.identifier.includes("@") ? "email" : "phone",
-            //   },
-            // }).unwrap();
-            // enqueueSnackbar(data?.message || "OTP verified successfully!", {
-            //   variant: "success",
-            // });
+            const data = await verifyUserResetPasswordMutation({
+              body: {
+                otp: values.otp,
+                email: values.email
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "OTP verified successfully!", {
+              variant: "success",
+            });
             break;
           }
           case AuthResetPasswordStep.CHANGE: {
-            // const data = await resetPasswordMutation({
-            //   body: {
-            //     password: values.password,
-            //   },
-            // }).unwrap();
-            // enqueueSnackbar(data?.message || "Password reset successful", {
-            //   variant: "success",
-            // });
+            const data = await resetPasswordMutation({
+              body: {
+                password: values.password,
+                confirmPassword : values.confirmPassword,
+                email : values.email
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "Password reset successful", {
+              variant: "success",
+            });
             break;
           }
           case AuthResetPasswordStep.SUCCESS: {
@@ -134,24 +137,24 @@ function AuthResetPassword() {
     },
   });
 
-  // const handleResendOtpReset = async () => {
-  //   try {
-  //     const data = await sendUserResetPasswordMutation({
-  //       body: { identifier: formik.values.identifier, device_id: "kdkdkdd" },
-  //     }).unwrap();
-  //     setCountdownDate(getCountdownDate());
-  //     enqueueSnackbar("Password reset otp sent", {
-  //       variant: "success",
-  //     });
-  //   } catch (error: any) {
-  //     enqueueSnackbar(
-  //       error?.data?.message || "Failed to resend password reset otp",
-  //       {
-  //         variant: "error",
-  //       }
-  //     );
-  //   }
-  // };
+  const handleResendOtpReset = async () => {
+    try {
+      const data = await sendUserResetPasswordMutation({
+        body: { email: formik.values.email },
+      }).unwrap();
+      setCountdownDate(getCountdownDate());
+      enqueueSnackbar(data?.message || "Password reset otp sent", {
+        variant: "success",
+      });
+    } catch (error: any) {
+      enqueueSnackbar(
+        error?.data?.message || "Failed to resend password reset otp",
+        {
+          variant: "error",
+        }
+      );
+    }
+  };
 
   const contents = [
     {
@@ -223,12 +226,12 @@ function AuthResetPassword() {
                         Didn’t get the code?{" "}
                         <ButtonBase
                           disableRipple
-                          // disabled={
-                          //   sendUserResetPasswordMutationResult.isLoading
-                          // }
+                          disabled={
+                            sendUserResetPasswordMutationResult?.isLoading
+                          }
                           component={MuiLink}
-                          // onClick={handleResendOtpReset as any}
-                          className="underline text-text-primary font-bold"
+                          onClick={handleResendOtpReset as any}
+                          className="font-bold text-primary-main"
                         >
                           Resend Code.
                         </ButtonBase>
@@ -334,6 +337,7 @@ function AuthResetPassword() {
 
         <div className="sticky bottom-0 p-5 md:p-8 bg-inherit z-10 space-y-2">
           <LoadingButton
+            variant="gradient"
             type="submit"
             fullWidth
             size="large"

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logout } from "./store-actions";
-import { AuthUser } from "../types/user.ts";
+import { AuthUser, User } from "../types/user.ts";
 import { userApi } from "apis/user.ts";
 import { addSeconds } from "utils/date/add-seconds.ts";
 
@@ -85,21 +85,22 @@ export const slice = createSlice({
       //     );
       //   }
       // )
-      // .addMatcher(
-      //   userApi.endpoints.sendUserResetPassword.matchFulfilled,
-      //   (state, { payload }) => {
-      //     state.authUser = payload.data as User;
-      //   }
-      // )
-      // .addMatcher(
-      //   userApi.endpoints.verifyUserResetPassword.matchFulfilled,
-      //   (state, { payload }) => {
-      //     state.authUser.token = payload.data;
-      //   }
-      // )
-      // .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
-      //   state.authUser = null;
-      // })
+      .addMatcher(
+        userApi.endpoints.sendUserResetPassword.matchFulfilled,
+        (state, { payload }) => {
+          state.authUser = { token : payload?.token }
+        }
+      )
+      .addMatcher(
+        userApi.endpoints.verifyUserResetPassword.matchFulfilled,
+        (state, { payload }) => {
+          console.log({payload})
+          state.authUser.token = payload?.data?.token;
+        }
+      )
+      .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
+        state.authUser = null;
+      })
       .addMatcher(
         userApi.endpoints.getUser.matchFulfilled,
         (state, { payload }) => {
