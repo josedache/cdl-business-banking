@@ -1,8 +1,16 @@
 import { baseApi } from "configs/store-query";
 import { USER } from "constants/tags.ts";
 import {
+  UserGetVoiceOtpApiRequest,
+  UserGetVoiceOtpApiResponse,
+  UserKycApiRequest,
+  UserKycApiResponse,
   UserLoginApiRequest,
   UserLoginApiResponse,
+  UserPinApiRequest,
+  UserPinApiResponse,
+  UserSendOtpApiRequest,
+  UserSendOtpApiResponse,
   UserVerifyOtpApiRequest,
   UserVerifyOtpApiResponse,
 } from "types/user-api.ts";
@@ -53,6 +61,48 @@ export const userApi = baseApi.injectEndpoints({
         ...config,
       }),
       providesTags: [{ type: USER }],
+    }),
+
+    userKyc: builder.mutation<UserKycApiResponse, UserKycApiRequest>({
+      query: (config) => ({
+        url: BASE_URL + "/kyc",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userPin: builder.mutation<UserPinApiResponse, UserPinApiRequest>({
+      query: (config) => ({
+        url: BASE_URL + "/pin",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userSendOtp: builder.mutation<
+      UserSendOtpApiResponse,
+      UserSendOtpApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/send-otp",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userGetVoiceOtp: builder.mutation<
+      UserGetVoiceOtpApiResponse,
+      UserGetVoiceOtpApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/get-otp-voice",
+        method: "GET",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
     }),
   }),
 });

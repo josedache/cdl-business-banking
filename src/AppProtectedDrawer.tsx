@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,23 +18,26 @@ import {
   Card,
 } from "@mui/material";
 import clsx from "clsx";
-import Logo from "components/Logo";
-import MediaBreakpoint from "enums/media-breakpoint";
-import useSideNavigation from "hooks/use-side-navigation";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import { Icon, Icon as Iconify } from "@iconify/react";
+
+import useSideNavigation from "hooks/use-side-navigation";
+import MediaBreakpoint from "enums/media-breakpoint";
+import Logo from "components/Logo";
 import useToggle from "hooks/use-toggle";
-import { useMemo } from "react";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
-import { DASHBOARD } from "constants/urls";
+import { DASHBOARD, TRANSFER } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
+import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 
 function AppProtectedDrawer() {
   const islg = useMediaQuery(MediaBreakpoint.LG);
 
   // const { logout } = useLogout();
   const authUser = useAuthUser();
+
+  const isKycCompleted = isKycCheckCompleted(authUser?.info);
 
   const infoPopover = usePopover();
 
@@ -59,13 +63,13 @@ function AppProtectedDrawer() {
           icon: "hugeicons:wallet-add-01",
           label: "Main Wallet",
           to: "/test",
-          kycAllow: true,
+          kycAllow: false,
         },
         {
           icon: "hugeicons:money-receive-02",
           label: "Collections",
           to: "/test",
-          kycAllow: true,
+          kycAllow: false,
         },
       ],
     },
@@ -75,13 +79,13 @@ function AppProtectedDrawer() {
           icon: "hugeicons:time-02",
           label: "Transactions",
           to: "/test",
-          kycAllow: true,
+          kycAllow: false,
         },
         {
           icon: "hugeicons:money-exchange-03",
           label: "Transfer funds",
-          to: "/test",
-          kycAllow: true,
+          to: TRANSFER,
+          kycAllow: isKycCompleted,
         },
       ],
     },
@@ -151,10 +155,10 @@ function AppProtectedDrawer() {
                   }}
                   className="p-1.5 w-[40px] h-[40px] rounded-full"
                 >
-                  <Avatar className="w-full h-full bg-white text-primary-500">
-                    {authUser?.firstname?.[0]}
-                    {authUser?.lastname?.[0]}
-                  </Avatar>
+                  <Avatar
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath fill='%23fff' fill-rule='evenodd' d='M14 7a6.98 6.98 0 0 1-1.941 4.838A6.98 6.98 0 0 1 7.02 14h-.04a6.98 6.98 0 0 1-5.039-2.162A7 7 0 1 1 14 7m-2.757 3.5A5.49 5.49 0 0 0 7 8.5a5.49 5.49 0 0 0-4.243 2A5.49 5.49 0 0 0 7 12.5a5.49 5.49 0 0 0 4.243-2M7 7.5a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5' clip-rule='evenodd'/%3E%3C/svg%3E"
+                    className="w-full h-full text-primary-500"
+                  />
                 </Card>
                 <Popover
                   open={infoPopover.isOpen}

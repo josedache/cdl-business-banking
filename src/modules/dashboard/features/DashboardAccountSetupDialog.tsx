@@ -13,6 +13,9 @@ import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
 import CheckMark from "assets/imgs/check.png";
 import { useNavigate } from "react-router-dom";
 import { ACCOUNT_SETUP } from "constants/urls";
+import useAuthUser from "hooks/use-auth-user";
+import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
+import { ONBOARDING_STEPS } from "../enums/onboardingStepsEnum";
 
 type DashboardAccountSetupDialogProps = {
   open: true;
@@ -23,33 +26,43 @@ export default function DashboardAccountSetupDialog(
 ) {
   const { onClose, ...rest } = props;
   const navigate = useNavigate();
+  const user = useAuthUser();
+
+  const verificationPercentage = getKycVerificationPercentage(user?.info);
 
   const steps = [
     {
       title: "Email verified",
-      verified: true,
+      verified: user?.info?.isEmailVerified || false,
     },
     {
       title: "Provide NIN ",
       description: "Required to verify your identity",
-      verified: false,
+      verified: user?.info?.isNinVerified || false,
+      step: ONBOARDING_STEPS.NIN,
     },
     {
       title: "Provide BVN ",
       description: "Required to unlock transactions",
-      verified: false,
+      verified: user?.info?.isBvnVerified || false,
+      step: ONBOARDING_STEPS.BVN,
     },
     {
       title: "Provide Business Details",
       description: "Required to personalize your experience",
-      verified: false,
+      verified: user?.info?.businesses?.[0]?.is_validated || false,
+      step: ONBOARDING_STEPS.BUSINESS,
     },
     {
       title: "Setup Transaction PIN",
       description: "Required to secure your transactions",
-      verified: false,
+      verified: user?.info?.transactionPin?.[0]?.is_active || false,
+      step: ONBOARDING_STEPS.PIN_SETUP,
     },
   ];
+
+  const firstUnverifiedStep = steps.find((step) => !step.verified).step;
+
   return (
     <Dialog
       fullWidth
@@ -99,7 +112,7 @@ export default function DashboardAccountSetupDialog(
               </Typography>
             </div>
 
-            <CircularProgressWithLabel value={30} />
+            <CircularProgressWithLabel value={verificationPercentage || 0} />
           </div>
 
           <div className="mt-5 grid grid-cols-1 gap-4">
@@ -141,7 +154,7 @@ export default function DashboardAccountSetupDialog(
 
           <Button
             onClick={() => {
-              navigate(ACCOUNT_SETUP);
+              navigate(ACCOUNT_SETUP + `?step=${firstUnverifiedStep}`);
             }}
             fullWidth
             className="mt-4"
