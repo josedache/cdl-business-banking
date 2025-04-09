@@ -1,27 +1,19 @@
 export type User = {
   id: number;
-  clientId: number;
-  tierLevel: string;
+  clientId: string;
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName: string | null;
   phone: string;
   bvn: string;
   nin: string;
-  alternateNumber: string;
-  rcNumber: string;
-  token: string;
-  cbaWalletId: string;
-  cbaFlexId: string;
-  preferredNumber: string;
+  rcNumber: string | null;
   email: string;
-  referralCode: string;
+  referralCode: string | null;
   dateOfBirth: string;
   companyId: string;
   companyDomain: string;
   isActive: boolean;
-  login2fa: boolean;
-  is2fa: boolean;
   isPhoneVerified: boolean;
   isAlternateNumberVerified: boolean;
   isEmailVerified: boolean;
@@ -29,13 +21,21 @@ export type User = {
   isNinVerified: boolean;
   isDeactivated: boolean;
   acceptedTermsAndConditions: boolean;
-  isUserPropagatedToCba: boolean;
   isTokenVerified: boolean;
-  gender: string;
-  userType: string;
-  preferredNotificationChannel: "main_phone_number" | string;
-  createdAt: string; // ISO 8601 date
-  updatedAt: string; // ISO 8601 date
+  gender: string | null;
+  userType: string | null;
+  preferredNotificationChannel: string;
+  businesses: Array<{
+    id: string;
+    is_validated: boolean;
+    name: string;
+  }>;
+  transactionPin: Array<{
+    id: string;
+    is_active: boolean;
+  }>;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type AuthUser = {

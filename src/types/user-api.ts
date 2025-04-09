@@ -13,8 +13,16 @@ export type UserLoginApiResponse = ApiResponse<{
 }>;
 
 export type UserVerifyOtpApiRequest = ApiRequest<{
-  reason: string;
+  reason:
+    | "verify_bvn"
+    | "verify_email"
+    | "verify_nin"
+    | "verify_main_phone_number"
+    | "verify_business"
+    | "complete_transfer"
+    | "verify_login_2fa";
   otp: string;
+  rcNumber?: string;
 }>;
 
 export type UserVerifyOtpApiResponse = ApiResponse<{
@@ -75,3 +83,47 @@ export type UserResetPasswordApiRequest = ApiRequest<{
 export type UserResetPasswordApiResponse = ApiResponse<{
  
 }>;
+export type UserKycApiRequest = ApiRequest<{
+  nin?: string;
+  bvn?: string;
+}>;
+
+export type UserKycApiResponse = ApiResponse<{
+  expiry: number;
+  phone: string;
+}>;
+
+export type UserPinApiRequest = ApiRequest<
+  {
+    pin: string;
+  },
+  void,
+  {
+    action: "create" | "confirm";
+  }
+>;
+
+export type UserPinApiResponse = ApiResponse<{}>;
+
+export type UserSendOtpApiRequest = ApiRequest<{
+  reason:
+    | "verify_bvn"
+    | "verify_email"
+    | "verify_nin"
+    | "verify_main_phone_number"
+    | "verify_business"
+    | "complete_transfer"
+    | "verify_login_2fa";
+}>;
+
+export type UserSendOtpApiResponse = ApiResponse<{
+  token: string;
+  loginExpiry: number;
+  refreshToken: string;
+  refreshExpiry: number;
+  user: User;
+}>;
+
+export type UserGetVoiceOtpApiRequest = ApiRequest<unknown>;
+
+export type UserGetVoiceOtpApiResponse = ApiResponse<unknown>;

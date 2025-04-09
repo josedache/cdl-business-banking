@@ -1,16 +1,24 @@
 import { baseApi } from "configs/store-query";
 import { USER } from "constants/tags.ts";
 import {
-  UserLoginApiRequest,
-  UserLoginApiResponse,
+  UserGetVoiceOtpApiRequest,
+  UserGetVoiceOtpApiResponse,
+  UserKycApiRequest,
+  UserKycApiResponse,
   UserResetPasswordApiRequest,
   UserResetPasswordApiResponse,
   UserResetPasswordSendApiRequest,
   UserResetPasswordSendApiResponse,
   UserResetPasswordVerifyApiRequest,
   UserResetPasswordVerifyApiResponse,
+  UserLoginApiRequest,
+  UserLoginApiResponse,
   UserVerifyOtpApiRequest,
   UserVerifyOtpApiResponse,
+  UserPinApiResponse,
+  UserPinApiRequest,
+  UserSendOtpApiResponse,
+  UserSendOtpApiRequest,
 } from "types/user-api.ts";
 
 export const BASE_URL = "/user";
@@ -60,11 +68,52 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: [{ type: USER }],
     }),
-    
-    sendUserResetPassword : builder.mutation<
-    UserResetPasswordSendApiResponse,
-    UserResetPasswordSendApiRequest
-  >({
+    userKyc: builder.mutation<UserKycApiResponse, UserKycApiRequest>({
+      query: (config) => ({
+        url: BASE_URL + "/kyc",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userPin: builder.mutation<UserPinApiResponse, UserPinApiRequest>({
+      query: (config) => ({
+        url: BASE_URL + "/pin",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userSendOtp: builder.mutation<
+      UserSendOtpApiResponse,
+      UserSendOtpApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/send-otp",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    userGetVoiceOtp: builder.mutation<
+      UserGetVoiceOtpApiResponse,
+      UserGetVoiceOtpApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/get-otp-voice",
+        method: "GET",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    sendUserResetPassword: builder.mutation<
+      UserResetPasswordSendApiResponse,
+      UserResetPasswordSendApiRequest
+    >({
       query: (config) => ({
         url: BASE_URL + "/forgot-password",
         method: "post",
@@ -74,27 +123,27 @@ export const userApi = baseApi.injectEndpoints({
     }),
 
     verifyUserResetPassword: builder.mutation<
-    UserResetPasswordVerifyApiResponse,
-    UserResetPasswordVerifyApiRequest
-  >({
-    query: ({ ...config }) => ({
-      url: BASE_URL + "/verify-forgot-password-otp",
-      method: "post",
-      ...config,
+      UserResetPasswordVerifyApiResponse,
+      UserResetPasswordVerifyApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/verify-forgot-password-otp",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
     }),
-    invalidatesTags:  [{ type: USER }],
-  }),
 
-  resetPassword: builder.mutation<
-  UserResetPasswordApiResponse,
-  UserResetPasswordApiRequest
->({
-  query: ({ ...config }) => ({
-    url: BASE_URL + "/reset-password",
-    method: "patch",
-    ...config,
-  }),
-  invalidatesTags: [{ type: USER }],
-}),
+    resetPassword: builder.mutation<
+      UserResetPasswordApiResponse,
+      UserResetPasswordApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/reset-password",
+        method: "patch",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
   }),
 });
