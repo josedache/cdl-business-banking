@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logout } from "./store-actions";
-import { AuthUser, User } from "../types/user.ts";
+import { AuthUser } from "../types/user.ts";
 import { userApi } from "apis/user.ts";
 import { addSeconds } from "utils/date/add-seconds.ts";
 
@@ -100,7 +100,6 @@ export const slice = createSlice({
       .addMatcher(
         userApi.endpoints.verifyUserResetPassword.matchFulfilled,
         (state, { payload }) => {
-          console.log({payload})
           state.authUser.token = payload?.data?.token;
         }
       )
