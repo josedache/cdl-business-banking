@@ -1,21 +1,9 @@
-import { useSnackbar } from "notistack";
-import {
-  ButtonBase,
-  CardActionArea,
-  Divider,
-  FormHelperText,
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import clsx from "clsx";
 import * as yup from "yup";
-import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
-import { DASHBOARD } from "constants/urls.ts";
+import { useSnackbar } from "notistack";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import useStepper from "hooks/use-stepper.ts";
-import { userApi } from "apis/user.ts";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -24,29 +12,99 @@ import StepConnector, {
 } from "@mui/material/StepConnector";
 import { useFormik } from "formik";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { getTextFieldProps } from "utils/formik/get-text-field-props";
-import { LoadingButton } from "@mui/lab";
-import NumberTextField from "components/NumberTextField";
-import SecuredDataBadge from "components/SecuredDataBadge";
+import { Container } from "@mui/material";
+
 import { ONBOARDING_STEPS } from "../enums/onboardingStepsEnum";
+import { DASHBOARD } from "constants/urls";
+import { userApi } from "apis/user.ts";
+import { merchantApi } from "apis/merchant";
+import DashboardAccountSetupNin from "../features/DashboardAccountSetupNin";
+import DashboardAccountSetupNinVerification from "../features/DashboardAccountSetupNinVerification";
+import DashboardAccountSetupBvn from "../features/DashboardAccountSetupBvn";
+import DashboardAccountSetupBvnVerification from "../features/DashboardAccountSetupBvnVerification";
+import DashboardAccountSetupBusiness from "../features/DashboardAccountSetupBusiness";
+import DashboardAccountSetupBusinessCacReg from "../features/DashboardAccountSetupBusinessCacReg";
+import DashboardAccountSetupBusinessCacRegVerification from "../features/DashboardAccountSetupBusinessCacRegVerification";
+import DashboardAccountSetupPinSetupVerification from "../features/DashboardAccountSetupPinSetupVerification";
+import DashboardAccountSetupPinSetupCompleted from "../features/DashboardAccountSetupPinSetupCompleted";
+import { DashboardAccountSetupFormikValues } from "../types/DashboardStepForm";
+import DashboardAccountSetupBusinessNonCacReg from "../features/DashboardAccountSetupBusinessNonCacReg";
+import DashboardAccountSetupPinSetup from "../features/DashboardAccountSetupPinSetup";
 
 function DashboardAccountSetup() {
   const { enqueueSnackbar } = useSnackbar();
+  const [searchParams] = useSearchParams();
+  const step = searchParams.get("step") || {};
 
   const navigate = useNavigate();
+  const stepper = useStepper({
+    initialStep: Number(step) || 0,
+  });
 
-  const stepper = useStepper();
+  const [userKyCMutation, userKyCMutationResult] = userApi.useUserKycMutation();
+  const [verifyOtpMutation] = userApi.useVerifyUserOtpMutation();
+  const [registerMerchantCacMutation, registerMerchantCacMutationResult] =
+    merchantApi.useMerchantRegistrationCacMutation();
+  const [registerMerchantNonCacMutation] =
+    merchantApi.useMerchantRegistrationNonCacMutation();
+  const [userPinMutation] = userApi.useUserPinMutation();
 
-  const [loginUserMutation] = userApi.useLoginUserMutation();
-
-  const formik = useFormik({
+  const formik = useFormik<DashboardAccountSetupFormikValues>({
     initialValues: {
-      email: "",
+      nin: "",
+      bvn: "",
+      otp: "",
+
+      rcNumber: "",
+
+      businessType: "",
+      businessName: "",
+      annualTurnOver: "",
+      businessSector: "",
+      businessSectorParent: "",
+
+      transactionPin: "",
+      confirmTransactionPin: "",
     },
     validationSchema: yup.object({
       ...[
         {
           nin: yup.string().label("NIN").max(11),
+        },
+        {
+          otp: yup.string().label("Otp").max(6),
+        },
+        {
+          bvn: yup.string().label("BVN").max(11),
+        },
+        {
+          otp: yup.string().label("Otp").max(6),
+        },
+        {},
+        {
+          rcNumber: yup.string().label("RC Number"),
+        },
+        {
+          otp: yup.string().label("Otp").max(6),
+        },
+        {
+          businessType: yup.string().label("Business Type").required(),
+          businessName: yup.string().label("Business Name").required(),
+          annualTurnOver: yup.string().label("Annual Turn Over"),
+          businessSector: yup
+            .string()
+            .label("Business Sector Subcategory")
+            .required(),
+          businessSectorParent: yup
+            .string()
+            .label("Business Sector")
+            .required(),
+        },
+        {
+          transactionPin: yup.string().label("Pin").max(6),
+        },
+        {
+          confirmTransactionPin: yup.string().label("Pin").max(6),
         },
         {},
       ][stepper.step],
@@ -54,18 +112,171 @@ function DashboardAccountSetup() {
     onSubmit: async (values) => {
       try {
         switch (stepper.step) {
-          case 0: {
-            // const data = await loginUserMutation({ body: values }).unwrap();
-            // enqueueSnackbar(data?.message || "Successfully!", {
-            //   variant: "success",
-            // });
-            stepper.next();
+          case ONBOARDING_STEPS.NIN: {
+            const resp = await userKyCMutation({
+              body: {
+                nin: values.nin,
+              },
+            }).unwrap();
+
+            if (resp?.statusCode === 200) {
+              // NIN and BVN exist on CBA
+              stepper.go(ONBOARDING_STEPS.BUSINESS);
+            }
+            if (resp?.statusCode === 201) {
+              // Newly created NIN
+              stepper.go(ONBOARDING_STEPS.NIN_VERIFICATION);
+            }
+            if (resp?.statusCode === 202) {
+              // NIN exists on CBA but BVN does not
+              stepper.go(ONBOARDING_STEPS.BVN);
+            }
+            if (resp?.statusCode === 409) {
+              // Incomplete NIN registration
+              stepper.go(ONBOARDING_STEPS.NIN_VERIFICATION);
+            }
+
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
             break;
           }
-          case 1: {
-            stepper.next();
+          case ONBOARDING_STEPS.NIN_VERIFICATION: {
+            const resp = await verifyOtpMutation({
+              body: {
+                reason: "verify_nin",
+                otp: values.otp,
+              },
+            }).unwrap();
+            stepper.go(ONBOARDING_STEPS.BVN);
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.BVN: {
+            const resp = await userKyCMutation({
+              body: {
+                bvn: values.bvn,
+              },
+            }).unwrap();
 
-            // navigate(DASHBOARD);
+            if (resp?.statusCode === 200) {
+              stepper.go(ONBOARDING_STEPS.BUSINESS);
+            }
+            if (resp?.statusCode === 201) {
+              stepper.go(ONBOARDING_STEPS.BVN_VERIFICATION);
+            }
+            if (resp?.statusCode === 202) {
+              stepper.go(ONBOARDING_STEPS.BUSINESS);
+            }
+            if (resp?.statusCode === 409) {
+              stepper.go(ONBOARDING_STEPS.BVN_VERIFICATION);
+            }
+
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.BVN_VERIFICATION: {
+            await verifyOtpMutation({
+              body: {
+                reason: "verify_bvn",
+                otp: values.otp,
+              },
+            }).unwrap();
+            stepper.go(ONBOARDING_STEPS.BUSINESS);
+            break;
+          }
+          case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION: {
+            const resp = await registerMerchantCacMutation({
+              params: {
+                rcNumber: values.rcNumber,
+              },
+            }).unwrap();
+
+            if (resp?.statusCode === 200) {
+              stepper.go(ONBOARDING_STEPS.PIN_SETUP);
+            }
+            if (resp?.statusCode === 201) {
+              stepper.go(
+                ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION
+              );
+            }
+
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION: {
+            if (!values.rcNumber) {
+              stepper.go(ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION);
+            }
+            const resp = await verifyOtpMutation({
+              body: {
+                reason: "verify_business",
+                otp: values.otp,
+                rcNumber: values.rcNumber,
+              },
+            }).unwrap();
+
+            stepper.go(ONBOARDING_STEPS.PIN_SETUP);
+
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION: {
+            const resp = await registerMerchantNonCacMutation({
+              body: {
+                businessType: values.businessType,
+                businessName: values.businessName,
+                annualTurnOver: values.annualTurnOver,
+                businessSector: values.businessSector,
+              },
+            }).unwrap();
+            stepper.go(ONBOARDING_STEPS.PIN_SETUP);
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.PIN_SETUP: {
+            const resp = await userPinMutation({
+              body: {
+                pin: values.transactionPin,
+              },
+              params: {
+                action: "create",
+              },
+            }).unwrap();
+            stepper.go(ONBOARDING_STEPS.PIN_SETUP_VERIFICATION);
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.PIN_SETUP_VERIFICATION: {
+            const resp = await userPinMutation({
+              body: {
+                pin: values.transactionPin,
+              },
+              params: {
+                action: "confirm",
+              },
+            }).unwrap();
+            stepper.go(ONBOARDING_STEPS.ACCOUNT_SETUP_COMPLETED);
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.ACCOUNT_SETUP_COMPLETED: {
+            navigate(DASHBOARD);
+            break;
           }
         }
       } catch (error) {
@@ -76,351 +287,149 @@ function DashboardAccountSetup() {
     },
   });
 
+  const contentProps = { formik, stepper };
+
   const steps = [
     {
       title: "Provide NIN",
-      key: ONBOARDING_STEPS.NIN,
-      content: (
-        <Fragment key={0}>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="p-6">
-              <ButtonBase
-                disableRipple
-                className="flex items-center gap-2"
-                onClick={() => stepper.previous()}
-              >
-                <Icon icon="weui:back-filled" fontSize={20} />
-                <Typography>Go back</Typography>
-              </ButtonBase>
-            </div>
-
-            <Divider />
-            <div className="px-6 pt-4 pb-8">
-              <Typography variant="h5" className="">
-                Provide NIN
-              </Typography>
-              <Typography className=" text-neutral-500">
-                We need your NIN to confirm your identity and keep your account
-                secure
-              </Typography>
-              <NumberTextField
-                freeSolo
-                fullWidth
-                slotProps={{
-                  input: {
-                    inputProps: {
-                      maxLength: 11,
-                    },
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Icon
-                          icon="hugeicons:security-lock"
-                          width="24"
-                          height="24"
-                          className="text-neutral-950"
-                        />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                label="NIN (National Identification Number)"
-                placeholder="19392398293"
-                className="mt-10"
-                {...getTextFieldProps(formik, "nin")}
-              />
-              <FormHelperText>
-                Enter your 11-digit NIN as it appears on your National ID slip.
-              </FormHelperText>
-            </div>
-            <Divider />
-            <div className="px-4 pb-4">
-              <LoadingButton
-                variant="gradient"
-                type="submit"
-                fullWidth
-                // disabled={!formik.isValid || !formik.dirty}
-                size="large"
-                loading={formik.isSubmitting}
-                loadingPosition="end"
-                endIcon={<></>}
-                className="my-5"
-              >
-                Verify NIN
-              </LoadingButton>
-
-              <div className="flex items-center justify-center gap-2">
-                <SecuredDataBadge />
-              </div>
-            </div>
-          </form>
-        </Fragment>
-      ),
+      tab: ONBOARDING_STEPS.NIN,
+      parentTab: ONBOARDING_STEPS.NIN,
+      parent: true,
+      content: <DashboardAccountSetupNin {...contentProps} />,
       verified: true,
       hasStepper: true,
     },
     {
-      title: "Provide BVN",
-      key: ONBOARDING_STEPS.BVN,
+      title: "Verify NIN",
+      tab: ONBOARDING_STEPS.NIN_VERIFICATION,
+      parentTab: ONBOARDING_STEPS.NIN,
       content: (
-        <form onSubmit={formik.handleSubmit}>
-          <div>{renderStepper()}</div>
-          <div className="p-6">
-            <ButtonBase
-              disableRipple
-              className="flex items-center gap-2"
-              onClick={() => stepper.previous()}
-            >
-              <Icon icon="weui:back-filled" fontSize={20} />
-              <Typography>Go back</Typography>
-            </ButtonBase>
-          </div>
-
-          <Divider />
-          <div className="px-6 pt-4 pb-8">
-            <Typography variant="h5" className="">
-              Provide BVN
-            </Typography>
-            <Typography className=" text-neutral-500">
-              Your BVN helps us link your bank account and unlock transactions.
-            </Typography>
-            <NumberTextField
-              freeSolo
-              fullWidth
-              slotProps={{
-                input: {
-                  inputProps: {
-                    maxLength: 11,
-                  },
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Icon
-                        icon="hugeicons:security-lock"
-                        width="24"
-                        height="24"
-                        className="text-neutral-950"
-                      />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              label="BVN (Bank Verification Number)"
-              placeholder="19392398293"
-              className="mt-10"
-              {...getTextFieldProps(formik, "nin")}
-            />
-            <FormHelperText>
-              We use it only for verification and never share your data
-            </FormHelperText>
-          </div>
-          <Divider />
-          <div className="px-4 pb-4">
-            <LoadingButton
-              variant="gradient"
-              type="submit"
-              fullWidth
-              // disabled={!formik.isValid || !formik.dirty}
-              size="large"
-              loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
-              className="my-5"
-            >
-              Continue
-            </LoadingButton>
-
-            <div className="flex items-center justify-center gap-2">
-              <SecuredDataBadge />
-            </div>
-          </div>
-        </form>
+        <DashboardAccountSetupNinVerification
+          {...contentProps}
+          phone={userKyCMutationResult?.data?.data?.phone}
+          expiration={userKyCMutationResult?.data?.data?.expiry || 0}
+        />
       ),
-      verified: false,
+      hasStepper: false,
+    },
+    {
+      title: "Provide BVN",
+      tab: ONBOARDING_STEPS.BVN,
+      parentTab: ONBOARDING_STEPS.BVN,
+      parent: true,
+      content: <DashboardAccountSetupBvn {...contentProps} />,
       hasStepper: true,
     },
     {
-      title: "Business Details",
-      key: ONBOARDING_STEPS.BUSINESS,
+      title: "Verify BVN",
+      tab: ONBOARDING_STEPS.BVN_VERIFICATION,
+      parentTab: ONBOARDING_STEPS.BVN,
       content: (
-        <Fragment key={2}>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="p-6">
-              <ButtonBase
-                disableRipple
-                className="flex items-center gap-2"
-                onClick={() => stepper.previous()}
-              >
-                <Icon icon="weui:back-filled" fontSize={20} />
-                <Typography>Go back</Typography>
-              </ButtonBase>
-            </div>
-
-            <Divider />
-            <div className="px-6 pt-4 pb-8">
-              <Typography variant="h5" className="">
-                What type of business do you own?{" "}
-              </Typography>
-              <Typography className=" text-neutral-500">
-                Let’s confirm your business type to give you the best experience
-              </Typography>
-
-              <div className="grid grid-cols-1 gap-4 mt-6">
-                {[
-                  {
-                    icon: "hugeicons:building-03",
-                    title: "Business registered with CAC",
-                    description: "You’ll need your CAC number to proceed",
-                  },
-                  {
-                    icon: "solar:document-bold",
-                    title: "Business not yet registered with CAC",
-                    description: "You’ll provide a few details to continue",
-                  },
-                ].map(({ icon, title, description, ...rest }) => (
-                  <CardActionArea
-                    key={title}
-                    {...rest}
-                    className="flex gap-3 py-4 w-full  rounded-lg"
-                  >
-                    <Paper className="rounded-full bg-[#FFF3EE] border-1 border-[#FECBB9] p-3 w-fit">
-                      <Icon
-                        className="text-[#C53D0D]"
-                        icon={icon}
-                        width="24"
-                        height="24"
-                      />
-                    </Paper>
-                    <div className="flex-1">
-                      <Typography className="font-medium text-neutral-900">
-                        {title}
-                      </Typography>
-                      <Typography className="text-neutral-500 font-medium mt-2">
-                        {description}
-                      </Typography>
-                    </div>
-                    <Icon
-                      icon="icon-park-outline:right"
-                      width="24"
-                      height="24"
-                    />
-                  </CardActionArea>
-                ))}
-              </div>
-            </div>
-          </form>
-        </Fragment>
+        <DashboardAccountSetupBvnVerification
+          {...contentProps}
+          phone={userKyCMutationResult?.data?.data?.phone}
+          expiration={userKyCMutationResult?.data?.data?.expiry || 0}
+        />
       ),
-      verified: false,
+      hasStepper: false,
+    },
+    {
+      title: "Business Details",
+      tab: ONBOARDING_STEPS.BUSINESS,
+      parentTab: ONBOARDING_STEPS.BUSINESS,
+      parent: true,
+      content: <DashboardAccountSetupBusiness {...contentProps} />,
+      hasStepper: true,
+    },
+
+    {
+      title: "Business CAC Registration",
+      tab: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION,
+      parentTab: ONBOARDING_STEPS.BUSINESS,
+      parent: false,
+      content: <DashboardAccountSetupBusinessCacReg {...contentProps} />,
+      hasStepper: true,
+    },
+    {
+      title: "Verify Business CAC Registration",
+      tab: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION,
+      parentTab: ONBOARDING_STEPS.BUSINESS,
+      parent: false,
+      content: (
+        <DashboardAccountSetupBusinessCacRegVerification
+          {...contentProps}
+          phone={registerMerchantCacMutationResult?.data?.data?.phone || ""}
+          expiration={
+            registerMerchantCacMutationResult?.data?.data?.expiry || 0
+          }
+        />
+      ),
+      hasStepper: false,
+    },
+    {
+      title: "Business NON CAC Registration",
+      tab: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
+      parentTab: ONBOARDING_STEPS.BUSINESS,
+      parent: false,
+      content: <DashboardAccountSetupBusinessNonCacReg {...contentProps} />,
       hasStepper: true,
     },
     {
       title: "Setup PIN",
-      key: ONBOARDING_STEPS.PIN_SETUP,
-      content: (
-        <Fragment key={3}>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="p-6">
-              <ButtonBase
-                disableRipple
-                className="flex items-center gap-2"
-                onClick={() => stepper.previous()}
-              >
-                <Icon icon="weui:back-filled" fontSize={20} />
-                <Typography>Go back</Typography>
-              </ButtonBase>
-            </div>
-
-            <Divider />
-            <div className="px-6 pt-4 pb-8">
-              <Typography variant="h5" className="">
-                What type of business do you own?{" "}
-              </Typography>
-              <Typography className=" text-neutral-500">
-                Let’s confirm your business type to give you the best experience
-              </Typography>
-
-              <div className="grid grid-cols-1 gap-4 mt-6">
-                {[
-                  {
-                    icon: "hugeicons:building-03",
-                    title: "Business registered with CAC",
-                    description: "You’ll need your CAC number to proceed",
-                  },
-                  {
-                    icon: "solar:document-bold",
-                    title: "Business not yet registered with CAC",
-                    description: "You’ll provide a few details to continue",
-                  },
-                ].map(({ icon, title, description, ...rest }) => (
-                  <CardActionArea
-                    key={title}
-                    {...rest}
-                    className="flex gap-3 py-4 w-full  rounded-lg"
-                  >
-                    <Paper className="rounded-full bg-[#FFF3EE] border-1 border-[#FECBB9] p-3 w-fit">
-                      <Icon
-                        className="text-[#C53D0D]"
-                        icon={icon}
-                        width="24"
-                        height="24"
-                      />
-                    </Paper>
-                    <div className="flex-1">
-                      <Typography className="font-medium text-neutral-900">
-                        {title}
-                      </Typography>
-                      <Typography className="text-neutral-500 font-medium mt-2">
-                        {description}
-                      </Typography>
-                    </div>
-                    <Icon
-                      icon="icon-park-outline:right"
-                      width="24"
-                      height="24"
-                    />
-                  </CardActionArea>
-                ))}
-              </div>
-            </div>
-          </form>
-        </Fragment>
-      ),
-      verified: false,
+      tab: ONBOARDING_STEPS.PIN_SETUP,
+      parentTab: ONBOARDING_STEPS.PIN_SETUP,
+      parent: true,
+      content: <DashboardAccountSetupPinSetup {...contentProps} />,
       hasStepper: true,
+    },
+    {
+      title: "Setup PIN Verification",
+      tab: ONBOARDING_STEPS.PIN_SETUP_VERIFICATION,
+      parentTab: ONBOARDING_STEPS.PIN_SETUP,
+      parent: false,
+      content: <DashboardAccountSetupPinSetupVerification {...contentProps} />,
+      hasStepper: true,
+    },
+    {
+      title: "Account Setup Completed",
+      tab: ONBOARDING_STEPS.ACCOUNT_SETUP_COMPLETED,
+      parentTab: ONBOARDING_STEPS.PIN_SETUP,
+      parent: false,
+      content: <DashboardAccountSetupPinSetupCompleted {...contentProps} />,
+      hasStepper: false,
     },
   ];
 
-  const currentStep = steps.find((step) => step.key === stepper.step);
+  const currentStep = steps[stepper.step];
+  const parentSteps = steps.filter((step) => step.parent === true);
+  const parentStepIndex = parentSteps?.findIndex(
+    (step) => step?.tab === currentStep?.parentTab
+  );
 
   return (
-    <div className="w-full max-w-[600px] mx-auto">
-      <Paper className="mt-5">
-        <Stepper
-          activeStep={stepper.step}
-          connector={<CustomSVGConnector />}
-          className="mb-5"
-        >
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        {steps.map((step) => step.content)}
-      </Paper>
-    </div>
+    <Container className="mt-18 mx-auto">
+      <Stepper
+        activeStep={parentStepIndex}
+        connector={<CustomSVGConnector />}
+        className={clsx(
+          "mb-5 max-w-[600px] mx-auto",
+          currentStep?.hasStepper ? "visible" : "invisible"
+        )}
+      >
+        {parentSteps.map(({ title }) => (
+          <Step key={title}>
+            <StepLabel StepIconComponent={QontoStepIcon}>{title}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <div className="mt-5">{currentStep?.content}</div>
+    </Container>
   );
 }
 
 export default DashboardAccountSetup;
 
 export const Component = DashboardAccountSetup;
-
-export const ONBOARDING_STEP_ = {
-  NIN: 1,
-  BVN: 2,
-  BUSINESS: 3,
-  PIN_SETUP: 4,
-};
 
 const CustomSVGConnector = styled(StepConnector)(() => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -482,7 +491,7 @@ function QontoStepIcon(props) {
         <>
           {completed ? (
             <Icon
-              className="text-success-400"
+              className="text-[#0E8950]"
               icon="lets-icons:check-fill"
               width="25"
               height="25"

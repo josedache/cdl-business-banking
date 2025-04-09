@@ -10,7 +10,10 @@ export default function SecuredDataBadge() {
         height="18"
         className="text-neutral-900"
       />
-      <Typography variant="body2" className="text-neutral-600 font-medium">
+      <Typography
+        variant="body2"
+        className="text-neutral-600 font-medium select-none"
+      >
         Your data is secure and encrypted
       </Typography>
     </div>

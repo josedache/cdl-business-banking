@@ -137,6 +137,7 @@ export const theme = responsiveFontSizes(
         "-apple-system",
         "BlinkMacSystemFont",
       ].join(),
+
       // htmlFontSize: 10,
       fontSize: 12,
       // color: "#1D2129",
@@ -144,6 +145,12 @@ export const theme = responsiveFontSizes(
         textTransform: "none",
         fontWeight: 500,
         fontSize: "0.785rem",
+      },
+      body1: {
+        fontWeight: 450,
+      },
+      body2: {
+        fontWeight: 450,
       },
       h5: {
         fontWeight: 600,

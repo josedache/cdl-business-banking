@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer } from "react";
 
 /**
  *
@@ -6,7 +6,7 @@ import { useReducer } from 'react'
  * @returns
  */
 function useStepper(options: StepperOptions = {}) {
-  const initialStep = options?.initialStep || 0
+  const initialStep = options?.initialStep || 0;
   const [state, dispatch] = useReducer(reducer, undefined, () => {
     return {
       step: initialStep,
@@ -15,19 +15,19 @@ function useStepper(options: StepperOptions = {}) {
       completed: [],
       errored: [],
       history: [initialStep],
-    }
-  })
+    };
+  });
 
   /**
    *
    * @param {number} step
    */
   function go(step?: number) {
-    if (!step || !(step >= 0) || step === state.step) return
+    if (!step || !(step >= 0) || step === state.step) return;
     if (step > state.step) {
-      next(step)
+      next(step);
     } else {
-      previous(step)
+      previous(step);
     }
   }
 
@@ -36,7 +36,7 @@ function useStepper(options: StepperOptions = {}) {
    * @param {number} step
    */
   function next(step?: number) {
-    dispatch({ type: 'NEXT', payload: { step } })
+    dispatch({ type: "NEXT", payload: { step } });
   }
 
   /**
@@ -44,7 +44,7 @@ function useStepper(options: StepperOptions = {}) {
    * @param {number} step
    */
   function previous(step?: number) {
-    dispatch({ type: 'PREVIOUS', payload: { step } })
+    dispatch({ type: "PREVIOUS", payload: { step } });
   }
 
   /**
@@ -52,13 +52,13 @@ function useStepper(options: StepperOptions = {}) {
    * @param {number} step
    */
   function reset(step = initialStep) {
-    dispatch({ type: 'RESET', payload: { step, initialStep } })
+    dispatch({ type: "RESET", payload: { step, initialStep } });
   }
 
-  return { ...state, next, previous, reset, go }
+  return { ...state, next, previous, reset, go };
 }
 
-export default useStepper
+export default useStepper;
 
 /**
  *
@@ -67,44 +67,44 @@ export default useStepper
  */
 function reducer(
   state: State,
-  { type, payload }: { type: 'NEXT' | 'PREVIOUS' | 'RESET'; payload: any },
+  { type, payload }: { type: "NEXT" | "PREVIOUS" | "RESET"; payload: any }
 ) {
   switch (type) {
-    case 'NEXT': {
+    case "NEXT": {
       if (payload?.step === state.step) {
-        return state
+        return state;
       }
       const step =
         !isNaN(payload?.step) && parseInt(payload?.step) >= state.step
           ? parseInt(payload.step)
-          : state.step + 1
+          : state.step + 1;
 
-      const jumped = [...state.jumped]
+      const jumped = [...state.jumped];
       if (step > state.step + 1) {
         for (let index = state.step + 1; index < step; index++) {
           if (!jumped.includes(index)) {
-            jumped.push(index)
+            jumped.push(index);
           }
         }
       }
 
-      return { ...state, step, jumped, history: [...state.history, step] }
+      return { ...state, step, jumped, history: [...state.history, step] };
     }
-    case 'PREVIOUS': {
+    case "PREVIOUS": {
       if (payload?.step === state.step) {
-        return state
+        return state;
       }
 
-      let jumped = [...state.jumped]
+      let jumped = [...state.jumped];
 
       const getNextStep = (step: number): number => {
-        const stepIndex = jumped.indexOf(step)
+        const stepIndex = jumped.indexOf(step);
         if (stepIndex > -1) {
-          jumped.splice(stepIndex, 1)
-          return getNextStep(step - 1)
+          jumped.splice(stepIndex, 1);
+          return getNextStep(step - 1);
         }
-        return step
-      }
+        return step;
+      };
 
       const step =
         !isNaN(payload?.step) &&
@@ -113,30 +113,30 @@ function reducer(
           ? parseInt(payload.step)
           : state.step
             ? getNextStep(state.step - 1)
-            : 0
+            : 0;
 
-      jumped = jumped.filter((jump) => jump < step)
+      jumped = jumped.filter((jump) => jump < step);
 
-      return { ...state, step, jumped, history: [...state.history, step] }
+      return { ...state, step, jumped, history: [...state.history, step] };
     }
-    case 'RESET': {
+    case "RESET": {
       const step = parseInt(payload.step)
         ? parseInt(payload.step)
-        : payload.initialStep
-      return { ...state, step, jumped: [], history: [step] }
+        : payload.initialStep;
+      return { ...state, step, jumped: [], history: [step] };
     }
     default:
-      return state
+      return state;
   }
 }
 
-export type StepperOptions = { initialStep?: number }
+export type StepperOptions = { initialStep?: number };
 
 export type State = {
-  step: number
-  jumped: number[]
-  skipped: number[]
-  completed: number[]
-  errored: number[]
-  history: number[]
-}
+  step: number;
+  jumped: number[];
+  skipped: number[];
+  completed: number[];
+  errored: number[];
+  history: number[];
+};

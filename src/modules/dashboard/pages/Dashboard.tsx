@@ -15,49 +15,62 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import CurrencyTypography from "components/CurrencyTypography";
 import useToggle from "hooks/use-toggle";
 import DashboardAccountSetupDialog from "../features/DashboardAccountSetupDialog";
+import useAuthUser from "hooks/use-auth-user";
+import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
+import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
+
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
-  const [isAccountSetup, toggleAccountSetup] = useToggle();
+  const [isAccountSetup, toggleAccountSetup] = useToggle(true);
+
+  const user = useAuthUser();
+
+  const isKycCompleted = isKycCheckCompleted(user?.info);
+  const verificationPercentage = getKycVerificationPercentage(user?.info);
+
+  const businessName = user?.info?.businesses?.[0]?.name;
 
   return (
     <>
-      <Typography className="font-semibold" variant="h4">
-        Welcome
+      <Typography className="font-semibold capitalize" noWrap variant="h4">
+        Welcome, {businessName}
       </Typography>
 
-      <Card
-        elevation={0}
-        sx={{
-          backgroundImage: `url(${SetUpBgImg}), linear-gradient(112deg, #353D4A 40.01%, #737882 92.86%)`,
-          backgroundPosition: "right center",
-          backgroundOrigin: "border-box",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "",
-          borderRadius: "16px",
-        }}
-        className="flex flex-wrap items-center gap-4 p-6 mt-6"
-      >
-        <div>
-          <CircularProgressWithLabel value={30} />
-        </div>
-        <div className="flex justify-between items-center gap-4 flex-wrap flex-1">
+      {!isKycCompleted ? (
+        <Card
+          elevation={0}
+          sx={{
+            backgroundImage: `url(${SetUpBgImg}), linear-gradient(112deg, #353D4A 40.01%, #737882 92.86%)`,
+            backgroundPosition: "right center",
+            backgroundOrigin: "border-box",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "",
+            borderRadius: "16px",
+          }}
+          className="flex flex-wrap items-center gap-4 p-6 mt-6"
+        >
           <div>
-            <Typography variant="h5" className="font-semibold text-white">
-              Finish Setting Up Your Account
-            </Typography>
-            <Typography className="text-white max-w-[407px]">
-              Complete your profile to start carrying out transactions. Just 4
-              steps left to unlock full features—takes less than 5 minutes!
-            </Typography>
+            <CircularProgressWithLabel value={verificationPercentage || 0} />
           </div>
+          <div className="flex justify-between items-center gap-4 flex-wrap flex-1">
+            <div>
+              <Typography variant="h5" className="font-semibold text-white">
+                Finish Setting Up Your Account
+              </Typography>
+              <Typography className="text-white max-w-[407px]">
+                Complete your profile to start carrying out transactions. Just 4
+                steps left to unlock full features—takes less than 5 minutes!
+              </Typography>
+            </div>
 
-          <div>
-            <Button onClick={toggleAccountSetup} size="large">
-              Unlock Full Access
-            </Button>
+            <div>
+              <Button onClick={toggleAccountSetup} size="large">
+                Unlock Full Access
+              </Button>
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      ) : null}
 
       <Card
         elevation={0}
@@ -69,6 +82,7 @@ function Dashboard() {
           backgroundRepeat: "repeat-x",
           backgroundSize: "",
           borderRadius: "16px",
+          ...(isKycCompleted ? { opacity: 1 } : { opacity: 0.2 }),
         }}
       >
         <div className="flex gap-5 justify-between flex-wrap">
@@ -77,7 +91,10 @@ function Dashboard() {
           </Typography>
 
           <div className="inline-flex gap-4">
-            <CardActionArea className="inline-flex bg-white rounded-lg px-4 gap-1 items-center py-[6px]">
+            <CardActionArea
+              disabled={!isKycCompleted}
+              className="inline-flex bg-white rounded-lg px-4 gap-1 items-center py-[6px]"
+            >
               <Icon
                 icon="hugeicons:filter-mail-square"
                 width="24"
@@ -89,6 +106,7 @@ function Dashboard() {
 
             <CardActionArea
               onClick={toggleIsBurWaller}
+              disabled={!isKycCompleted}
               className="p-[6px] bg-white rounded-lg"
             >
               <Icon
@@ -123,6 +141,7 @@ function Dashboard() {
               <IconButton
                 variant="contained"
                 className="rounded-lg w-fit text-white"
+                disabled={!isKycCompleted}
                 sx={{
                   background:
                     "linear-gradient(180deg, #EFC531 0%, #FF7849 100%)",
@@ -140,7 +159,11 @@ function Dashboard() {
             </div>
 
             <div className="inline-flex flex-col justify-center gap-3 items-center ">
-              <IconButton variant="outlined" className="rounded-lg w-fit ">
+              <IconButton
+                disabled={!isKycCompleted}
+                variant="outlined"
+                className="rounded-lg w-fit "
+              >
                 <Icon
                   icon="hugeicons:more-horizontal-circle-01"
                   width="24"
