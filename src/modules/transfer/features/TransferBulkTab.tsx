@@ -7,10 +7,14 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
+import { TransferContentProps } from "../types/TransferStepForm";
 
-export default function TransferBulkTab() {
-  const hasList = true;
+type TransferBulkTabProps = {} & TransferContentProps;
+
+export default function TransferBulkTab(props: TransferBulkTabProps) {
+  const { formik } = props;
+  const hasList = false;
 
   const list = [
     {
@@ -74,7 +78,7 @@ export default function TransferBulkTab() {
           </div>
         </div>
       ) : (
-        <div>
+        <form onSubmit={formik.handleSubmit}>
           <div className="px-6 pt-6 pb-8">
             <Typography variant="h5">How Bulk Payouts works</Typography>
 
@@ -141,9 +145,15 @@ export default function TransferBulkTab() {
           <Divider />
 
           <div className="px-6 py-5">
-            <Button className="w-full  text-white">Continues</Button>
+            <Button
+              variant="gradient"
+              className="w-full  text-white"
+              type="submit"
+            >
+              Continues
+            </Button>
           </div>
-        </div>
+        </form>
       )}
     </Fragment>
   );

@@ -10,11 +10,11 @@ import {
 } from "@mui/material";
 import SecuredDataBadge from "components/SecuredDataBadge";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
+import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 
-type DashboardAccountSetupBusinessCacRegProps = {
-  stepper: any;
-  formik: any;
-};
+type DashboardAccountSetupBusinessCacRegProps =
+  {} & DashboardAccountSetupContentProps;
+
 export default function DashboardAccountSetupBusinessCacReg(
   props: DashboardAccountSetupBusinessCacRegProps
 ) {

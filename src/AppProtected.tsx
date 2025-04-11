@@ -14,7 +14,7 @@ import { SIGNIN } from "constants/urls";
 function AppProtected() {
   const { logout } = useLogout();
 
-  const userQueryResult = userApi.useGetUserQuery(undefined);
+  // const userQueryResult = userApi.useGetUserQuery(undefined);
 
   const [
     isRefreshTokenDialog,
@@ -48,9 +48,9 @@ function AppProtected() {
   return (
     <LoadingContent
       fullHeight
-      loading={userQueryResult.isLoading}
-      error={userQueryResult.isError}
-      onRetry={userQueryResult.refetch}
+      // loading={userQueryResult.isLoading}
+      // error={userQueryResult.isError}
+      // onRetry={userQueryResult.refetch}
     >
       {() => (
         <>
@@ -72,11 +72,11 @@ export default AppProtected;
 export const Component = AppProtected;
 
 export function loader() {
-  const { authUser } = store.getState().global;
+  // const { authUser } = store.getState().global;
 
-  if (!authUser?.isAuthenticated) {
-    return redirect(SIGNIN);
-  }
+  // if (!authUser?.isAuthenticated) {
+  //   return redirect(SIGNIN);
+  // }
 
   return null;
 }
