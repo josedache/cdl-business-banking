@@ -91,21 +91,21 @@ export const slice = createSlice({
       //     );
       //   }
       // )
-      // .addMatcher(
-      //   userApi.endpoints.sendUserResetPassword.matchFulfilled,
-      //   (state, { payload }) => {
-      //     state.authUser = payload.data as User;
-      //   }
-      // )
-      // .addMatcher(
-      //   userApi.endpoints.verifyUserResetPassword.matchFulfilled,
-      //   (state, { payload }) => {
-      //     state.authUser.token = payload.data;
-      //   }
-      // )
-      // .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
-      //   state.authUser = null;
-      // })
+      .addMatcher(
+        userApi.endpoints.sendUserResetPassword.matchFulfilled,
+        (state, { payload }) => {
+          state.authUser = { token : payload?.token }
+        }
+      )
+      .addMatcher(
+        userApi.endpoints.verifyUserResetPassword.matchFulfilled,
+        (state, { payload }) => {
+          state.authUser.token = payload?.data?.token;
+        }
+      )
+      .addMatcher(userApi.endpoints.resetPassword.matchFulfilled, (state) => {
+        state.authUser = null;
+      })
       .addMatcher(
         userApi.endpoints.getUser.matchFulfilled,
         (state, { payload }) => {
