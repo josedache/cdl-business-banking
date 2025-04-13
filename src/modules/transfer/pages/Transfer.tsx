@@ -16,31 +16,47 @@ import { TRANSFER_STEPS_ENUM } from "../enums/TransferStepsEnum";
 import TransferSingleEnterPaymentPin from "../features/TransferSingleEnterPaymentPin";
 import TransferSingleSuccess from "../features/TransferSingleSuccess";
 import TransferSingleFailed from "../features/TransferSingleFailed";
+import { transferApi } from "apis/transfer";
+import TransferSingleEnterPaymentOtp from "../features/TransferSingleEnterPaymentOtp";
 
 export default function Transfer() {
   const { enqueueSnackbar } = useSnackbar();
   const stepper = useStepper();
   const navigate = useNavigate();
 
+  const [transferMutation, transferMutationResult] =
+    transferApi.useTransferMutation();
+  const [completeTransferMutation] = transferApi.useCompleteTransferMutation();
+
   const formik = useFormik<TransferSetupFormikValues>({
     initialValues: {
       accountName: "",
       accountNumber: "",
+      bankSortCode: "",
       amount: "",
 
+      walletId: "",
+      nameEnquiryReference: "",
+      narration: "",
       transactionPin: "",
+      reference: "",
+
+      shouldAddBeneficiary: false,
+      otp: "",
     },
     validationSchema: yup.object({
       ...[
         {
           accountName: yup.string().label("Account Name"),
           amount: yup.string().label("Amount").min(1).required(),
+          bankSortCode: yup.string().label("Bank").required().required(),
           accountNumber: yup
             .string()
             .label("Account Number")
             .min(10)
             .max(10)
             .required(),
+          narration: yup.string().label("Narration"),
         },
         {},
         {},
@@ -70,7 +86,34 @@ export default function Transfer() {
             break;
           }
           case TRANSFER_STEPS_ENUM.SINGLE_PAYMENT_PIN: {
-            stepper.go(TRANSFER_STEPS_ENUM.SINGLE_SUCCESS);
+            const resp = await transferMutation({
+              body: {
+                walletId: Number(values.walletId),
+                amount: Number(values.amount),
+                nameEnquiryReference: values?.nameEnquiryReference || "",
+                transactionPin: values?.transactionPin,
+                ...(values.narration ? { narration: values.narration } : {}),
+              },
+            }).unwrap();
+            formik.setFieldValue("reference", resp?.data?.transfer?.reference);
+            stepper.go(TRANSFER_STEPS_ENUM.SINGLE_PAYMENT_OTP);
+            break;
+          }
+          case TRANSFER_STEPS_ENUM.SINGLE_PAYMENT_OTP: {
+            const resp = await completeTransferMutation({
+              body: {
+                shouldAddBeneficiary: values?.shouldAddBeneficiary,
+                otp: values?.otp,
+              },
+              path: {
+                reference: values?.reference,
+              },
+            }).unwrap();
+            if (resp.data?.isSuccessful) {
+              stepper.go(TRANSFER_STEPS_ENUM.SINGLE_SUCCESS);
+            } else {
+              stepper.go(TRANSFER_STEPS_ENUM.SINGLE_FAILED);
+            }
             break;
           }
           case TRANSFER_STEPS_ENUM.SINGLE_SUCCESS: {
@@ -83,6 +126,7 @@ export default function Transfer() {
           }
         }
       } catch (error) {
+        console.log("error", error);
         enqueueSnackbar(error?.message || error?.data?.message || "Failed", {
           variant: "error",
         });
@@ -126,6 +170,20 @@ export default function Transfer() {
       hideTransaction: true,
     },
     {
+      title: "Payment OTP",
+      tab: TRANSFER_STEPS_ENUM.SINGLE_PAYMENT_OTP,
+      content: (
+        <TransferSingleEnterPaymentOtp
+          {...contentProps}
+          phone={transferMutationResult?.data?.data?.phone || ""}
+        />
+      ),
+      parentTab: TRANSFER_STEPS_ENUM.SINGLE,
+      parent: false,
+      external: true,
+      hideTransaction: true,
+    },
+    {
       title: "Single payment Success",
       tab: TRANSFER_STEPS_ENUM.SINGLE_SUCCESS,
       content: <TransferSingleSuccess {...contentProps} />,
@@ -152,17 +210,19 @@ export default function Transfer() {
     (step) => step?.tab === currentStep?.parentTab
   );
 
+  console.log({ formik });
+
   return (
     <div>
       {currentStep?.external ? (
         <>{currentStep.content}</>
       ) : (
-        <Paper className="mx-auto border border-neutral-100  rounded-2xl max-w-[520px]">
-          <div className="pt-6 pb-4 px-6">
-            <Typography className="font-semibold text-center" variant="h4">
-              Transfers
-            </Typography>
-            <div className="flex items-center justify-center mt-4">
+        <Paper
+          elevation={0}
+          className="mx-auto border border-neutral-100  rounded-2xl max-w-[520px]"
+        >
+          <div className="pt-4 pb-4 px-6">
+            <div className="flex items-center justify-center">
               {parentSteps.map((tab, index) => (
                 <ButtonBase
                   className={clsx(

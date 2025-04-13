@@ -61,7 +61,7 @@ export default function DashboardAccountSetupDialog(
     },
   ];
 
-  const firstUnverifiedStep = steps.find((step) => !step.verified).step;
+  const firstUnverifiedStep = steps?.find((step) => !step?.verified)?.step;
 
   return (
     <Dialog

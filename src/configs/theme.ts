@@ -107,7 +107,7 @@ export const theme = responsiveFontSizes(
     },
     shadows: [
       "none",
-      "0px 4px 40px 0px rgba(107, 114, 128, 0.15)",
+      " 0px -8px 16px 6px rgba(16, 24, 40, 0.05), 0px 0px 6px -5px rgba(16, 24, 40, 0.03)",
       "0px 2px 5px 0px rgba(145, 158, 171, 0.12),0px 2px 2px 0px rgba(145, 158, 171, 0.12),0px 3px 1px -2px rgba(145, 158, 171, 0.12)",
       "0px 2px 9px 0px rgba(145, 158, 171, 0.12),0px 1px 3px 0px rgba(145, 158, 171, 0.12),0px 3px 3px -2px rgba(145, 158, 171, 0.12)",
       "0px 4px 4px -1px rgba(145, 158, 171, 0.12),0px 0px 5px 0px rgba(145, 158, 171, 0.12),0px 1px 10px 0px rgba(145, 158, 171, 0.12)",
@@ -592,11 +592,10 @@ export const theme = responsiveFontSizes(
       //     },
       //   },
       // },
-
       MuiPaper: {
         defaultProps: {
           shape: "circular",
-          elevation: 0,
+          elevation: 1,
         },
         styleOverrides: {
           root: ({ ownerState }) => {

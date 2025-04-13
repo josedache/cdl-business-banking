@@ -14,7 +14,7 @@ type TransferBulkTabProps = {} & TransferContentProps;
 
 export default function TransferBulkTab(props: TransferBulkTabProps) {
   const { formik } = props;
-  const hasList = false;
+  const hasList = true;
 
   const list = [
     {
@@ -28,6 +28,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
       description: "Jimmy Agbaje, John Chuka, Mayowa and 12 others",
     },
   ];
+
   return (
     <Fragment>
       {hasList ? (
@@ -54,7 +55,10 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                     className="flex gap-3 py-2 w-full"
                     {...rest}
                   >
-                    <Paper className="rounded-full  bg-[#F4F5F5] p-2 w-fit">
+                    <Paper
+                      elevation={0}
+                      className="rounded-full  bg-[#F4F5F5] p-2 w-fit"
+                    >
                       <Icon icon={icon} width="20" height="20" />
                     </Paper>
                     <div className="flex-1">

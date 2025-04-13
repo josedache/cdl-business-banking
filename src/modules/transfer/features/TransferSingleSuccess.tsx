@@ -13,7 +13,7 @@ export default function TransferSingleSuccess(
   const { formik } = props;
 
   return (
-    <Paper className="mx-auto max-w-[520px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="h-[450px] flex flex-col justify-center items-center max-w-[450px] mx-auto">
           <div className="flex justify-center mt-5">
@@ -32,7 +32,7 @@ export default function TransferSingleSuccess(
             {currencyjs(formik.values.amount || 0).format({
               symbol: "₦",
             })}{" "}
-            successfully sent to SEGUN ADEYINKA AKINNIBOSUN{" "}
+            successfully sent to {formik?.values?.accountName}{" "}
           </Typography>
 
           <div className="flex justify-center mt-8">

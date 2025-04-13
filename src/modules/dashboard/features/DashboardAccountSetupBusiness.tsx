@@ -18,7 +18,7 @@ export default function DashboardAccountSetupBusiness(
   const { formik, stepper } = props;
 
   return (
-    <Paper className="mx-auto max-w-[600px]">
+    <Paper elevation={0} className="mx-auto max-w-[600px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase
@@ -48,12 +48,12 @@ export default function DashboardAccountSetupBusiness(
               to: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION,
               description: "You’ll need your CAC number to proceed",
             },
-            {
-              icon: "solar:document-bold",
-              title: "Business not yet registered with CAC",
-              to: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
-              description: "You’ll provide a few details to continue",
-            },
+            // {
+            //   icon: "solar:document-bold",
+            //   title: "Business not yet registered with CAC",
+            //   to: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
+            //   description: "You’ll provide a few details to continue",
+            // },
           ].map(({ icon, title, description, ...rest }) => (
             <CardActionArea
               key={title}
@@ -63,7 +63,10 @@ export default function DashboardAccountSetupBusiness(
               }}
               className="flex gap-3 py-4 px-6  w-full"
             >
-              <Paper className="rounded-full bg-[#FFF3EE] border-1 border-[#FECBB9] p-3 w-fit">
+              <Paper
+                elevation={0}
+                className="rounded-full bg-[#FFF3EE] border-1 border-[#FECBB9] p-3 w-fit"
+              >
                 <Icon
                   className="text-[#C53D0D]"
                   icon={icon}

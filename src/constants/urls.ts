@@ -6,3 +6,4 @@ export const RESET_PASSWORD = "/reset-password";
 export const DASHBOARD = "/";
 export const ACCOUNT_SETUP = "/account-setups";
 export const TRANSFER = "/transfer";
+export const TRANSFER_BULK = "/transfer/bulk";

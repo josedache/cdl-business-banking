@@ -1,13 +1,21 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Autocomplete,
   Avatar,
   Box,
   CardActionArea,
+  Chip,
+  CircularProgress,
+  ClickAwayListener,
   Divider,
   FormControlLabel,
+  Grow,
   IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   styled,
   TextField,
   Tooltip,
@@ -24,6 +32,11 @@ import NumberTextField from "components/NumberTextField";
 import ToggleSwitch from "components/ToggleSwitch";
 import { TransferContentProps } from "../types/TransferStepForm";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
+import { lookupApi } from "apis/lookup";
+import { beneficiaryApi } from "apis/beneficiary";
+import { enquiryApi } from "apis/enquiry";
+import { getCheckFieldProps } from "utils/formik/get-check-field-props";
+import { transferApi } from "apis/transfer";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -35,6 +48,60 @@ export default function TransferSingle(props: TransferSingleProps) {
 
   const maximumAmount = 5000000;
   const exceedsMaximumAmount = Number(formik.values.amount) >= maximumAmount;
+
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState(1);
+
+  const handleClick = () => {
+    console.info(`You clicked ${options[selectedIndex]}`);
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number
+  ) => {
+    setSelectedIndex(index);
+    setOpen(false);
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const getALlBanksQuery = lookupApi.useBankLookupQuery({
+    params: {
+      activeOnly: true,
+    },
+  });
+
+  const getAllWalletsQuery = transferApi.useGetTransferWalletsQuery({});
+
+  const selectedWallet = getAllWalletsQuery?.data?.data?.find(
+    (item) => String(item.walletId) === formik.values.walletId
+  );
+
+  const getAllBeneficiariesQuery = beneficiaryApi.useGetBeneficiariesQuery({
+    params: {
+      type: "transfer",
+      page: String(1),
+      limit: String(20),
+    },
+  });
+
+  const [getBankNameEnquiryMutation, getBankNameEnquiryMutationResult] =
+    enquiryApi.useNameEnquiryMutation();
 
   const handleChange = (event: any) => {
     const newValue = event.target.value;
@@ -57,19 +124,51 @@ export default function TransferSingle(props: TransferSingleProps) {
     setWidth(135);
   };
 
-  const options = banks.map((option) => {
-    const firstLetter = option.title[0].toUpperCase();
-    return {
-      firstLetter: /[0-9]/.test(firstLetter) ? "0-9" : firstLetter,
-      ...option,
-    };
-  });
+  const options =
+    getALlBanksQuery?.data?.data?.map((option) => {
+      const firstLetter = option.name[0].toUpperCase();
+      return {
+        firstLetter: /[0-9]/.test(firstLetter) ? "0-9" : firstLetter,
+        ...option,
+      };
+    }) || [];
 
-  const hasBeneficiaries = beneficiaries.length > 0;
+  const hasBeneficiaries = getAllBeneficiariesQuery?.data?.data?.length > 0;
+
+  const handleBankNameEnquiry = async () => {
+    try {
+      const resp = await getBankNameEnquiryMutation({
+        body: {
+          bankCode: formik.values.bankSortCode,
+          accountNumber: formik.values.accountNumber,
+        },
+      }).unwrap();
+      formik.setFieldValue(
+        "accountName",
+        resp.data?.responseContent?.accountName
+      );
+      formik.setFieldValue(
+        "nameEnquiryReference",
+        resp?.data?.responseContent?.referenceNumber
+      );
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(() => {
+    formik.setFieldValue("accountName", "");
+    if (
+      formik.values.accountNumber.length === 10 &&
+      formik.values.bankSortCode
+    ) {
+      handleBankNameEnquiry();
+    }
+  }, [formik.values.accountNumber, formik.values.bankSortCode]);
+
   return (
     <div>
       <form onSubmit={formik.handleSubmit}>
-        <div className="px-4 max-h-[calc(100vh-500px)] min-h-[450px] overflow-auto scrollbar-hidden">
+        <div className="px-4 max-h-[calc(100vh-600px)] min-h-[490px] overflow-auto scrollbar-hidden">
           <div className="pt-4">
             <Typography className="text-center text-neutral-500">
               Enter amount
@@ -96,7 +195,7 @@ export default function TransferSingle(props: TransferSingleProps) {
                     <span className="underline text-primary-main">
                       Add Director’s info
                     </span>{" "}
-                    to send amounts up to
+                    to send amounts up to{" "}
                     {currencyjs(formik.values.amount).format({
                       symbol: "₦",
                     })}
@@ -151,7 +250,7 @@ export default function TransferSingle(props: TransferSingleProps) {
                 "text-center font-light text-[#D92D20] p-0 leading-3"
               )}
             >
-              Amount needs to be within
+              Amount needs to be within{" "}
               {currencyjs(maximumAmount).format({
                 symbol: "₦",
               })}
@@ -159,23 +258,100 @@ export default function TransferSingle(props: TransferSingleProps) {
           </div>
 
           <div className="flex justify-center mt-4">
-            <CardActionArea className="bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit">
+            <CardActionArea
+              ref={anchorRef}
+              disabled={getAllWalletsQuery?.isLoading}
+              className="bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit"
+              onClick={handleToggle}
+            >
               <Typography className="text-neutral-500 font-normal">
                 Transfer from
               </Typography>
               <Typography className="text-neutral-800 font-medium">
-                Main wallet balance
-                {currencyjs(10).format({
-                  symbol: "₦",
-                })}
+                {formik?.values?.walletId ? (
+                  <>
+                    {selectedWallet?.groupId
+                      ? `Main wallet Balance ${currencyjs(
+                          selectedWallet.balance || ""
+                        ).format({
+                          symbol: "₦",
+                        })}`
+                      : `${selectedWallet?.name}  ${currencyjs(
+                          selectedWallet.balance || ""
+                        ).format({
+                          symbol: "₦",
+                        })}`}
+                  </>
+                ) : null}
               </Typography>
+
               <Icon
                 icon="line-md:chevron-down"
                 width="17"
                 height="17"
                 color="#686A71"
               />
+
+              {getAllWalletsQuery?.isLoading ? (
+                <CircularProgress size={10} />
+              ) : null}
             </CardActionArea>
+
+            <Popper
+              sx={{ zIndex: 1 }}
+              open={open}
+              anchorEl={anchorRef.current}
+              role={undefined}
+              transition
+              disablePortal
+            >
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin:
+                      placement === "bottom" ? "center top" : "center bottom",
+                  }}
+                >
+                  <Paper className="rounded-2xl">
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <MenuList id="split-button-menu" autoFocusItem>
+                        {getAllWalletsQuery?.data?.data?.map((option) => (
+                          <MenuItem
+                            key={option.walletId}
+                            disabled={!option.isActive}
+                            selected={
+                              String(option.walletId) === formik.values.walletId
+                            }
+                            onClick={() => {
+                              formik.setFieldValue(
+                                "walletId",
+                                String(option.walletId)
+                              );
+                            }}
+                          >
+                            <Typography
+                              className="text-neutral-600"
+                              variant="body2"
+                            >
+                              {option?.groupId
+                                ? "Main wallet Balance"
+                                : option.name}
+                            </Typography>{" "}
+                            <Chip
+                              label={currencyjs(option.balance || "").format({
+                                symbol: "₦",
+                              })}
+                              className="ml-2"
+                            />
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper>
           </div>
 
           {hasBeneficiaries ? (
@@ -251,48 +427,113 @@ export default function TransferSingle(props: TransferSingleProps) {
               />
 
               <Autocomplete
-                options={options.sort(
+                options={options?.sort(
                   (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
                 )}
                 fullWidth
+                loading={getALlBanksQuery.isLoading}
                 groupBy={(option) => option.firstLetter}
-                getOptionLabel={(option) => option.title}
+                getOptionLabel={(option) => option.name}
                 renderOption={(props, option) => {
                   const { key, ...optionProps } = props;
                   return (
                     <Box
                       key={key}
                       component="li"
-                      sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                      sx={{ "& > img": { mr: 2, mt: 1, flexShrink: 0 } }}
                       {...optionProps}
                     >
                       <img
                         loading="lazy"
-                        className="rounded-full w-6 h-6"
-                        srcSet={`https://flagcdn.com/w24/ngn.png 2x`}
-                        src={`https://flagcdn.com/w24/ngn.png`}
-                        alt={option.title}
+                        className="rounded-full w-6 h-6 bg-black"
+                        src={option.icon || bankDefaultIcon}
+                        onError={(e: any) => {
+                          e.target.onerror = null;
+                          e.target.src = bankDefaultIcon;
+                        }}
+                        alt={option.name}
                       />
-                      {option.title}
+                      {option.name}
                     </Box>
                   );
+                }}
+                value={
+                  options.find(
+                    (option) =>
+                      option.bank_sort_code === formik.values.bankSortCode
+                  ) || null
+                }
+                onChange={(_, value) => {
+                  formik.setFieldValue("bankSortCode", value?.bank_sort_code);
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Select Bank" />
                 )}
               />
 
-              <div className="flex items-center gap-2 py-[6px] rounded-md px-3 w-full bg-[#DBF4E9]">
+              <div
+                className={clsx(
+                  !formik.values.accountName
+                    ? "bg-neutral-100"
+                    : "bg-[#DBF4E9]",
+                  "flex items-center gap-2 py-[6px] rounded-md px-3 w-full uppercase"
+                )}
+              >
                 <Icon
-                  icon="lets-icons:check-fill"
+                  icon={clsx(
+                    formik.values.accountNumber
+                      ? "lets-icons:check-fill"
+                      : "meteocons:not-available"
+                  )}
                   width="20"
                   height="20"
-                  className="text-[#095C35]"
+                  className={clsx(
+                    formik.values.accountName
+                      ? "text-[#0B8A4D]"
+                      : "text-neutral-400"
+                  )}
                 />
-                <Typography className="text-[#095C35]">
-                  SEGUN AKINNIBOSUN
+                <Typography
+                  className={clsx(
+                    formik.values.accountName
+                      ? "text-[#0B8A4D]"
+                      : "text-neutral-400"
+                  )}
+                >
+                  {formik.values.accountName || "Account name"}
                 </Typography>
+                <div className="flex-1" />
+                {getBankNameEnquiryMutationResult?.isLoading && (
+                  <CircularProgress
+                    size={10}
+                    color={formik.values.accountName ? "success" : "secondary"}
+                  />
+                )}
               </div>
+
+              {getBankNameEnquiryMutationResult?.data?.data?.responseCode ===
+                "99" && (
+                <div className="flex items-center gap-2 py-[6px] rounded-md px-3 w-full uppercase bg-[#FFFBF5]">
+                  <Icon
+                    icon="octicon:alert-16"
+                    width="20"
+                    height="20"
+                    className="text-[#F79009]"
+                  />
+                  <Typography className="text-neutral-400">
+                    {getBankNameEnquiryMutationResult?.data?.data?.message}
+                  </Typography>
+                  <div className="flex-1" />
+                  {getBankNameEnquiryMutationResult?.isLoading && (
+                    <CircularProgress
+                      size={10}
+                      color={
+                        formik.values.accountName ? "success" : "secondary"
+                      }
+                    />
+                  )}
+                </div>
+              )}
 
               <div>
                 <FormControlLabel
@@ -301,12 +542,14 @@ export default function TransferSingle(props: TransferSingleProps) {
                   label="Save beneficiary for Future actions?"
                   className="flex justify-between m-0"
                   labelPlacement="start"
+                  {...getCheckFieldProps(formik, "shouldAddBeneficiary")}
                 />
               </div>
 
               <TextField
                 label="Reason for payment"
                 autoComplete="off"
+                {...getTextFieldProps(formik, "narration")}
                 placeholder="Enter reason for payment"
               />
             </div>
@@ -349,109 +592,6 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     borderRadius: 8,
   },
 }));
-
-const banks = [
-  {
-    title: "Access Bank",
-    icon: "logos:access-bank",
-  },
-  {
-    title: "First Bank",
-    icon: "logos:first-bank",
-  },
-  {
-    title: "GTBank",
-    icon: "logos:gtbank",
-  },
-  {
-    title: "Zenith Bank",
-    icon: "logos:zenith-bank",
-  },
-  {
-    title: "UBA",
-    icon: "logos:uba",
-  },
-  {
-    title: "Fidelity Bank",
-    icon: "logos:fidelity-bank",
-  },
-  {
-    title: "Union Bank",
-    icon: "logos:union-bank",
-  },
-  {
-    title: "Wema Bank",
-    icon: "logos:wema-bank",
-  },
-  {
-    title: "Stanbic IBTC",
-    icon: "logos:stanbic-ibtc",
-  },
-  {
-    title: "Ecobank",
-    icon: "logos:ecobank",
-  },
-  {
-    title: "Heritage Bank",
-    icon: "logos:heritage-bank",
-  },
-  {
-    title: "Polaris Bank",
-    icon: "logos:polaris-bank",
-  },
-  {
-    title: "Keystone Bank",
-    icon: "logos:keystone-bank",
-  },
-  {
-    title: "Standard Chartered Bank",
-    icon: "logos:standard-chartered-bank",
-  },
-  {
-    title: "Citibank Nigeria",
-    icon: "logos:citi-bank",
-  },
-  {
-    title: "Union Bank UK",
-    icon: "logos:union-bank-uk",
-  },
-  {
-    title: "FSDH Merchant Bank",
-    icon: "logos:fsdh-merchant-bank",
-  },
-  {
-    title: "Sterling Bank",
-    icon: "logos:sterling-bank",
-  },
-  {
-    title: "CitiBank Nigeria",
-    icon: "logos:citi-bank-nigeria",
-  },
-  {
-    title: "Jaiz Bank",
-    icon: "logos:jaiz-bank",
-  },
-  {
-    title: "SunTrust Bank",
-    icon: "logos:suntrust-bank",
-  },
-  {
-    title: "Unity Bank",
-    icon: "logos:unity-bank",
-  },
-  {
-    title: "FBNQuest Merchant Bank",
-    icon: "logos:fbnquest-merchant-bank",
-  },
-  {
-    title: "Rand Merchant Bank",
-    icon: "logos:rand-merchant-bank",
-  },
-  {
-    title: "VFD Microfinance Bank",
-    icon: "logos:vfd-microfinance-bank",
-  },
-];
 
 const beneficiaries = [
   {
@@ -497,3 +637,6 @@ const beneficiaries = [
     bankName: "Fidelity Bank",
   },
 ];
+
+const bankDefaultIcon =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12.512 2.634a1.74 1.74 0 0 0-1.023 0l-2.986.918A16.5 16.5 0 0 0 4.178 5.61c-.848.567-.446 1.89.574 1.89h14.496c1.02 0 1.422-1.323.575-1.89a16.5 16.5 0 0 0-4.326-2.058zM4.25 21a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75m2-4a.75.75 0 0 0 1.5 0v-6a.75.75 0 0 0-1.5 0zm5.75.75a.75.75 0 0 1-.75-.75v-6a.75.75 0 0 1 1.5 0v6a.75.75 0 0 1-.75.75m4.25-.75a.75.75 0 0 0 1.5 0v-6a.75.75 0 0 0-1.5 0z' stroke-width='0.5' stroke='%23fff'/%3E%3C/svg%3E";

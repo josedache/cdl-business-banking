@@ -37,7 +37,7 @@ export default function DashboardAccountSetupBusinessCacRegVerification(
   }, []);
 
   return (
-    <Paper className="mx-auto max-w-[520px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit} className="max-w-[520px]">
         <div className="p-6">
           <ButtonBase

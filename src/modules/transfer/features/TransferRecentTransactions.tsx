@@ -3,8 +3,8 @@ import CurrencyTypography from "components/CurrencyTypography";
 
 export default function TransferRecentTransactions() {
   return (
-    <Paper className="mx-auto rounded-2xl max-w-[520px] p-6 ">
-      <div className="flex justify-between items-center px-6">
+    <Paper elevation={0} className="mx-auto rounded-2xl max-w-[520px] p-6 ">
+      <div className="flex justify-between items-center">
         <Typography className="text-netral-600">Recent Transactions</Typography>
 
         <ButtonBase className="text-primary-main font-medium">
@@ -36,7 +36,7 @@ export default function TransferRecentTransactions() {
             image: "https://via.placeholder.com/150",
           },
         ].map((item, index) => (
-          <div key={index} className="flex items-center gap-4 px-6 pt-[18px]">
+          <div key={index} className="flex items-center gap-4 pt-[18px]">
             <img
               src={item.image}
               alt="user"

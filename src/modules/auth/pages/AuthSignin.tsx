@@ -264,7 +264,9 @@ function AuthSignin() {
 
   return (
     <>
-      <Paper className="p-4 md:p-8">{[step1, step2][stepper.step]}</Paper>
+      <Paper elevation={0} className="p-4 md:p-8">
+        {[step1, step2][stepper.step]}
+      </Paper>
     </>
   );
 }

@@ -28,6 +28,7 @@ export type UserVerifyOtpApiRequest = ApiRequest<{
 export type UserVerifyOtpApiResponse = ApiResponse<{
   token: string;
   loginExpiry: number;
+  login_expiry: number;
   refreshToken: string;
   refreshExpiry: number;
   user: User;

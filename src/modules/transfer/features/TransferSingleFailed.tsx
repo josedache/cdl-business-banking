@@ -14,7 +14,7 @@ export default function TransferSingleFailed(props: TransferSingleFailedProps) {
   const navigate = useNavigate();
 
   return (
-    <Paper className="mx-auto max-w-[520px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="h-[450px] flex flex-col justify-center items-center">
           <div className="flex justify-center mt-5">

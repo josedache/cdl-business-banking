@@ -4,6 +4,7 @@ import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
 import currencyjs from "currency.js";
 
 import { TransferContentProps } from "../types/TransferStepForm";
+import { lookupApi } from "apis/lookup";
 
 type TransferSingleConfirmNewTransferProps = {} & TransferContentProps;
 
@@ -12,10 +13,21 @@ export default function TransferSingleConfirmNewTransfer(
 ) {
   const { formik, stepper } = props;
 
+  const getALlBanksQuery = lookupApi.useBankLookupQuery({
+    params: {
+      activeOnly: true,
+    },
+  });
+  const options = getALlBanksQuery?.data?.data || [];
+  const bankName =
+    options.find(
+      (option) => option.bank_sort_code === formik.values.bankSortCode
+    )?.name || "";
+
   const transactionDetails = [
     {
       title: "Name",
-      value: formik.values.accountName || "John Doe",
+      value: formik.values.accountName?.toUpperCase(),
     },
     {
       title: "Account No.",
@@ -23,7 +35,7 @@ export default function TransferSingleConfirmNewTransfer(
     },
     {
       title: "Bank",
-      value: "Union Bank",
+      value: bankName || "",
     },
     {
       title: "Amount",
@@ -33,11 +45,12 @@ export default function TransferSingleConfirmNewTransfer(
     },
     {
       title: "Transfer Fee",
-      value: `${currencyjs(10).format({ symbol: "₦" })}`,
+      value: `${currencyjs(0).format({ symbol: "₦" })}`,
     },
   ];
+
   return (
-    <Paper className="mx-auto max-w-[520px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase

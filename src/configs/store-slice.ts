@@ -68,16 +68,20 @@ export const slice = createSlice({
         userApi.endpoints.verifyUserOtp.matchFulfilled,
         (state, { payload }) => {
           state.authUser = {
-            info: payload?.data?.user,
-            token: payload?.data?.token,
-            expiresIn: String(
-              addSeconds(new Date(), payload?.data?.loginExpiry)
-            ),
-            refreshToken: payload?.data?.refreshToken,
-            refreshExpiresIn: String(
-              addSeconds(new Date(), payload?.data?.refreshExpiry)
-            ),
-            isAuthenticated: true,
+            ...state.authUser,
+            info: payload?.data?.user ?? state.authUser?.info,
+            token: payload?.data?.token ?? state.authUser?.token,
+            expiresIn: payload?.data?.login_expiry
+              ? String(addSeconds(new Date(), payload?.data?.loginExpiry))
+              : state.authUser?.expiresIn,
+            refreshToken:
+              payload?.data?.refreshToken ?? state.authUser?.refreshToken,
+            refreshExpiresIn: payload?.data?.refreshExpiry
+              ? String(addSeconds(new Date(), payload?.data?.refreshExpiry))
+              : state.authUser?.refreshExpiresIn,
+            isAuthenticated: payload?.data?.token
+              ? true
+              : state.authUser?.isAuthenticated,
           } as AuthUser;
         }
       )

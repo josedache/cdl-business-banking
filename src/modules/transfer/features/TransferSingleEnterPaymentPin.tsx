@@ -14,7 +14,7 @@ export default function TransferSingleEnterPaymentPin(
   const { formik, stepper } = props;
 
   return (
-    <Paper className="mx-auto max-w-[520px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase
