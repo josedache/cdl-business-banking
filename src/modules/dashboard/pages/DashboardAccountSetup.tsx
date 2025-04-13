@@ -2,16 +2,12 @@ import clsx from "clsx";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { styled } from "@mui/material/styles";
 import useStepper from "hooks/use-stepper.ts";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import StepConnector, {
-  stepConnectorClasses,
-} from "@mui/material/StepConnector";
+
 import { useFormik } from "formik";
-import { Icon } from "@iconify/react/dist/iconify.js";
 import { Container } from "@mui/material";
 
 import { ONBOARDING_STEPS } from "../enums/onboardingStepsEnum";
@@ -30,6 +26,8 @@ import DashboardAccountSetupPinSetupCompleted from "../features/DashboardAccount
 import { DashboardAccountSetupFormikValues } from "../types/DashboardStepForm";
 import DashboardAccountSetupBusinessNonCacReg from "../features/DashboardAccountSetupBusinessNonCacReg";
 import DashboardAccountSetupPinSetup from "../features/DashboardAccountSetupPinSetup";
+import StepperConnector from "components/StepperConnector";
+import StepperIcon from "components/StepperIcon";
 
 function DashboardAccountSetup() {
   const { enqueueSnackbar } = useSnackbar();
@@ -410,7 +408,7 @@ function DashboardAccountSetup() {
     <Container className="mt-18 mx-auto">
       <Stepper
         activeStep={parentStepIndex}
-        connector={<CustomSVGConnector />}
+        connector={<StepperConnector />}
         className={clsx(
           "mb-5 max-w-[600px] mx-auto",
           currentStep?.hasStepper ? "visible" : "invisible"
@@ -418,7 +416,7 @@ function DashboardAccountSetup() {
       >
         {parentSteps.map(({ title }) => (
           <Step key={title}>
-            <StepLabel StepIconComponent={QontoStepIcon}>{title}</StepLabel>
+            <StepLabel StepIconComponent={StepperIcon}>{title}</StepLabel>
           </Step>
         ))}
       </Stepper>
@@ -430,82 +428,3 @@ function DashboardAccountSetup() {
 export default DashboardAccountSetup;
 
 export const Component = DashboardAccountSetup;
-
-const CustomSVGConnector = styled(StepConnector)(() => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 22,
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    height: 0,
-    border: "none",
-    margin: 0,
-    padding: 0,
-    position: "relative",
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      top: -5,
-      left: 0,
-      width: "100%",
-      height: 10,
-      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M12.5 18s6-4.419 6-6s-6-6-6-6m-7 12s6-4.419 6-6s-6-6-6-6' color='%23000'/%3E%3C/svg%3E")`,
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      backgroundSize: "100% 15px",
-      zIndex: 1,
-    },
-  },
-}));
-
-const CustomStepIconRoot = styled("div")(() => ({
-  color: "#eaeaf0",
-  display: "flex",
-  height: 22,
-  margin: 5,
-  alignItems: "center",
-  "& .QontoStepIcon-completedIcon": {
-    color: "#784af4",
-    zIndex: 1,
-    fontSize: 18,
-  },
-  "& .QontoStepIcon-circle": {
-    width: 8,
-    height: 8,
-    borderRadius: "50%",
-    backgroundColor: "currentColor",
-  },
-}));
-
-function QontoStepIcon(props) {
-  const { active, completed, className } = props;
-  return (
-    <CustomStepIconRoot ownerState={{ active }} className={className}>
-      {active && !completed ? (
-        <Icon
-          className="text-neutral-200 bg-black rounded-full"
-          icon="fa:circle-o"
-          width="24"
-          height="24"
-        />
-      ) : (
-        <>
-          {completed ? (
-            <Icon
-              className="text-[#0E8950]"
-              icon="lets-icons:check-fill"
-              width="25"
-              height="25"
-            />
-          ) : (
-            <Icon
-              className="text-neutral-200 bg-white rounded-full"
-              icon="hugeicons:circle"
-              width="24"
-              height="24"
-            />
-          )}
-        </>
-      )}
-    </CustomStepIconRoot>
-  );
-}

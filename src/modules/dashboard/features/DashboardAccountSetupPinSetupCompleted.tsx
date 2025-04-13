@@ -19,7 +19,7 @@ export default function DashboardAccountSetupPinSetupCompleted(
   });
 
   return (
-    <Paper className="mx-auto max-w-[600px] p-6">
+    <Paper elevation={0} className="mx-auto max-w-[600px] p-6">
       <div>
         <div className="flex justify-center">
           <img

@@ -1,0 +1,7 @@
+export const TRANSFER_BUK_STEPS_ENUM = {
+  LIST: 0,
+  RECIPIENT: 1,
+  SUMMARY: 2,
+  LIST_PROGRESS: 3,
+  LIST_REVIEW: 4,
+};

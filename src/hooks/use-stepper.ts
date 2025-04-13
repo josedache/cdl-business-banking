@@ -23,7 +23,7 @@ function useStepper(options: StepperOptions = {}) {
    * @param {number} step
    */
   function go(step?: number) {
-    if (!step || !(step >= 0) || step === state.step) return;
+    if (step === undefined || step < 0 || step === state.step) return;
     if (step > state.step) {
       next(step);
     } else {

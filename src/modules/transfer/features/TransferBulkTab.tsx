@@ -7,9 +7,13 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
+import { TransferContentProps } from "../types/TransferStepForm";
 
-export default function TransferBulkTab() {
+type TransferBulkTabProps = {} & TransferContentProps;
+
+export default function TransferBulkTab(props: TransferBulkTabProps) {
+  const { formik } = props;
   const hasList = true;
 
   const list = [
@@ -24,6 +28,7 @@ export default function TransferBulkTab() {
       description: "Jimmy Agbaje, John Chuka, Mayowa and 12 others",
     },
   ];
+
   return (
     <Fragment>
       {hasList ? (
@@ -50,7 +55,10 @@ export default function TransferBulkTab() {
                     className="flex gap-3 py-2 w-full"
                     {...rest}
                   >
-                    <Paper className="rounded-full  bg-[#F4F5F5] p-2 w-fit">
+                    <Paper
+                      elevation={0}
+                      className="rounded-full  bg-[#F4F5F5] p-2 w-fit"
+                    >
                       <Icon icon={icon} width="20" height="20" />
                     </Paper>
                     <div className="flex-1">
@@ -74,7 +82,7 @@ export default function TransferBulkTab() {
           </div>
         </div>
       ) : (
-        <div>
+        <form onSubmit={formik.handleSubmit}>
           <div className="px-6 pt-6 pb-8">
             <Typography variant="h5">How Bulk Payouts works</Typography>
 
@@ -141,9 +149,15 @@ export default function TransferBulkTab() {
           <Divider />
 
           <div className="px-6 py-5">
-            <Button className="w-full  text-white">Continues</Button>
+            <Button
+              variant="gradient"
+              className="w-full  text-white"
+              type="submit"
+            >
+              Continues
+            </Button>
           </div>
-        </div>
+        </form>
       )}
     </Fragment>
   );
