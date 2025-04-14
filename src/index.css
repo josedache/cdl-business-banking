@@ -218,7 +218,7 @@
   /*}*/
   @font-face {
     font-family: "General Sans";
-    src: url("assets/fonts/general-sans/GeneralSans-SemiBoldItalic.otf")
+    src: url("assets/fonts/general-sans/GeneralSans-SemiboldItalic.otf")
       format("opentype");
     font-weight: 600;
     font-style: italic;
