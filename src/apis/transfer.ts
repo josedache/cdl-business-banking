@@ -1,6 +1,6 @@
 import { baseApi } from "configs/store-query";
 
-import { TRANSFER } from "constants/tags.ts";
+import { BENEFICIARY, TRANSFER } from "constants/tags.ts";
 import {
   CompleteTransferApiRequest,
   CompleteTransferApiResponse,
@@ -48,7 +48,7 @@ export const transferApi = baseApi.injectEndpoints({
         },
         ...config,
       }),
-      invalidatesTags: [{ type: TRANSFER }],
+      invalidatesTags: [{ type: TRANSFER }, { type: BENEFICIARY }],
     }),
   }),
 });

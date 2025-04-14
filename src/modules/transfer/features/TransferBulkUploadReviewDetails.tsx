@@ -20,6 +20,8 @@ import { LoadingButton } from "@mui/lab";
 
 import { TransferBulkContentProps } from "../types/TransferBulkStepForm";
 import { Fragment, useState } from "react";
+import TanStandardTable from "components/TanStandardTable";
+import useTable from "hooks/use-table";
 
 type TransferBulkUploadReviewDetailsProps = {} & TransferBulkContentProps;
 
@@ -62,6 +64,50 @@ export default function TransferBulkUploadReviewDetails(
       status: "failed",
     },
   ];
+
+  const columns = [
+    {
+      Header: "Name",
+      accessor: "name",
+    },
+    {
+      Header: "Amount",
+      accessor: "amount",
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+    },
+  ];
+
+  const data = [
+    {
+      id: 1,
+      name: "John Doe",
+      amount: 1000,
+      status: "success",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      amount: 2000,
+      status: "success",
+    },
+  ];
+
+  const tableInstance = useTable({
+    columns,
+    // data: vendors?.pageItems,
+    // pageCount: vendorsQueryResult?.data?.data?.totalFilteredRecords
+    //   ? Math.ceil(
+    //       vendorsQueryResult?.data?.data?.totalFilteredRecords / 10, //pagination?.pageSize,
+    //     )
+    //   : 0,
+    // manualPagination: true,
+    // state: { pagination },
+    // onPaginationChange: setPagination,
+  });
+
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">
       <div className="p-6">
@@ -77,7 +123,7 @@ export default function TransferBulkUploadReviewDetails(
 
       <Divider />
       <form onSubmit={formik.handleSubmit}>
-        <div className="space-y-4 p-6 h-[440px] overflow-y-auto scroll-hidden">
+        <div className="space-y-4 p-6 h-[440px] overflow-y-auto scrollbar-hidden">
           <div>
             <div>
               <Typography variant="h5" className="font-semibold">
@@ -129,9 +175,32 @@ export default function TransferBulkUploadReviewDetails(
               <Divider />
               <Collapse in={open} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemText primary="Starred" />
-                  </ListItemButton>
+                  <ListItem>
+                    {/* <TanStandardTable
+                      // loading={vendorsQueryResult.isFetching}
+                      // error={vendorsQueryResult.isError}
+                      // onErrorRetry={vendorsQueryResult.refetch}
+                      // onEmptyRetry={vendorsQueryResult.refetch}
+                      instance={tableInstance}
+                      pagination={false}
+                      // slots={{ bodyRow: Link }}
+                      // slotProps={{
+                      //   bodyRow(bodyRow) {
+                      //     return {
+                      //       to: generatePath(VENDORS_DETAIL, {
+                      //         id: bodyRow?.original?.id,
+                      //       }),
+                      //     };
+                      //   },
+                      // }}
+                      // classes={{
+                      //   bodyCell: "first:bg-[#f3f4f6] p-4  text-sm first:text-center",
+                      //   headerCell:
+                      //     "first:bg-[#f3f4f6] p-4 capitalize first:text-center text-xs font-semibold text-text-gray",
+                      //   bodyRow: "table-row",
+                      // }}
+                    /> */}
+                  </ListItem>
                 </List>
               </Collapse>
             </List>

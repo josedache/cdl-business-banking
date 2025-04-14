@@ -10,13 +10,45 @@ import { LoadingButton } from "@mui/lab";
 
 import { TransferBulkContentProps } from "../types/TransferBulkStepForm";
 import BorderLinearProgress from "components/BorderLinearProgress";
+import { beneficiaryApi } from "apis/beneficiary";
 
-type TransferBulkUploadProgressProps = {} & TransferBulkContentProps;
+type TransferBulkUploadProgressProps = {
+  batchNumber: string;
+} & TransferBulkContentProps;
 
 export default function TransferBulkUploadProgress(
   props: TransferBulkUploadProgressProps
 ) {
-  const { formik, stepper } = props;
+  const { formik, batchNumber, stepper } = props;
+
+  const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery(
+    {
+      path: {
+        batchNumber,
+      },
+    },
+    {
+      pollingInterval: 10000, //TODO: reduce polling time
+    }
+  );
+
+  const total = getBatchReportQuery?.data?.data?.meta?.total || 0;
+  const success = getBatchReportQuery?.data?.data?.meta?.processed || 0;
+  const uploadPercentage = total > 0 ? (success / total) * 100 : 0;
+
+  const totalMatchedRecipientsCount =
+    getBatchReportQuery?.data?.data?.beneficiaries?.filter(
+      (beneficiary) => beneficiary.responseType === "success"
+    )?.length || 0;
+
+  const totalFailedRecipientsCount =
+    getBatchReportQuery?.data?.data?.beneficiaries?.filter(
+      (beneficiary) =>
+        beneficiary.responseType === "error" ||
+        beneficiary.responseType === "warning"
+    )?.length || 0;
+
+  const isLoading = uploadPercentage < 100;
 
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">
@@ -24,6 +56,7 @@ export default function TransferBulkUploadProgress(
         <ButtonBase
           disableRipple
           className="flex items-center gap-2"
+          disabled
           onClick={() => stepper.previous()}
         >
           <Icon icon="weui:back-filled" fontSize={20} />
@@ -43,19 +76,25 @@ export default function TransferBulkUploadProgress(
 
             <div className="p-4 mt-8 border-dashed border font-medium rounded-lg border-neutral-300">
               <div className="flex gap-2 items-center">
-                <CircularProgress color="inherit" size={10} />
+                {isLoading ? (
+                  <CircularProgress color="inherit" size={10} />
+                ) : null}
                 <Typography className="font-light">
-                  Verifying information
+                  {isLoading
+                    ? "Verifying information"
+                    : "Verification complete"}
                 </Typography>
               </div>
               <div className="flex gap-1 items-center w-full">
                 <BorderLinearProgress
-                  value={20}
+                  value={uploadPercentage}
                   className="w-full"
                   variant="determinate"
                   color="inherit"
                 />
-                <Typography className="font-light">50%</Typography>
+                <Typography className="font-light">
+                  {uploadPercentage}%
+                </Typography>
               </div>
             </div>
           </div>
@@ -67,9 +106,15 @@ export default function TransferBulkUploadProgress(
               height="20"
               className="text-[#12B76A]"
             />
-            <Typography className="flex-1">132 Recepients matched</Typography>
-            <Divider orientation="vertical" flexItem />{" "}
-            <CircularProgress color="inherit" size={12} />
+            <Typography className="flex-1">
+              {totalMatchedRecipientsCount} Recipients matched
+            </Typography>
+            {isLoading ? (
+              <>
+                <Divider orientation="vertical" flexItem />{" "}
+                <CircularProgress color="inherit" size={12} />
+              </>
+            ) : null}
           </div>
 
           <div className="bg-[#FFFBF5] py-[10px] px-4 flex items-center gap-4 rounded-md">
@@ -79,9 +124,15 @@ export default function TransferBulkUploadProgress(
               height="20"
               className="text-[#F79009]"
             />
-            <Typography className="flex-1">132 Recepients matched</Typography>
-            <Divider orientation="vertical" flexItem />{" "}
-            <CircularProgress color="inherit" size={12} />
+            <Typography className="flex-1">
+              {totalFailedRecipientsCount} Errors detected
+            </Typography>
+            {isLoading ? (
+              <>
+                <Divider orientation="vertical" flexItem />{" "}
+                <CircularProgress color="inherit" size={12} />
+              </>
+            ) : null}
           </div>
         </div>
 
@@ -92,12 +143,12 @@ export default function TransferBulkUploadProgress(
             variant="gradient"
             type="submit"
             size="large"
-            disabled={!formik.isValid || !formik.dirty}
+            disabled={isLoading}
             loading={formik.isSubmitting}
             loadingPosition="end"
             endIcon={<></>}
           >
-            Upload & Continue
+            {isLoading ? "Uploading..." : "Continue"}
           </LoadingButton>
         </div>
       </form>

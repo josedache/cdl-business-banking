@@ -2,20 +2,38 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Button,
   CardActionArea,
+  ClickAwayListener,
   Divider,
+  Grow,
+  MenuItem,
+  MenuList,
   Paper,
+  Popper,
   Skeleton,
   Typography,
 } from "@mui/material";
 import { Fragment } from "react";
 import { TransferContentProps } from "../types/TransferStepForm";
+import usePopover from "hooks/use-popover";
+import { useNavigate } from "react-router-dom";
+import { TRANSFER_BULK } from "constants/urls";
+import { beneficiaryApi } from "apis/beneficiary";
+import LoadingContent from "components/LoadingContent";
 
 type TransferBulkTabProps = {} & TransferContentProps;
 
 export default function TransferBulkTab(props: TransferBulkTabProps) {
   const { formik } = props;
-  const hasList = true;
+  const hasList = false;
 
+  const actionPopover = usePopover();
+  const navigate = useNavigate();
+
+  const getBeneficiarySampleTemplateQuery =
+    beneficiaryApi.useGetBeneficiariesTemplateSampleQuery({});
+
+  const [downloadTemplateSample, downloadTemplateSampleResult] =
+    beneficiaryApi.useLazyDownloadBeneficiariesTemplateSampleQuery({});
   const list = [
     {
       icon: "hugeicons:user-group-03",
@@ -29,6 +47,14 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
     },
   ];
 
+  const handleDownloadTemplate = async () => {
+    try {
+      await downloadTemplateSample({}).unwrap();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Fragment>
       {hasList ? (
@@ -40,11 +66,64 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                 startIcon={
                   <Icon icon="ic:baseline-plus" width="24" height="24" />
                 }
+                ref={actionPopover.anchorEl}
+                onClick={actionPopover.togglePopover}
                 size="small"
                 variant="soft"
               >
                 Create new List
               </Button>
+
+              <Popper
+                sx={{ zIndex: 1 }}
+                open={actionPopover.isOpen}
+                anchorEl={actionPopover.anchorEl}
+                role={undefined}
+                transition
+                disablePortal
+              >
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin:
+                        placement === "bottom" ? "center top" : "center bottom",
+                    }}
+                  >
+                    <Paper className="rounded-2xl">
+                      <ClickAwayListener
+                        onClickAway={actionPopover.togglePopover}
+                      >
+                        <MenuList id="split-button-menu" autoFocusItem>
+                          {[
+                            {
+                              icon: "tabler:upload",
+                              name: "Upload CSV",
+                              onClick: () => {
+                                navigate(TRANSFER_BULK);
+                              },
+                            },
+                            {
+                              icon: "mage:file-2",
+                              name: "Add recipients manually",
+                            },
+                          ].map(({ name, icon, ...rest }) => (
+                            <MenuItem key={name} {...rest}>
+                              <Icon
+                                icon={icon}
+                                width="20"
+                                height="20"
+                                className="mr-2"
+                              />
+                              {name}
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
             </div>
 
             <div className="mt-8">
@@ -87,7 +166,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
             <Typography variant="h5">How Bulk Payouts works</Typography>
 
             {[
-              "Upload a CSV with Beneficiaries you wish to payout to or Choose from Existing Beneficiaries.",
+              "Upload a Excel with Beneficiaries you wish to payout to or Choose from Existing Beneficiaries.",
               "Review the Recipients.",
               "Complete the payout transaction.",
             ].map((item, index) => (
@@ -107,42 +186,60 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
             <div className="flex justify-between items-center">
               <Typography>Preview Sample</Typography>
 
-              <Button size="small" variant="soft">
+              <Button
+                onClick={handleDownloadTemplate}
+                loading={downloadTemplateSampleResult?.isFetching}
+                size="small"
+                variant="soft"
+              >
                 Download Template
               </Button>
             </div>
 
             <div className="border border-[#E2E4E9] rounded-[16px] mt-4">
-              <table className="table-auto  w-full border border-[#E2E4E9]  overflow-hidden rounded-[16px] ">
-                <thead>
-                  <tr>
-                    {["Full Name", "Account Number", "Bank Name", "Amount"].map(
-                      (item, index) => (
+              <LoadingContent
+                loading={getBeneficiarySampleTemplateQuery.isLoading}
+                error={getBeneficiarySampleTemplateQuery.isError}
+                renderLoading={() => <TransferBulkLoader />}
+              >
+                <table className="table-auto  w-full border border-[#E2E4E9]  overflow-hidden rounded-[16px] ">
+                  <thead>
+                    <tr>
+                      {Object.keys(
+                        getBeneficiarySampleTemplateQuery?.data?.data?.[0] || {}
+                      ).map((item, index) => (
                         <th
                           key={index}
-                          className="border bg-[#F9F9FA] border-[#E2E4E9] text-center  py-2"
+                          className="border bg-[#F9F9FA] border-[#E2E4E9] text-center  py-2 px-1"
                         >
-                          <Typography>{item}</Typography>
+                          <Typography variant="body2">{item}</Typography>
                         </th>
-                      )
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[1, 2, 3].map((item) => (
-                    <tr key={item}>
-                      {["", "", "", ""].map((item) => (
-                        <td
-                          key={item}
-                          className="border border-[#E2E4E9] text-center py-2 px-3"
-                        >
-                          <Skeleton className="h-[20px] w-full" />
-                        </td>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {getBeneficiarySampleTemplateQuery?.data?.data.map(
+                      (item) => (
+                        <tr key={item}>
+                          {Object.values(item).map((item) => (
+                            <td
+                              key={item}
+                              className="border border-[#E2E4E9] text-center py-2 px-2"
+                            >
+                              <Typography
+                                variant="caption"
+                                className="font-medium"
+                              >
+                                {item}
+                              </Typography>
+                            </td>
+                          ))}
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </LoadingContent>
             </div>
           </div>
 
@@ -153,12 +250,48 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
               variant="gradient"
               className="w-full  text-white"
               type="submit"
+              size="large"
+              loading={formik.isSubmitting}
+              loadingPosition="end"
             >
-              Continues
+              Continue
             </Button>
           </div>
         </form>
       )}
     </Fragment>
+  );
+}
+
+export function TransferBulkLoader() {
+  return (
+    <table className="table-auto  w-full border border-[#E2E4E9]  overflow-hidden rounded-[16px] ">
+      <thead>
+        <tr>
+          {Array(4).map((item, index) => (
+            <th
+              key={index}
+              className="border bg-[#F9F9FA] border-[#E2E4E9] text-center  py-2"
+            >
+              <Typography>{item}</Typography>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {[1, 2, 3].map((item) => (
+          <tr key={item}>
+            {["", "", "", ""].map((item) => (
+              <td
+                key={item}
+                className="border border-[#E2E4E9] text-center py-2 px-3"
+              >
+                <Skeleton className="h-[20px] w-full" />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

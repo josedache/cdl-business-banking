@@ -12,10 +12,20 @@ import { TransferBulkFormikValues } from "../types/TransferBulkStepForm";
 import TransferBulkUpload from "../features/TransferBulkUpload";
 import TransferBulkUploadProgress from "../features/TransferBulkUploadProgress";
 import TransferBulkUploadReviewDetails from "../features/TransferBulkUploadReviewDetails";
+import TransferBulkUploadTransferSummary from "../features/TransferBulkUploadTransferSummary";
+import { uploadApi } from "apis/upload";
+import { beneficiaryApi } from "apis/beneficiary";
+import { useState } from "react";
 
 export default function TransferBulk() {
   const stepper = useStepper();
   const { enqueueSnackbar } = useSnackbar();
+  const [batchNumber, setBatchNumber] = useState("");
+
+  const [uploadFileMutation] = uploadApi.useFileUploadMutation();
+
+  const [processBatchMutation] =
+    beneficiaryApi.useProcessBeneficiaryBatchMutation();
 
   const formik = useFormik<TransferBulkFormikValues>({
     initialValues: {
@@ -32,7 +42,19 @@ export default function TransferBulk() {
       try {
         switch (stepper.step) {
           case TRANSFER_BUK_STEPS_ENUM.LIST: {
+            const resp = await uploadFileMutation({
+              body: {
+                file: values.file,
+                uploadType: "bank_beneficiary",
+              },
+            }).unwrap();
+            await processBatchMutation({
+              path: {
+                batchNumber: resp?.data?.uploadResponse?.batchNumber,
+              },
+            }).unwrap();
             stepper.go(TRANSFER_BUK_STEPS_ENUM.LIST_PROGRESS);
+            setBatchNumber(resp?.data?.uploadResponse?.batchNumber);
             enqueueSnackbar("Successful!", {
               variant: "success",
             });
@@ -40,6 +62,7 @@ export default function TransferBulk() {
           }
           case TRANSFER_BUK_STEPS_ENUM.LIST_PROGRESS: {
             stepper.go(TRANSFER_BUK_STEPS_ENUM.LIST_REVIEW);
+
             enqueueSnackbar("Successful!", {
               variant: "success",
             });
@@ -92,7 +115,12 @@ export default function TransferBulk() {
       tab: TRANSFER_BUK_STEPS_ENUM.LIST_PROGRESS,
       parentTab: TRANSFER_BUK_STEPS_ENUM.LIST,
       parent: false,
-      content: <TransferBulkUploadProgress {...contentProps} />,
+      content: (
+        <TransferBulkUploadProgress
+          {...contentProps}
+          batchNumber={batchNumber}
+        />
+      ),
       verified: true,
       hasStepper: true,
     },
@@ -102,6 +130,15 @@ export default function TransferBulk() {
       parentTab: TRANSFER_BUK_STEPS_ENUM.LIST,
       parent: false,
       content: <TransferBulkUploadReviewDetails {...contentProps} />,
+      verified: true,
+      hasStepper: true,
+    },
+    {
+      title: "Transfer Summary",
+      tab: TRANSFER_BUK_STEPS_ENUM.TRANSFER_SUMMARY,
+      parentTab: TRANSFER_BUK_STEPS_ENUM.LIST,
+      parent: false,
+      content: <TransferBulkUploadTransferSummary {...contentProps} />,
       verified: true,
       hasStepper: true,
     },

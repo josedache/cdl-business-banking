@@ -13,29 +13,41 @@ import { useSnackbar } from "notistack";
 import clsx from "clsx";
 import { useDropzone } from "react-dropzone";
 import { Fragment } from "react/jsx-runtime";
+import { useNavigate } from "react-router-dom";
+import { TRANSFER } from "constants/urls";
+import { beneficiaryApi } from "apis/beneficiary";
+import download from "utils/file/download";
 
 type TransferBulkUploadProps = {} & TransferBulkContentProps;
 
 export default function TransferBulkUpload(props: TransferBulkUploadProps) {
-  const { formik, stepper } = props;
+  const { formik } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleClearFile = () => {
     formik.setFieldValue("file", "");
   };
 
-  const handleDownloadFile = () => {
-    // Implement file download logic here
+  const [downloadTemplateSample, downloadTemplateSampleResult] =
+    beneficiaryApi.useLazyDownloadBeneficiariesTemplateSampleQuery({});
+
+  const handleDownloadFile = async () => {
+    try {
+      await downloadTemplateSample({}).unwrap();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const dropzone = useDropzone({
     multiple: false,
-    // accept: {
-    //   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-    //     ".xlsx",
-    //   ],
-    //   "application/vnd.ms-excel": [".xls"],
-    // },
+    accept: {
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
+      "application/vnd.ms-excel": [".xls"],
+    },
     maxFiles: 1,
     maxSize: 3 * 1024 * 1024, // 3MB
     onDropAccepted: async (files) => {
@@ -57,13 +69,25 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
     },
   });
 
+  const handleDownloadLocalFile = async () => {
+    const file = formik.values.file as unknown as File;
+    console.log(file);
+    if (file) {
+      const url = URL.createObjectURL(file) as any;
+      download(url, file.name);
+      URL.revokeObjectURL(url);
+    } else {
+      console.error("No file to download");
+    }
+  };
+
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">
       <div className="p-6">
         <ButtonBase
           disableRipple
           className="flex items-center gap-2"
-          onClick={() => stepper.previous()}
+          onClick={() => navigate(TRANSFER)}
         >
           <Icon icon="weui:back-filled" fontSize={20} />
           <Typography>Go back</Typography>
@@ -75,10 +99,10 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
         <div className="p-6 min-h-[440px]">
           <div>
             <Typography variant="h4" className="font-semibold">
-              Upload CSV of Recipients
+              Upload Excel of Recipients
             </Typography>
             <Typography className="text-neutral-500 mt-2">
-              Upload a CSV file (Smaller than 1MB) with the following column:
+              Upload a Excel file (Smaller than 1MB) with the following column:
             </Typography>
             <Typography className="text-neutral-500 font-semibold">
               Name, Bank Name, Account number, Amount{" "}
@@ -101,7 +125,13 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <IconButton onClick={handleDownloadFile}>
+                  <IconButton
+                    component="a"
+                    href={
+                      URL.createObjectURL(formik?.values?.file as any) as any
+                    }
+                    download
+                  >
                     <Icon icon="ci:download" width="15" height="15" />
                   </IconButton>
 
@@ -128,7 +158,7 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
                     height="25"
                   />
                   <Typography>Click to upload file</Typography>
-                  <Typography>format: CSV</Typography>
+                  <Typography>format: Excel</Typography>
                 </>
               </div>
             </div>
@@ -141,9 +171,17 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
               height="12"
               className="font-semibold"
             />
-            <ButtonBase className="text-primary-main font-medium underline">
-              Download CSV template
-            </ButtonBase>{" "}
+            <Button
+              onClick={handleDownloadFile}
+              variant="text"
+              disabled={downloadTemplateSampleResult?.isFetching}
+              className={clsx(
+                downloadTemplateSampleResult?.isFetching ? "opacity-[0.6]" : "",
+                "text-primary-main font-medium underline p-0"
+              )}
+            >
+              Download Excel template
+            </Button>{" "}
             <Typography className="text-neutral-500">
               to see an example of the format required
             </Typography>

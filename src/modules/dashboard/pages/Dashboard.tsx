@@ -120,7 +120,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <Paper elevation={0} elevation={0} className="bg-[#F8F9FB] mt-6">
+        <Paper elevation={0} className="bg-[#F8F9FB] mt-6">
           <div className="px-4 pt-4">
             <Typography className="font-semibold text-[#686A71]">
               Main wallet balance
