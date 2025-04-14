@@ -3,14 +3,12 @@ import {
   ButtonBase,
   Checkbox,
   Chip,
-  CircularProgress,
   Collapse,
   Divider,
   FormControlLabel,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Paper,
   Typography,
@@ -33,20 +31,20 @@ export default function TransferBulkUploadReviewDetails(
     setOpen(!open);
   };
 
-  const successFullUploads = [
-    {
-      id: 1,
-      name: "John Doe",
-      amount: 1000,
-      status: "success",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      amount: 2000,
-      status: "success",
-    },
-  ];
+  // const successFullUploads = [
+  //   {
+  //     id: 1,
+  //     name: "John Doe",
+  //     amount: 1000,
+  //     status: "success",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Jane Smith",
+  //     amount: 2000,
+  //     status: "success",
+  //   },
+  // ];
 
   const failedUploads = [
     {

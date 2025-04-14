@@ -51,19 +51,19 @@ export default function TransferSingle(props: TransferSingleProps) {
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  // const [selectedIndex, setSelectedIndex] = useState(1);
 
-  const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
-  };
+  // const handleClick = () => {
+  //   console.info(`You clicked ${options[selectedIndex]}`);
+  // };
 
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
-    setOpen(false);
-  };
+  // const handleMenuItemClick = (
+  //   event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+  //   index: number
+  // ) => {
+  //   setSelectedIndex(index);
+  //   setOpen(false);
+  // };
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -151,9 +151,7 @@ export default function TransferSingle(props: TransferSingleProps) {
         "nameEnquiryReference",
         resp?.data?.responseContent?.referenceNumber
       );
-    } catch (error) {
-      console.log("error", error);
-    }
+    } catch {}
   };
   useEffect(() => {
     formik.setFieldValue("accountName", "");
@@ -259,10 +257,10 @@ export default function TransferSingle(props: TransferSingleProps) {
 
           <div className="flex justify-center mt-4">
             <CardActionArea
-              ref={anchorRef}
+              ref={anchorRef as any}
               disabled={getAllWalletsQuery?.isLoading}
               className="bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit"
-              onClick={handleToggle}
+              onClick={handleToggle as any}
             >
               <Typography className="text-neutral-500 font-normal">
                 Transfer from

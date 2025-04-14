@@ -16,10 +16,11 @@ import {
   ListItemIcon,
   Tooltip,
   Card,
+  Icon,
 } from "@mui/material";
 import clsx from "clsx";
 import { Link, matchPath, useLocation } from "react-router-dom";
-import { Icon, Icon as Iconify } from "@iconify/react";
+import { Icon as Iconify } from "@iconify/react";
 
 import useSideNavigation from "hooks/use-side-navigation";
 import MediaBreakpoint from "enums/media-breakpoint";
@@ -44,7 +45,7 @@ function AppProtectedDrawer() {
   const sideNavigation = useSideNavigation();
   const sidebarIcon = useSidebarIcon();
 
-  const [isSupport, toggleSupport] = useToggle();
+  // const [isSupport, toggleSupport] = useToggle();
 
   const NAV_LINKS = [
     {
@@ -94,7 +95,7 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:customer-support",
           label: "Support",
-          onClick: toggleSupport,
+          // onClick: toggleSupport,
           kycAllow: true,
         },
       ],
@@ -126,7 +127,7 @@ function AppProtectedDrawer() {
             {islg && (
               <div className="flex items-center justify-between w-full">
                 <div>
-                  <Logo variant="1" />
+                  <Logo />
                 </div>
 
                 <IconButton
@@ -135,9 +136,9 @@ function AppProtectedDrawer() {
                     "p-1  bg-white border-neutral-200 border-1",
                     collapseToIcon ? "opacity-0 visible" : ""
                   )}
-                  onClick={sidebarIcon.toggle}
+                  onClick={sidebarIcon.toggle as any}
                 >
-                  <Icon
+                  <Iconify
                     icon="hugeicons:arrow-left-double"
                     width="20"
                     height="20"
@@ -186,7 +187,7 @@ function AppProtectedDrawer() {
             )}
             {!islg && (
               <IconButton onClick={() => sideNavigation.toggle()}>
-                <Icon icon="hugeicons:cancel-02" width="24" height="24" />
+                <Iconify icon="hugeicons:cancel-02" width="24" height="24" />
               </IconButton>
             )}
           </Toolbar>
@@ -225,7 +226,11 @@ function AppProtectedDrawer() {
               sidebarIcon.toggle();
             }}
           >
-            <Icon icon="hugeicons:arrow-right-double" width="18" height="18" />
+            <Iconify
+              icon="hugeicons:arrow-right-double"
+              width="18"
+              height="18"
+            />
           </IconButton>
         ) : null}
       </div>
@@ -242,12 +247,12 @@ function AppProtectedDrawerItem(props: any) {
 
   const [isKycDialog, toggleKycDialog] = useToggle();
 
-  const authUser = useAuthUser();
+  // const authUser = useAuthUser();
 
-  const isKycCompleted =
-    authUser?.kyc_validation?.basic &&
-    authUser?.kyc_validation?.nin &&
-    authUser?.kyc_validation?.bank;
+  const isKycCompleted = false;
+  // authUser?.kyc_validation?.basic &&
+  // authUser?.kyc_validation?.nin &&
+  // authUser?.kyc_validation?.bank;
 
   const isGroup = !!links;
 

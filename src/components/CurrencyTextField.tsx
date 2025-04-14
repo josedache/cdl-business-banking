@@ -1,7 +1,7 @@
 import { InputAdornment } from "@mui/material";
 import { forwardRef } from "react";
 import NumberTextField, { NumberTextFieldProps } from "./NumberTextField";
-import Currency from "enums/Currency";
+import Currency from "enums/currency";
 
 const CurrencyTextField = forwardRef(function CurrencyTextField(
   props: CurrencyTextFieldProps,

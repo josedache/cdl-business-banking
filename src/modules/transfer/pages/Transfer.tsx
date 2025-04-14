@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
+import { ButtonBase, Divider, Paper } from "@mui/material";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
 import { TransferSetupFormikValues } from "../types/TransferStepForm";

@@ -15,7 +15,7 @@ export type GetTransactionApiRequest = ApiRequest<
   void,
   {
     transactionId: string;
-  },
+  }
 >;
 
 export type GetTransactionLimitApiResponse = ApiResponse<TransactionLimit[]>;
@@ -37,4 +37,4 @@ export type GenerateTransactionReceiptApiRequest = ApiRequest<
   {
     transactionId: string;
   }
-s>;
+>;

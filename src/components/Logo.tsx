@@ -11,5 +11,5 @@ export default Logo;
 
 export type LogoProps = {
   // variant?: "1" | "2" | "3";
-} & ComponentPropsWithoutRef<"div">;
+} & ComponentPropsWithoutRef<typeof LogoSvg>;
 // typeof YieldVariant1Svg
