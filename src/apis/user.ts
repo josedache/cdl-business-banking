@@ -5,14 +5,20 @@ import {
   UserGetVoiceOtpApiResponse,
   UserKycApiRequest,
   UserKycApiResponse,
+  UserResetPasswordApiRequest,
+  UserResetPasswordApiResponse,
+  UserResetPasswordSendApiRequest,
+  UserResetPasswordSendApiResponse,
+  UserResetPasswordVerifyApiRequest,
+  UserResetPasswordVerifyApiResponse,
   UserLoginApiRequest,
   UserLoginApiResponse,
-  UserPinApiRequest,
-  UserPinApiResponse,
-  UserSendOtpApiRequest,
-  UserSendOtpApiResponse,
   UserVerifyOtpApiRequest,
   UserVerifyOtpApiResponse,
+  UserPinApiResponse,
+  UserPinApiRequest,
+  UserSendOtpApiResponse,
+  UserSendOtpApiRequest,
 } from "types/user-api.ts";
 
 export const BASE_URL = "/user";
@@ -62,7 +68,6 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: [{ type: USER }],
     }),
-
     userKyc: builder.mutation<UserKycApiResponse, UserKycApiRequest>({
       query: (config) => ({
         url: BASE_URL + "/kyc",
@@ -100,6 +105,42 @@ export const userApi = baseApi.injectEndpoints({
       query: (config) => ({
         url: BASE_URL + "/get-otp-voice",
         method: "GET",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    sendUserResetPassword: builder.mutation<
+      UserResetPasswordSendApiResponse,
+      UserResetPasswordSendApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/forgot-password",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    verifyUserResetPassword: builder.mutation<
+      UserResetPasswordVerifyApiResponse,
+      UserResetPasswordVerifyApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/verify-forgot-password-otp",
+        method: "post",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    resetPassword: builder.mutation<
+      UserResetPasswordApiResponse,
+      UserResetPasswordApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/reset-password",
+        method: "patch",
         ...config,
       }),
       invalidatesTags: [{ type: USER }],
