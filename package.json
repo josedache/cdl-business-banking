@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:joe": "vite --port 7788",
+    "dev:joe": "vite --port 50704",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.0.15",
     "@tanstack/react-table": "^8.21.2",
+    "@tanstack/react-virtual": "^3.13.6",
     "axios": "^1.8.4",
     "clsx": "^2.1.1",
     "currency.js": "^2.0.4",

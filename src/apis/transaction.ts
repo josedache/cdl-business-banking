@@ -4,22 +4,36 @@ import { TRANSACTION } from "constants/tags.ts";
 import {
   GenerateTransactionReceiptApiRequest,
   GenerateTransactionReceiptApiResponse,
-  GetTransactionApiRequest,
-  GetTransactionApiResponse,
+  GetTransactionSavingsHistoryApiRequest,
+  GetTransactionSavingsHistoryApiResponse,
   GetTransactionLimitApiRequest,
   GetTransactionLimitApiResponse,
+  GetTransactionApiResponse,
+  GetTransactionApiRequest,
 } from "types/transaction-api";
 
 export const BASE_URL = "/transaction";
 
 export const transactionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getTransaction: builder.query<
-      GetTransactionLimitApiResponse,
-      GetTransactionLimitApiRequest
+    getTransactionSavingsHistory: builder.query<
+      GetTransactionSavingsHistoryApiResponse,
+      GetTransactionSavingsHistoryApiRequest
     >({
-      query: ({ ...config }) => ({
-        url: BASE_URL + "",
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/history/${path.savingsAccountId}`,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: TRANSACTION }],
+    }),
+
+    getTransaction: builder.query<
+      GetTransactionApiResponse,
+      GetTransactionApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/${path?.id}`,
         method: "GET",
         ...config,
       }),
@@ -27,11 +41,11 @@ export const transactionApi = baseApi.injectEndpoints({
     }),
 
     getTransactionLimit: builder.query<
-      GetTransactionApiResponse,
-      GetTransactionApiRequest
+      GetTransactionLimitApiResponse,
+      GetTransactionLimitApiRequest
     >({
-      query: ({ path, ...config }) => ({
-        url: BASE_URL + `/${path?.transactionId}`,
+      query: (config) => ({
+        url: BASE_URL + `/limit`,
         method: "GET",
         ...config,
       }),
@@ -43,7 +57,7 @@ export const transactionApi = baseApi.injectEndpoints({
       GenerateTransactionReceiptApiRequest
     >({
       query: ({ path, ...config }) => ({
-        url: BASE_URL + `/${path?.transactionId}/receipt`,
+        url: BASE_URL + `/${path?.id}/receipt`,
         method: "GET",
         ...config,
       }),

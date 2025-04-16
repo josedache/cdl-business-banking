@@ -1,4 +1,3 @@
-//@ts-nocheck
 /**
  * @template {{}} T
  * @param {T} obj

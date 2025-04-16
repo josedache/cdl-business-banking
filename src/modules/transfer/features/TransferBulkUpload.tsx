@@ -42,7 +42,7 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
       try {
         const file = files[0];
         await formik.setFieldValue("file", file);
-      } catch (error) {
+      } catch {
         enqueueSnackbar(`Failed to attach files`, { variant: "error" });
       }
     },

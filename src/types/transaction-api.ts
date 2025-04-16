@@ -1,20 +1,35 @@
 import { ApiRequest, ApiResponse } from "./api";
+import {
+  Transaction,
+  TransactionLimit,
+  TransactionReceipt,
+} from "types/transaction.ts";
 
-export type TransactionLimit = {
-  id: number;
-  tier: number;
-  cumulative_daily_limit: string;
-  single_transaction_limit: string;
-  created_at: string;
-  updated_at: string;
-};
+export type GetTransactionSavingsHistoryApiResponse = ApiResponse<
+  Transaction[]
+>;
 
-export type GetTransactionApiResponse = ApiResponse<TransactionLimit[]>;
+export type GetTransactionSavingsHistoryApiRequest = ApiRequest<
+  void,
+  {
+    savingsAccountId: number | string;
+  },
+  {
+    page?: number | string;
+    limit?: number | string;
+    accountNumber?: number | string;
+  }
+>;
+
+export type GetTransactionApiResponse = ApiResponse<Transaction[]>;
 
 export type GetTransactionApiRequest = ApiRequest<
   void,
   {
-    transactionId: string;
+    id: string;
+  },
+  {
+    tier: string;
   }
 >;
 
@@ -28,13 +43,12 @@ export type GetTransactionLimitApiRequest = ApiRequest<
   }
 >;
 
-export type GenerateTransactionReceiptApiResponse = ApiResponse<
-  TransactionLimit[]
->;
+export type GenerateTransactionReceiptApiResponse =
+  ApiResponse<TransactionReceipt>;
 
 export type GenerateTransactionReceiptApiRequest = ApiRequest<
   void,
   {
-    transactionId: string;
+    id: string;
   }
 >;

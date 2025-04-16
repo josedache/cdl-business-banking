@@ -37,6 +37,7 @@ import { beneficiaryApi } from "apis/beneficiary";
 import { enquiryApi } from "apis/enquiry";
 import { getCheckFieldProps } from "utils/formik/get-check-field-props";
 import { transferApi } from "apis/transfer";
+import useDataRef from "hooks/use-data-ref.ts";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -153,15 +154,18 @@ export default function TransferSingle(props: TransferSingleProps) {
       );
     } catch {}
   };
+
+  const dataRef = useDataRef({ formik, handleBankNameEnquiry });
+
   useEffect(() => {
-    formik.setFieldValue("accountName", "");
+    dataRef.current.formik.setFieldValue("accountName", "");
     if (
       formik.values.accountNumber.length === 10 &&
       formik.values.bankSortCode
     ) {
-      handleBankNameEnquiry();
+      dataRef.current.handleBankNameEnquiry();
     }
-  }, [formik.values.accountNumber, formik.values.bankSortCode]);
+  }, [formik.values.accountNumber, formik.values.bankSortCode, dataRef]);
 
   return (
     <div>

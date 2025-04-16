@@ -81,9 +81,8 @@ export type UserResetPasswordApiRequest = ApiRequest<{
   confirmPassword :string;
 }>;
 
-export type UserResetPasswordApiResponse = ApiResponse<{
- 
-}>;
+export type UserResetPasswordApiResponse = ApiResponse
+
 export type UserKycApiRequest = ApiRequest<{
   nin?: string;
   bvn?: string;
@@ -104,7 +103,7 @@ export type UserPinApiRequest = ApiRequest<
   }
 >;
 
-export type UserPinApiResponse = ApiResponse<{}>;
+export type UserPinApiResponse = ApiResponse;
 
 export type UserSendOtpApiRequest = ApiRequest<{
   reason:
