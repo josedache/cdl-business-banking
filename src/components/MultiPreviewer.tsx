@@ -1,6 +1,6 @@
 import { Icon, IconButton } from "@mui/material";
 import clsx from "clsx";
-import useStepper from "hooks/useStepper";
+import useStepper from "hooks/use-stepper";
 import AssetPreviewer, { AssetPreviewerProps } from "./AssetPreviewer";
 import "./MultiPreviewer.css";
 import { ComponentProps } from "react";

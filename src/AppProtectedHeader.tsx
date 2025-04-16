@@ -79,7 +79,7 @@ function AppProtectedHeader(props: AppBarProps) {
             <div className="flex-1" />
 
             <div className=" border-1 rounded-full w-10 h-10 border-[#EDEFF2] bg-[#FAFAFA]">
-              <IconButton color="" className="" disabled>
+              <IconButton disabled>
                 <Iconify
                   className="MuiIcon-root"
                   icon="hugeicons:notification-02"
@@ -111,7 +111,7 @@ function AppProtectedHeader(props: AppBarProps) {
           </div>
 
           <div className="flex md:hidden items-center justify-between gap-2 px-8 w-full">
-            <Logo variant="1" />
+            <Logo />
 
             <IconButton onClick={() => sideNavigation.toggle()}>
               <Icon>

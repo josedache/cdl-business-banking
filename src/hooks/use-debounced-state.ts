@@ -1,4 +1,4 @@
-import { debounceFunction } from "utils/debounce-function";
+import { debounce } from "utils/function/debounce";
 import { useEffect, useMemo, useState } from "react";
 
 interface Options {
@@ -11,7 +11,7 @@ function useDebouncedState<T>(initialState?: T, options: Options = {}) {
   const [state, setState] = useState<T | undefined>(initialState);
 
   const debouncedSetState = useMemo(
-    () => debounceFunction(setState, wait),
+    () => debounce(setState, wait),
     [wait]
   );
 

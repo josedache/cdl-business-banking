@@ -48,9 +48,9 @@ function AppProtected() {
   return (
     <LoadingContent
       fullHeight
-      loading={userQueryResult.isLoading}
-      error={userQueryResult.isError}
-      onRetry={userQueryResult.refetch}
+      // loading={userQueryResult.isLoading}
+      // error={userQueryResult.isError}
+      // onRetry={userQueryResult.refetch}
     >
       {() => (
         <>

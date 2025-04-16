@@ -1,6 +1,6 @@
 import { ApiRequest, ApiResponse } from "./api";
 
-export type GetBeneficiaryApiResponse = ApiResponse<{
+export type GetBeneficiariesApiResponse = ApiResponse<{
   beneficiaries: Array<{
     id: number;
     user_id: number;
@@ -31,7 +31,7 @@ export type GetBeneficiaryApiResponse = ApiResponse<{
   };
 }>;
 
-export type GetBeneficiaryApiRequest = ApiRequest<
+export type GetBeneficiariesApiRequest = ApiRequest<
   void,
   void,
   {
@@ -47,6 +47,35 @@ export type GetBeneficiaryApiRequest = ApiRequest<
     batchName?: string;
     page?: string;
     limit?: string;
+  }
+>;
+
+export type GetBeneficiaryApiResponse = ApiResponse<{
+  id: number;
+  user_id: number;
+  client_id: string;
+  bank_code: string;
+  bank_name: string;
+  bank_icon: string;
+  account_number: string;
+  account_name: string;
+  nip_account_name: string | null;
+  nickname: string | null;
+  amount: number | null;
+  batch: string | null;
+  batch_name: string | null;
+  type: "transfer";
+  nameEnquiryReference: string;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}>;
+
+export type GetBeneficiaryApiRequest = ApiRequest<
+  void,
+  {
+    beneficiaryId: string;
   }
 >;
 
@@ -184,5 +213,31 @@ export type GetBeneficiaryBatchSummaryApiRequest = ApiRequest<
   void,
   {
     batchNumber: string;
+  }
+>;
+
+export type CreateBeneficiaryApiResponse = ApiResponse<{}>;
+export type CreateBeneficiaryApiRequest = {
+  body: Partial<{
+    type: "transfer";
+    nameEnquiryReference: string;
+    nickName: string;
+    isNewBatch: boolean;
+    batchNumber: string;
+    batchName: string;
+    batchRecordId: string;
+    amount: number;
+    checkForExistence: boolean;
+  }>;
+};
+
+export type UpdateBeneficiaryApiResponse = ApiResponse<{}>;
+export type UpdateBeneficiaryApiRequest = ApiRequest<
+  {
+    nameEnquiryReference: string;
+    nickName?: string;
+  },
+  {
+    beneficiaryId: string;
   }
 >;

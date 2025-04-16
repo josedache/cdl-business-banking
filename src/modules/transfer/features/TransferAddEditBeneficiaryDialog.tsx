@@ -5,54 +5,103 @@ import {
   Box,
   CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogProps,
   Divider,
   TextField,
   Typography,
 } from "@mui/material";
-
-import { TransferContentProps } from "../types/TransferStepForm";
 import { useEffect } from "react";
 import { useSnackbar } from "notistack";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import clsx from "clsx";
 
 import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
-import clsx from "clsx";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import NumberTextField from "components/NumberTextField";
 import { enquiryApi } from "apis/enquiry";
 import { lookupApi } from "apis/lookup";
-import { useFormik } from "formik";
+import { beneficiaryApi } from "apis/beneficiary";
+import CurrencyTextField from "components/CurrencyTextField";
 
 type TransferAddEditBeneficiaryDialogProps = {
-  phone: string;
+  beneficiaryId?: string;
+  isNewBatch?: boolean;
+  batchNumber?: string;
   onClose: () => void;
-} & TransferContentProps &
-  Omit<DialogProps, "children">;
+} & Omit<DialogProps, "children">;
 
 export default function TransferAddEditBeneficiaryDialog(
   props: TransferAddEditBeneficiaryDialogProps
 ) {
-  const { onClose, ...rest } = props;
+  const { onClose, beneficiaryId, batchNumber, isNewBatch, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const isEdit = !!beneficiaryId;
+
+  const getBeneficiaryQuery = beneficiaryApi.useGetBeneficiaryQuery({
+    path: {
+      beneficiaryId,
+    },
+  });
+
+  const [addBeneficiaryMutation] =
+    beneficiaryApi.useCreateBeneficiaryMutation();
+  const [updateBeneficiaryMutation] =
+    beneficiaryApi.useUpdateBeneficiaryMutation();
 
   const formik = useFormik({
     initialValues: {
-      amount: "",
-      accountNumber: "",
-      bankSortCode: "",
-      accountName: "",
-      nameEnquiryReference: "",
+      amount: getBeneficiaryQuery?.data?.data?.amount || "",
+      accountNumber: getBeneficiaryQuery?.data?.data?.account_number || "",
+      bankSortCode: getBeneficiaryQuery?.data?.data?.bank_code || "",
+      accountName: getBeneficiaryQuery?.data?.data?.account_name || "",
+      nameEnquiryReference:
+        getBeneficiaryQuery?.data?.data?.nameEnquiryReference || "",
     },
     validateOnChange: false,
     validateOnBlur: false,
+    validationSchema: yup.object({
+      accountName: yup.string().label("Account Name").required(),
+      amount: yup.string().label("Amount").min(1).required(),
+      bankSortCode: yup.string().label("Bank").required().required(),
+      accountNumber: yup
+        .string()
+        .label("Account Number")
+        .min(10)
+        .max(10)
+        .required(),
+    }),
     onSubmit: async (values) => {
       try {
-        console.log("values", values);
+        if (isEdit) {
+          await updateBeneficiaryMutation({
+            body: {
+              nameEnquiryReference: values?.nameEnquiryReference,
+            },
+            path: {
+              beneficiaryId,
+            },
+          }).unwrap();
+        } else {
+          await addBeneficiaryMutation({
+            body: {
+              type: "transfer",
+              nameEnquiryReference: values?.nameEnquiryReference,
+              isNewBatch,
+              amount: Number(values?.amount),
+              checkForExistence: false,
+              batchNumber,
+            },
+          }).unwrap();
+        }
         onClose();
       } catch (error) {
         enqueueSnackbar(
-          error?.data?.error || "Error adding beneficiary, please try again",
+          error?.data?.error ||
+            error?.data?.message ||
+            "Error adding beneficiary, please try again",
           {
             variant: "error",
           }
@@ -106,18 +155,31 @@ export default function TransferAddEditBeneficiaryDialog(
     ) {
       handleBankNameEnquiry();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.accountNumber, formik.values.bankSortCode]);
 
   return (
-    <Dialog {...rest} className="px-0">
-      <DialogTitleXCloseButton onClose={onClose} />
+    <Dialog
+      {...rest}
+      className="px-0"
+      fullWidth
+      maxWidth="xs"
+      component="form"
+      onSubmit={(e: any) => formik.handleSubmit(e)}
+    >
+      <DialogTitleXCloseButton onClose={onClose}>
+        {isEdit ? "Edit Details" : "Add New Recipient"}
+      </DialogTitleXCloseButton>
+      <Divider />
+
       <DialogContent>
-        <form onSubmit={formik.handleSubmit}>
-          <div>
-            <NumberTextField
+        <div>
+          <div className="grid grid-cols-1 gap-4">
+            <CurrencyTextField
               label="Amount"
               placeholder="10,000"
               autoComplete="off"
+              code="NGN"
               {...getTextFieldProps(formik, "amount")}
             />
 
@@ -245,24 +307,43 @@ export default function TransferAddEditBeneficiaryDialog(
               </div>
             )}
           </div>
-
-          <Divider className="mt-12" />
-          <div className="px-4 py-4 flex">
-            <LoadingButton
-              variant="gradient"
-              type="submit"
-              disabled={!formik.isValid || !formik.dirty}
-              size="large"
-              loading={formik.isSubmitting}
-              loadingPosition="end"
-              fullWidth
-              endIcon={<></>}
-            >
-              Verify Otp
-            </LoadingButton>
-          </div>
-        </form>
+        </div>
       </DialogContent>
+
+      <Divider />
+
+      <DialogActions>
+        <div
+          className={clsx(
+            isEdit ? "justify-between" : "justify-between",
+            "flex px-4 py-1 gap-5 w-full"
+          )}
+        >
+          {/* {isEdit && ( */}
+          <LoadingButton
+            variant="soft"
+            color="error"
+            type="submit"
+            disabled
+            loadingPosition="end"
+            endIcon={<></>}
+          >
+            Remove Recipient
+          </LoadingButton>
+          {/* )} */}
+
+          <LoadingButton
+            variant="gradient"
+            type="submit"
+            disabled={!formik.isValid || !formik.dirty}
+            loading={formik.isSubmitting}
+            loadingPosition="end"
+            endIcon={<></>}
+          >
+            Save to List
+          </LoadingButton>
+        </div>
+      </DialogActions>
     </Dialog>
   );
 }

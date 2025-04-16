@@ -2,10 +2,12 @@ import { baseApi } from "configs/store-query";
 
 import { BENEFICIARY } from "constants/tags.ts";
 import {
+  CreateBeneficiaryApiRequest,
+  CreateBeneficiaryApiResponse,
   DownloadBeneficiariesTemplateSampleRequest,
   DownloadBeneficiariesTemplateSampleResponse,
-  GetBeneficiariesTemplateSampleRequest,
-  GetBeneficiariesTemplateSampleResponse,
+  GetBeneficiariesApiRequest,
+  GetBeneficiariesApiResponse,
   GetBeneficiaryApiRequest,
   GetBeneficiaryApiResponse,
   GetBeneficiaryBatchApiRequest,
@@ -17,6 +19,8 @@ import {
   GetBeneficiaryBatchSummaryApiResponse,
   ProcessBeneficiaryBatchApiRequest,
   ProcessBeneficiaryBatchApiResponse,
+  UpdateBeneficiaryApiRequest,
+  UpdateBeneficiaryApiResponse,
   UpdateBeneficiaryBatchApiRequest,
   UpdateBeneficiaryBatchApiResponse,
 } from "types/beneficiary";
@@ -27,6 +31,18 @@ export const BASE_URL = "/beneficiary";
 export const beneficiaryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getBeneficiaries: builder.query<
+      GetBeneficiariesApiResponse,
+      GetBeneficiariesApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: BENEFICIARY }],
+    }),
+
+    getBeneficiary: builder.query<
       GetBeneficiaryApiResponse,
       GetBeneficiaryApiRequest
     >({
@@ -38,16 +54,28 @@ export const beneficiaryApi = baseApi.injectEndpoints({
       providesTags: [{ type: BENEFICIARY }],
     }),
 
-    getBeneficiariesTemplateSample: builder.query<
-      GetBeneficiariesTemplateSampleResponse,
-      GetBeneficiariesTemplateSampleRequest
+    createBeneficiary: builder.mutation<
+      CreateBeneficiaryApiResponse,
+      CreateBeneficiaryApiRequest
     >({
       query: ({ ...config }) => ({
-        url: BASE_URL + "/template/sample",
-        method: "GET",
+        url: BASE_URL,
+        method: "POST",
         ...config,
       }),
-      providesTags: [{ type: BENEFICIARY }],
+      invalidatesTags: [{ type: BENEFICIARY }],
+    }),
+
+    updateBeneficiary: builder.mutation<
+      UpdateBeneficiaryApiResponse,
+      UpdateBeneficiaryApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/${path?.beneficiaryId}`,
+        method: "PUT",
+        ...config,
+      }),
+      invalidatesTags: [{ type: BENEFICIARY }],
     }),
     downloadBeneficiariesTemplateSample: builder.query<
       DownloadBeneficiariesTemplateSampleResponse,
