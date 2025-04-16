@@ -14,6 +14,7 @@ import clsx from "clsx";
 import { useDropzone } from "react-dropzone";
 import { Fragment } from "react/jsx-runtime";
 import { useNavigate } from "react-router-dom";
+
 import { TRANSFER } from "constants/urls";
 import { beneficiaryApi } from "apis/beneficiary";
 import download from "utils/file/download";
@@ -54,7 +55,8 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
       try {
         const file = files[0];
         await formik.setFieldValue("file", file);
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_) {
         enqueueSnackbar(`Failed to attach files`, { variant: "error" });
       }
     },
@@ -68,18 +70,6 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
       });
     },
   });
-
-  const handleDownloadLocalFile = async () => {
-    const file = formik.values.file as unknown as File;
-    console.log(file);
-    if (file) {
-      const url = URL.createObjectURL(file) as any;
-      download(url, file.name);
-      URL.revokeObjectURL(url);
-    } else {
-      console.error("No file to download");
-    }
-  };
 
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">

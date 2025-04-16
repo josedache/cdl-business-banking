@@ -15,8 +15,8 @@ import {
 import { Fragment } from "react";
 import { TransferContentProps } from "../types/TransferStepForm";
 import usePopover from "hooks/use-popover";
-import { useNavigate } from "react-router-dom";
-import { TRANSFER_BULK } from "constants/urls";
+import { generatePath, useNavigate } from "react-router-dom";
+import { TRANSFER_BULK, TRANSFER_BULK_DETAILS } from "constants/urls";
 import { beneficiaryApi } from "apis/beneficiary";
 import LoadingContent from "components/LoadingContent";
 
@@ -24,28 +24,16 @@ type TransferBulkTabProps = {} & TransferContentProps;
 
 export default function TransferBulkTab(props: TransferBulkTabProps) {
   const { formik } = props;
-  const hasList = false;
 
   const actionPopover = usePopover();
   const navigate = useNavigate();
+  const getAllBatchesQuery = beneficiaryApi.useGetBeneficiaryBatchesQuery();
 
   const getBeneficiarySampleTemplateQuery =
     beneficiaryApi.useGetBeneficiariesTemplateSampleQuery({});
 
   const [downloadTemplateSample, downloadTemplateSampleResult] =
     beneficiaryApi.useLazyDownloadBeneficiariesTemplateSampleQuery({});
-  const list = [
-    {
-      icon: "hugeicons:user-group-03",
-      title: "Payroll",
-      description: "Jimmy Agbaje, John Chuka, Mayowa and 12 others",
-    },
-    {
-      icon: "hugeicons:user-group-03",
-      title: "School Payment",
-      description: "Jimmy Agbaje, John Chuka, Mayowa and 12 others",
-    },
-  ];
 
   const handleDownloadTemplate = async () => {
     try {
@@ -57,208 +45,253 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
 
   return (
     <Fragment>
-      {hasList ? (
+      <LoadingContent
+        loading={getAllBatchesQuery?.isLoading}
+        error={getAllBatchesQuery?.isError}
+        onRetry={getAllBatchesQuery?.refetch}
+      >
         <div>
-          <div className="px-6 pt-6 pb-8">
-            <div className="flex items-center justify-between">
-              <Typography variant="h5">Choose a List</Typography>
-              <Button
-                startIcon={
-                  <Icon icon="ic:baseline-plus" width="24" height="24" />
-                }
-                ref={actionPopover.anchorEl}
-                onClick={actionPopover.togglePopover}
-                size="small"
-                variant="soft"
-              >
-                Create new List
-              </Button>
-
-              <Popper
-                sx={{ zIndex: 1 }}
-                open={actionPopover.isOpen}
-                anchorEl={actionPopover.anchorEl}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === "bottom" ? "center top" : "center bottom",
-                    }}
+          {getAllBatchesQuery?.data?.data?.length >= 1 ? (
+            <div className="max-h-[440px] overflow-scroll scrollbar-hidden">
+              <div className="px-6 pt-6 pb-8">
+                <div className="flex items-center justify-between">
+                  <Typography variant="h5">Choose a List</Typography>
+                  <Button
+                    startIcon={
+                      <Icon icon="ic:baseline-plus" width="24" height="24" />
+                    }
+                    // ref={actionPopover.anchorEl}
+                    onClick={actionPopover.togglePopover}
+                    size="small"
+                    variant="soft"
                   >
-                    <Paper className="rounded-2xl">
-                      <ClickAwayListener
-                        onClickAway={actionPopover.togglePopover}
+                    Create new List
+                  </Button>
+
+                  <Popper
+                    sx={{ zIndex: 1 }}
+                    open={actionPopover.isOpen}
+                    anchorEl={actionPopover.anchorEl}
+                    role={undefined}
+                    transition
+                    disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === "bottom"
+                              ? "center top"
+                              : "center bottom",
+                        }}
                       >
-                        <MenuList id="split-button-menu" autoFocusItem>
-                          {[
-                            {
-                              icon: "tabler:upload",
-                              name: "Upload CSV",
-                              onClick: () => {
-                                navigate(TRANSFER_BULK);
-                              },
-                            },
-                            {
-                              icon: "mage:file-2",
-                              name: "Add recipients manually",
-                            },
-                          ].map(({ name, icon, ...rest }) => (
-                            <MenuItem key={name} {...rest}>
-                              <Icon
-                                icon={icon}
-                                width="20"
-                                height="20"
-                                className="mr-2"
-                              />
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </div>
+                        <Paper className="rounded-2xl">
+                          <ClickAwayListener
+                            onClickAway={actionPopover.togglePopover}
+                          >
+                            <MenuList id="split-button-menu" autoFocusItem>
+                              {[
+                                {
+                                  icon: "tabler:upload",
+                                  name: "Upload CSV",
+                                  onClick: () => {
+                                    navigate(TRANSFER_BULK);
+                                  },
+                                },
+                                {
+                                  icon: "mage:file-2",
+                                  name: "Add recipients manually",
+                                },
+                              ].map(({ name, icon, ...rest }) => (
+                                <MenuItem key={name} {...rest}>
+                                  <Icon
+                                    icon={icon}
+                                    width="20"
+                                    height="20"
+                                    className="mr-2"
+                                  />
+                                  {name}
+                                </MenuItem>
+                              ))}
+                            </MenuList>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
+                </div>
 
-            <div className="mt-8">
-              {list.map(({ title, icon, description, ...rest }, index) => (
-                <Fragment key={title}>
-                  <CardActionArea
-                    key={title}
-                    className="flex gap-3 py-2 w-full"
-                    {...rest}
-                  >
-                    <Paper
-                      elevation={0}
-                      className="rounded-full  bg-[#F4F5F5] p-2 w-fit"
-                    >
-                      <Icon icon={icon} width="20" height="20" />
-                    </Paper>
-                    <div className="flex-1">
-                      <Typography className="font-medium text-neutral-900">
-                        {title}
-                      </Typography>
-                      <Typography className="text-neutral-500 font-medium">
-                        {description}
-                      </Typography>
-                    </div>
-                    <Icon
-                      icon="icon-park-outline:right"
-                      width="24"
-                      height="24"
-                    />
-                  </CardActionArea>
-                  {list.length - 1 !== index && <Divider className="my-4" />}
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <form onSubmit={formik.handleSubmit}>
-          <div className="px-6 pt-6 pb-8">
-            <Typography variant="h5">How Bulk Payouts works</Typography>
-
-            {[
-              "Upload a Excel with Beneficiaries you wish to payout to or Choose from Existing Beneficiaries.",
-              "Review the Recipients.",
-              "Complete the payout transaction.",
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-[10px] mt-8 text-neutral-500"
-              >
-                <span className="text-[#C53D0D] w-2 h-2 p-3 rounded-full inline-flex justify-center items-center border border-[#FECBB9] bg-[#FFF3EE]">
-                  {index + 1}
-                </span>
-                <Typography className="font-medium">{item}</Typography>
-              </div>
-            ))}
-          </div>
-
-          <div className="px-6 pt-6 pb-5">
-            <div className="flex justify-between items-center">
-              <Typography>Preview Sample</Typography>
-
-              <Button
-                onClick={handleDownloadTemplate}
-                loading={downloadTemplateSampleResult?.isFetching}
-                size="small"
-                variant="soft"
-              >
-                Download Template
-              </Button>
-            </div>
-
-            <div className="border border-[#E2E4E9] rounded-[16px] mt-4">
-              <LoadingContent
-                loading={getBeneficiarySampleTemplateQuery.isLoading}
-                error={getBeneficiarySampleTemplateQuery.isError}
-                renderLoading={() => <TransferBulkLoader />}
-              >
-                <table className="table-auto  w-full border border-[#E2E4E9]  overflow-hidden rounded-[16px] ">
-                  <thead>
-                    <tr>
-                      {Object.keys(
-                        getBeneficiarySampleTemplateQuery?.data?.data?.[0] || {}
-                      ).map((item, index) => (
-                        <th
-                          key={index}
-                          className="border bg-[#F9F9FA] border-[#E2E4E9] text-center  py-2 px-1"
+                <div className="mt-8">
+                  {getAllBatchesQuery?.data?.data?.map(
+                    (
+                      {
+                        beneficiary_batch_name,
+                        beneficiary_sample,
+                        beneficiary_batch,
+                        beneficiary_count,
+                        ...rest
+                      },
+                      index
+                    ) => (
+                      <Fragment key={beneficiary_batch_name}>
+                        <CardActionArea
+                          key={beneficiary_batch_name}
+                          className="flex items-center gap-3 py-5 w-full"
+                          onClick={() => {
+                            navigate(
+                              generatePath(TRANSFER_BULK_DETAILS, {
+                                id: beneficiary_batch,
+                              })
+                            );
+                          }}
+                          {...rest}
                         >
-                          <Typography variant="body2">{item}</Typography>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {getBeneficiarySampleTemplateQuery?.data?.data.map(
-                      (item) => (
-                        <tr key={item}>
-                          {Object.values(item).map((item) => (
-                            <td
-                              key={item}
-                              className="border border-[#E2E4E9] text-center py-2 px-2"
+                          <Paper
+                            elevation={0}
+                            className="rounded-full flex w-10 h-10 justify-center items-center  bg-[#F4F5F5]"
+                          >
+                            <Icon
+                              icon="hugeicons:user-group-03"
+                              width="20"
+                              height="20"
+                            />
+                          </Paper>
+                          <div className="flex-1">
+                            <Typography className="font-medium text-neutral-900">
+                              {beneficiary_batch_name || "----"}
+                            </Typography>
+                            <Typography className="text-neutral-500 capitalize font-medium w-full">
+                              {beneficiary_sample
+                                ?.map((beene) => beene?.toLocaleLowerCase())
+                                .join(", ")}{" "}
+                              and{" "}
+                              {Number(beneficiary_count) >
+                              beneficiary_sample?.length
+                                ? Number(beneficiary_count) -
+                                  beneficiary_sample?.length
+                                : 0}{" "}
+                              Others
+                            </Typography>
+                          </div>
+                          <Icon
+                            icon="icon-park-outline:right"
+                            width="24"
+                            height="24"
+                            className="text-neutral-500"
+                          />
+                        </CardActionArea>
+                        {getAllBatchesQuery?.data?.data.length - 1 !==
+                          index && <Divider />}
+                      </Fragment>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={formik.handleSubmit}>
+              <div className="px-6 pt-6 pb-8">
+                <Typography variant="h5">How Bulk Payouts works</Typography>
+
+                {[
+                  "Upload a Excel with Beneficiaries you wish to payout to or Choose from Existing Beneficiaries.",
+                  "Review the Recipients.",
+                  "Complete the payout transaction.",
+                ].map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-[10px] mt-8 text-neutral-500"
+                  >
+                    <span className="text-[#C53D0D] w-2 h-2 p-3 rounded-full inline-flex justify-center items-center border border-[#FECBB9] bg-[#FFF3EE]">
+                      {index + 1}
+                    </span>
+                    <Typography className="font-medium">{item}</Typography>
+                  </div>
+                ))}
+              </div>
+
+              <div className="px-6 pt-6 pb-5">
+                <div className="flex justify-between items-center">
+                  <Typography>Preview Sample</Typography>
+
+                  <Button
+                    onClick={handleDownloadTemplate}
+                    loading={downloadTemplateSampleResult?.isFetching}
+                    size="small"
+                    variant="soft"
+                  >
+                    Download Template
+                  </Button>
+                </div>
+
+                <div className="border border-[#E2E4E9] rounded-[16px] mt-4">
+                  <LoadingContent
+                    loading={getBeneficiarySampleTemplateQuery.isLoading}
+                    error={getBeneficiarySampleTemplateQuery.isError}
+                    renderLoading={() => <TransferBulkLoader />}
+                    onRetry={getBeneficiarySampleTemplateQuery?.refetch}
+                  >
+                    <table className="table-auto  w-full border border-[#E2E4E9]  overflow-hidden rounded-[16px] ">
+                      <thead>
+                        <tr>
+                          {Object.keys(
+                            getBeneficiarySampleTemplateQuery?.data
+                              ?.data?.[0] || {}
+                          ).map((item, index) => (
+                            <th
+                              key={index}
+                              className="border bg-[#F9F9FA] border-[#E2E4E9] text-center  py-2 px-1"
                             >
-                              <Typography
-                                variant="caption"
-                                className="font-medium"
-                              >
-                                {item}
-                              </Typography>
-                            </td>
+                              <Typography variant="body2">{item}</Typography>
+                            </th>
                           ))}
                         </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </LoadingContent>
-            </div>
-          </div>
+                      </thead>
+                      <tbody>
+                        {getBeneficiarySampleTemplateQuery?.data?.data.map(
+                          (item) => (
+                            <tr key={item}>
+                              {Object.values(item).map((item) => (
+                                <td
+                                  key={item}
+                                  className="border border-[#E2E4E9] text-center py-2 px-2"
+                                >
+                                  <Typography
+                                    variant="caption"
+                                    className="font-medium"
+                                  >
+                                    {item}
+                                  </Typography>
+                                </td>
+                              ))}
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </LoadingContent>
+                </div>
+              </div>
 
-          <Divider />
+              <Divider />
 
-          <div className="px-6 py-5">
-            <Button
-              variant="gradient"
-              className="w-full  text-white"
-              type="submit"
-              size="large"
-              loading={formik.isSubmitting}
-              loadingPosition="end"
-            >
-              Continue
-            </Button>
-          </div>
-        </form>
-      )}
+              <div className="px-6 py-5">
+                <Button
+                  variant="gradient"
+                  className="w-full  text-white"
+                  type="submit"
+                  size="large"
+                  loading={formik.isSubmitting}
+                  loadingPosition="end"
+                >
+                  Continue
+                </Button>
+              </div>
+            </form>
+          )}
+        </div>
+      </LoadingContent>
     </Fragment>
   );
 }

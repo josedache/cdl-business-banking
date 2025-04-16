@@ -10,10 +10,11 @@ import {
   GetBeneficiaryApiResponse,
   GetBeneficiaryBatchApiRequest,
   GetBeneficiaryBatchApiResponse,
-  GetBeneficiaryBatchesApiRequest,
   GetBeneficiaryBatchesApiResponse,
   GetBeneficiaryBatchReportApiRequest,
   GetBeneficiaryBatchReportApiResponse,
+  GetBeneficiaryBatchSummaryApiRequest,
+  GetBeneficiaryBatchSummaryApiResponse,
   ProcessBeneficiaryBatchApiRequest,
   ProcessBeneficiaryBatchApiResponse,
   UpdateBeneficiaryBatchApiRequest,
@@ -88,7 +89,8 @@ export const beneficiaryApi = baseApi.injectEndpoints({
       UpdateBeneficiaryBatchApiRequest
     >({
       query: ({ path, ...config }) => ({
-        url: BASE_URL + `/batch/${path?.batchNumber}`,
+        url: BASE_URL + `/batch/${path?.batchNumber}/name`,
+        method: "PUT",
         ...config,
       }),
       invalidatesTags: [{ type: BENEFICIARY }],
@@ -108,7 +110,7 @@ export const beneficiaryApi = baseApi.injectEndpoints({
 
     getBeneficiaryBatches: builder.query<
       GetBeneficiaryBatchesApiResponse,
-      GetBeneficiaryBatchesApiRequest
+      void
     >({
       query: () => ({
         url: BASE_URL + `/batch`,
@@ -123,6 +125,18 @@ export const beneficiaryApi = baseApi.injectEndpoints({
     >({
       query: ({ path, ...config }) => ({
         url: BASE_URL + `/batch/${path?.batchNumber}/report`,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: BENEFICIARY }],
+    }),
+
+    getBeneficiaryBatchSummary: builder.query<
+      GetBeneficiaryBatchSummaryApiResponse,
+      GetBeneficiaryBatchSummaryApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/batch/summary/${path?.batchNumber}`,
         method: "GET",
         ...config,
       }),

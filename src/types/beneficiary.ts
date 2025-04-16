@@ -80,11 +80,11 @@ export type ProcessBeneficiaryBatchApiRequest = ApiRequest<
   }
 >;
 
-export type UpdateBeneficiaryBatchApiResponse = ApiResponse<{
-  batchName: string;
-}>;
+export type UpdateBeneficiaryBatchApiResponse = ApiResponse<{}>;
 export type UpdateBeneficiaryBatchApiRequest = ApiRequest<
-  void,
+  {
+    batchName: string;
+  },
   {
     batchNumber: string;
   }
@@ -131,63 +131,37 @@ export type GetBeneficiaryBatchApiRequest = ApiRequest<
   }
 >;
 
+export type BeneficiaryBatchReport = {
+  _id: string;
+  userId: number;
+  clientId: string;
+  batch: string;
+  bankName: string | null;
+  bankCode: string | null;
+  accountNumber: string | null;
+  accountName: string | null;
+  resolvedAccountName: string | null;
+  accountNameMatchScore: number | null;
+  nameEnquiryReference: string | null;
+  amount: number | null;
+  shouldProcess: boolean;
+  isProcessed: boolean;
+  isSuccess?: boolean;
+  canEdit: boolean;
+  message: string;
+  responseType: "success" | "error" | "warning";
+  response?: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+    referenceNumber: string;
+  };
+  uploadedFile: string;
+  createdAt: string;
+};
 export type GetBeneficiaryBatchReportApiResponse = ApiResponse<{
-  beneficiaries: Array<{
-    _id: string;
-    userId: number;
-    clientId: string;
-    batch: string;
-    bankName: string | null;
-    bankCode: string | null;
-    accountNumber: string | null;
-    accountName: string | null;
-    resolvedAccountName: string | null;
-    accountNameMatchScore: number | null;
-    nameEnquiryReference: string | null;
-    amount: number | null;
-    shouldProcess: boolean;
-    isProcessed: boolean;
-    isSuccess?: boolean;
-    canEdit: boolean;
-    message: string;
-    responseType: "success" | "error" | "warning";
-    response?: {
-      bankName: string;
-      accountNumber: string;
-      accountName: string;
-      referenceNumber: string;
-    };
-    uploadedFile: string;
-    createdAt: string;
-  }>;
-  duplicates: Array<{
-    _id: string;
-    userId: number;
-    clientId: string;
-    batch: string;
-    bankName: string | null;
-    bankCode: string | null;
-    accountNumber: string | null;
-    accountName: string | null;
-    resolvedAccountName: string | null;
-    accountNameMatchScore: number | null;
-    nameEnquiryReference: string | null;
-    amount: number | null;
-    shouldProcess: boolean;
-    isProcessed: boolean;
-    isSuccess?: boolean;
-    canEdit: boolean;
-    message: string;
-    responseType: "success" | "error" | "warning";
-    response?: {
-      bankName: string;
-      accountNumber: string;
-      accountName: string;
-      referenceNumber: string;
-    };
-    uploadedFile: string;
-    createdAt: string;
-  }>;
+  beneficiaries: Array<BeneficiaryBatchReport>;
+  duplicates: Array<BeneficiaryBatchReport>;
   meta: {
     total: number;
     processed: number;
@@ -199,6 +173,14 @@ export type GetBeneficiaryBatchReportApiResponse = ApiResponse<{
   };
 }>;
 export type GetBeneficiaryBatchReportApiRequest = ApiRequest<
+  void,
+  {
+    batchNumber: string;
+  }
+>;
+
+export type GetBeneficiaryBatchSummaryApiResponse = ApiResponse<{}>;
+export type GetBeneficiaryBatchSummaryApiRequest = ApiRequest<
   void,
   {
     batchNumber: string;

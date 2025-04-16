@@ -1,38 +1,48 @@
-import {
-  ButtonBase,
-  CircularProgress,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { LoadingButton } from "@mui/lab";
 
 import { TransferBulkContentProps } from "../types/TransferBulkStepForm";
 import currencyjs from "currency.js";
 import { format } from "date-fns";
+import { beneficiaryApi } from "apis/beneficiary";
+import LoadingContent from "components/LoadingContent";
 
-type TransferBulkUploadTransferSummaryProps = {} & TransferBulkContentProps;
+type TransferBulkUploadTransferSummaryProps = {
+  batchNumber: string;
+} & TransferBulkContentProps;
 
 export default function TransferBulkUploadTransferSummary(
   props: TransferBulkUploadTransferSummaryProps
 ) {
-  const { formik, stepper } = props;
+  const { formik, batchNumber, stepper } = props;
+
+  const getBatchSummaryQuery = beneficiaryApi.useGetBeneficiaryBatchQuery({
+    path: {
+      batchNumber,
+    },
+  });
+
+  const batchSummary = getBatchSummaryQuery?.data?.data || [];
+  const totalAmount = batchSummary?.reduce(
+    (acc, item) => acc + Number(item.amount),
+    0
+  );
 
   const transactionDetails = [
     {
       title: "Payout Date",
-      value: format(new Date(), "PPpp"),
+      value: format(new Date(), "PP"),
     },
     {
       title: "Total Amount",
-      value: `${currencyjs(0).format({
+      value: `${currencyjs(totalAmount || 0).format({
         symbol: "₦",
       })}`,
     },
     {
       title: "Send to",
-      value: "100 Receipients",
+      value: `${batchSummary?.length} Receipients`,
     },
     {
       title: "Transaction Fee",
@@ -64,7 +74,7 @@ export default function TransferBulkUploadTransferSummary(
             Kindly review the details before proceeding. Please note that
             successful transfers cannot be reversed.
           </Typography>
-          <div className="mt-8 p-4 bg-neutral-50">
+          <div className="mt-8 p-4 bg-neutral-50 rounded-lg">
             <Typography
               variant="body2"
               className="uppercase font-medium text-neutral-900"
@@ -72,21 +82,27 @@ export default function TransferBulkUploadTransferSummary(
               Transaction Details
             </Typography>
 
-            <div className="mt-3">
-              {transactionDetails.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex gap-4 justify-between items-center mt-4"
-                >
-                  <Typography variant="body2" className="text-neutral-500">
-                    {item.title}
-                  </Typography>
-                  <Typography variant="body2" className="font-semibold">
-                    {item.value}
-                  </Typography>
-                </div>
-              ))}
-            </div>
+            <LoadingContent
+              loading={getBatchSummaryQuery?.isLoading}
+              error={getBatchSummaryQuery?.isError}
+              onRetry={getBatchSummaryQuery?.refetch}
+            >
+              <div className="mt-3">
+                {transactionDetails.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-4 justify-between items-center mt-4"
+                  >
+                    <Typography variant="body2" className="text-neutral-500">
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2" className="font-semibold">
+                      {item.value}
+                    </Typography>
+                  </div>
+                ))}
+              </div>
+            </LoadingContent>
           </div>
         </div>
         <Divider />
@@ -97,11 +113,11 @@ export default function TransferBulkUploadTransferSummary(
             type="submit"
             size="large"
             disabled={!formik.isValid || !formik.dirty}
-            loading={formik.isSubmitting}
+            loading={formik.isSubmitting || getBatchSummaryQuery.isLoading}
             loadingPosition="end"
             endIcon={<></>}
           >
-            Upload & Continue
+            Pay
           </LoadingButton>
         </div>
       </form>

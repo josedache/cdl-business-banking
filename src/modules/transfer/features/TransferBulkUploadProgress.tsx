@@ -34,7 +34,7 @@ export default function TransferBulkUploadProgress(
 
   const total = getBatchReportQuery?.data?.data?.meta?.total || 0;
   const success = getBatchReportQuery?.data?.data?.meta?.processed || 0;
-  const uploadPercentage = total > 0 ? (success / total) * 100 : 0;
+  const uploadPercentage = Number(total > 0 ? (success / total) * 100 : 0);
 
   const totalMatchedRecipientsCount =
     getBatchReportQuery?.data?.data?.beneficiaries?.filter(
@@ -43,9 +43,7 @@ export default function TransferBulkUploadProgress(
 
   const totalFailedRecipientsCount =
     getBatchReportQuery?.data?.data?.beneficiaries?.filter(
-      (beneficiary) =>
-        beneficiary.responseType === "error" ||
-        beneficiary.responseType === "warning"
+      (beneficiary) => beneficiary.responseType !== "success"
     )?.length || 0;
 
   const isLoading = uploadPercentage < 100;

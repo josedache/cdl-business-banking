@@ -22,7 +22,6 @@ export default function TransferSingleEnterPaymentOtp(
   const { formik, phone, stepper } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
-  const authUser = useAuthUser();
 
   const [resendOtpMutation, resendOtpMutationResult] =
     userApi.useUserSendOtpMutation();
@@ -159,7 +158,6 @@ export default function TransferSingleEnterPaymentOtp(
                               disableRipple
                               color="primary"
                               disabled={resendOtpMutationResult?.isLoading}
-                              component={MuiLink}
                               onClick={sendOtp}
                               className="font-semibold text-primary-main"
                             >

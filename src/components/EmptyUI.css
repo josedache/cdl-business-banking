@@ -7,6 +7,6 @@
 }
 
 .EmptyUI__icon {
-  @apply text-text-secondary;
+  color: var(--color-text-secondary);
   font-size: 100px;
 }

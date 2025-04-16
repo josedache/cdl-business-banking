@@ -1,4 +1,4 @@
-import { TRANSFER, TRANSFER_BULK } from "constants/urls";
+import { TRANSFER, TRANSFER_BULK, TRANSFER_BULK_DETAILS } from "constants/urls";
 import { RouteObject } from "react-router-dom";
 
 export default [
@@ -8,6 +8,10 @@ export default [
   },
   {
     path: TRANSFER_BULK,
+    lazy: () => import("modules/transfer/pages/TransferBulk"),
+  },
+  {
+    path: TRANSFER_BULK_DETAILS,
     lazy: () => import("modules/transfer/pages/TransferBulk"),
   },
 ] as RouteObject[];
