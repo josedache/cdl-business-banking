@@ -8,6 +8,8 @@ import {
   DownloadBeneficiariesTemplateSampleResponse,
   GetBeneficiariesApiRequest,
   GetBeneficiariesApiResponse,
+  GetBeneficiariesTemplateSampleRequest,
+  GetBeneficiariesTemplateSampleResponse,
   GetBeneficiaryApiRequest,
   GetBeneficiaryApiResponse,
   GetBeneficiaryBatchApiRequest,
@@ -77,6 +79,19 @@ export const beneficiaryApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: BENEFICIARY }],
     }),
+
+    getBeneficiariesTemplateSample: builder.query<
+      GetBeneficiariesTemplateSampleResponse,
+      GetBeneficiariesTemplateSampleRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/template/sample",
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: BENEFICIARY }],
+    }),
+
     downloadBeneficiariesTemplateSample: builder.query<
       DownloadBeneficiariesTemplateSampleResponse,
       DownloadBeneficiariesTemplateSampleRequest

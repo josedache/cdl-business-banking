@@ -315,22 +315,22 @@ export default function TransferAddEditBeneficiaryDialog(
       <DialogActions>
         <div
           className={clsx(
-            isEdit ? "justify-between" : "justify-between",
+            isEdit ? "justify-between" : "justify-end",
             "flex px-4 py-1 gap-5 w-full"
           )}
         >
-          {/* {isEdit && ( */}
-          <LoadingButton
-            variant="soft"
-            color="error"
-            type="submit"
-            disabled
-            loadingPosition="end"
-            endIcon={<></>}
-          >
-            Remove Recipient
-          </LoadingButton>
-          {/* )} */}
+          {isEdit && (
+            <LoadingButton
+              variant="soft"
+              color="error"
+              type="submit"
+              disabled
+              loadingPosition="end"
+              endIcon={<></>}
+            >
+              Remove Recipient
+            </LoadingButton>
+          )}
 
           <LoadingButton
             variant="gradient"
