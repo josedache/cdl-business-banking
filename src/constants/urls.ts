@@ -8,3 +8,4 @@ export const ACCOUNT_SETUP = "/account-setups";
 export const TRANSFER = "/transfer";
 export const TRANSFER_BULK = "/transfer/bulk-upload";
 export const TRANSFER_BULK_DETAILS = "/transfer/bulk-upload/:id";
+export const TRANSACTION = "/transactions";

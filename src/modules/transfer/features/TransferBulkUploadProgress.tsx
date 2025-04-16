@@ -28,13 +28,13 @@ export default function TransferBulkUploadProgress(
       },
     },
     {
-      pollingInterval: 10000, //TODO: reduce polling time
+      pollingInterval: 5000, //TODO: reduce polling time
     }
   );
 
   const total = getBatchReportQuery?.data?.data?.meta?.total || 0;
   const success = getBatchReportQuery?.data?.data?.meta?.processed || 0;
-  const uploadPercentage = Number(total > 0 ? (success / total) * 100 : 0);
+  const uploadPercentage = Math.round(total > 0 ? (success / total) * 100 : 0);
 
   const totalMatchedRecipientsCount =
     getBatchReportQuery?.data?.data?.beneficiaries?.filter(

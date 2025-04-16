@@ -8,12 +8,18 @@ interface Options {
 
 function useDebouncedState<T>(initialState?: T, options: Options = {}) {
   const { wait = 100, enableReInitialize = false } = options;
-  const [state, setState] = useState<T | undefined>(initialState);
-
-  const debouncedSetState = useMemo(
-    () => debounce(setState, wait),
-    [wait]
+  const [debouncedState, setDebouncedState] = useState<T | undefined>(
+    initialState
   );
+  const [state, setState] = useState(debouncedState);
+
+  const debouncedSetState = useMemo(() => {
+    const db = debounce(setDebouncedState, wait);
+    return ((arg) => {
+      setState(arg);
+      return db(arg);
+    }) as typeof setDebouncedState;
+  }, [wait]);
 
   useEffect(() => {
     if (enableReInitialize) {
@@ -21,7 +27,11 @@ function useDebouncedState<T>(initialState?: T, options: Options = {}) {
     }
   }, [debouncedSetState, enableReInitialize, initialState]);
 
-  return [state, debouncedSetState] as [T, typeof debouncedSetState];
+  return [debouncedState, debouncedSetState, state] as [
+    T,
+    typeof debouncedSetState,
+    T,
+  ];
 }
 
 export default useDebouncedState;

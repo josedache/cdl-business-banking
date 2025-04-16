@@ -1,9 +1,9 @@
-export function throttle<C extends Function>(callback: C, wait = 0) {
+export function throttle<C extends () => any>(callback: C, wait = 0) {
   let throttleTimer: any;
   let triggerArgs: any;
   let triggerThis: any;
-  function trigger(this: any) {
-    triggerArgs = arguments;
+  function trigger(this: any, ...arg: any[]) {
+    triggerArgs = arg;
     triggerThis = this;
     if (throttleTimer) return;
     throttleTimer = true;

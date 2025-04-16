@@ -109,7 +109,7 @@ export type ProcessBeneficiaryBatchApiRequest = ApiRequest<
   }
 >;
 
-export type UpdateBeneficiaryBatchApiResponse = ApiResponse<{}>;
+export type UpdateBeneficiaryBatchApiResponse = ApiResponse<any>;
 export type UpdateBeneficiaryBatchApiRequest = ApiRequest<
   {
     batchName: string;
@@ -178,7 +178,7 @@ export type BeneficiaryBatchReport = {
   isSuccess?: boolean;
   canEdit: boolean;
   message: string;
-  responseType: "success" | "error" | "warning";
+  responseType: "success" | "error" | "warning" | "duplicate";
   response?: {
     bankName: string;
     accountNumber: string;
@@ -208,7 +208,7 @@ export type GetBeneficiaryBatchReportApiRequest = ApiRequest<
   }
 >;
 
-export type GetBeneficiaryBatchSummaryApiResponse = ApiResponse<{}>;
+export type GetBeneficiaryBatchSummaryApiResponse = ApiResponse<any>;
 export type GetBeneficiaryBatchSummaryApiRequest = ApiRequest<
   void,
   {
@@ -216,7 +216,27 @@ export type GetBeneficiaryBatchSummaryApiRequest = ApiRequest<
   }
 >;
 
-export type CreateBeneficiaryApiResponse = ApiResponse<{}>;
+export type CreateBeneficiaryApiResponse = ApiResponse<{
+  user_id: number;
+  client_id: string;
+  bank_code: string;
+  bank_name: string;
+  bank_icon: string;
+  account_number: string;
+  account_name: string;
+  nickname: string | null;
+  batch: string;
+  batch_name: string | null;
+  type: "transfer";
+  nameEnquiryReference: string;
+  amount: number;
+  nip_account_name: string | null;
+  deleted_at: string | null;
+  id: number;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+}>;
 export type CreateBeneficiaryApiRequest = {
   body: Partial<{
     type: "transfer";
@@ -231,7 +251,7 @@ export type CreateBeneficiaryApiRequest = {
   }>;
 };
 
-export type UpdateBeneficiaryApiResponse = ApiResponse<{}>;
+export type UpdateBeneficiaryApiResponse = ApiResponse<any>;
 export type UpdateBeneficiaryApiRequest = ApiRequest<
   {
     nameEnquiryReference: string;
@@ -239,5 +259,13 @@ export type UpdateBeneficiaryApiRequest = ApiRequest<
   },
   {
     beneficiaryId: string;
+  }
+>;
+
+export type ResolveDuplicateBeneficiaryResponse = ApiResponse<any>;
+export type ResolveDuplicateBeneficiaryRequest = ApiRequest<
+  void,
+  {
+    batchNumber: string;
   }
 >;

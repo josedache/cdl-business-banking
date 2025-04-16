@@ -25,40 +25,35 @@ import { enquiryApi } from "apis/enquiry";
 import { lookupApi } from "apis/lookup";
 import { beneficiaryApi } from "apis/beneficiary";
 import CurrencyTextField from "components/CurrencyTextField";
+import { generatePath, useNavigate } from "react-router-dom";
+import { TRANSFER_BULK_DETAILS } from "constants/urls";
+import { BeneficiaryBatchReport } from "types/beneficiary";
 
 type TransferAddEditBeneficiaryDialogProps = {
-  beneficiaryId?: string;
   isNewBatch?: boolean;
   batchNumber?: string;
+  beneficiaryInfo?: BeneficiaryBatchReport;
   onClose: () => void;
 } & Omit<DialogProps, "children">;
 
 export default function TransferAddEditBeneficiaryDialog(
   props: TransferAddEditBeneficiaryDialogProps
 ) {
-  const { onClose, beneficiaryId, batchNumber, isNewBatch, ...rest } = props;
+  const { onClose, beneficiaryInfo, batchNumber, isNewBatch, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
-  const isEdit = !!beneficiaryId;
-
-  const getBeneficiaryQuery = beneficiaryApi.useGetBeneficiaryQuery({
-    path: {
-      beneficiaryId,
-    },
-  });
+  const navigate = useNavigate();
+  const isEdit = !!beneficiaryInfo;
 
   const [addBeneficiaryMutation] =
     beneficiaryApi.useCreateBeneficiaryMutation();
-  const [updateBeneficiaryMutation] =
-    beneficiaryApi.useUpdateBeneficiaryMutation();
 
   const formik = useFormik({
     initialValues: {
-      amount: getBeneficiaryQuery?.data?.data?.amount || "",
-      accountNumber: getBeneficiaryQuery?.data?.data?.account_number || "",
-      bankSortCode: getBeneficiaryQuery?.data?.data?.bank_code || "",
-      accountName: getBeneficiaryQuery?.data?.data?.account_name || "",
-      nameEnquiryReference:
-        getBeneficiaryQuery?.data?.data?.nameEnquiryReference || "",
+      amount: beneficiaryInfo?.amount || "",
+      accountNumber: beneficiaryInfo?.accountNumber || "",
+      bankSortCode: beneficiaryInfo?.bankCode || "",
+      accountName: beneficiaryInfo?.accountName || "",
+      nameEnquiryReference: beneficiaryInfo?.nameEnquiryReference || "",
     },
     validateOnChange: false,
     validateOnBlur: false,
@@ -76,16 +71,18 @@ export default function TransferAddEditBeneficiaryDialog(
     onSubmit: async (values) => {
       try {
         if (isEdit) {
-          await updateBeneficiaryMutation({
+          await addBeneficiaryMutation({
             body: {
+              type: "transfer",
               nameEnquiryReference: values?.nameEnquiryReference,
-            },
-            path: {
-              beneficiaryId,
+              amount: Number(values?.amount),
+              checkForExistence: false,
+              batchNumber,
+              batchRecordId: beneficiaryInfo?._id,
             },
           }).unwrap();
         } else {
-          await addBeneficiaryMutation({
+          const resp = await addBeneficiaryMutation({
             body: {
               type: "transfer",
               nameEnquiryReference: values?.nameEnquiryReference,
@@ -95,6 +92,9 @@ export default function TransferAddEditBeneficiaryDialog(
               batchNumber,
             },
           }).unwrap();
+          navigate(
+            generatePath(TRANSFER_BULK_DETAILS, { id: resp?.data?.batch })
+          );
         }
         onClose();
       } catch (error) {
@@ -135,13 +135,16 @@ export default function TransferAddEditBeneficiaryDialog(
           accountNumber: formik.values.accountNumber,
         },
       }).unwrap();
-      formik.setValues({
-        ...formik.values,
-        accountName: resp.data?.responseContent?.accountName,
-        nameEnquiryReference: resp?.data?.responseContent?.referenceNumber,
-      });
 
-      formik.validateField("accountName");
+      formik.setFieldValue(
+        "accountName",
+        resp.data?.responseContent?.accountName
+      );
+
+      formik.setFieldValue(
+        "nameEnquiryReference",
+        resp?.data?.responseContent?.referenceNumber
+      );
     } catch (error) {
       console.error("error", error);
     }
@@ -179,6 +182,11 @@ export default function TransferAddEditBeneficiaryDialog(
               label="Amount"
               placeholder="10,000"
               autoComplete="off"
+              slotProps={{
+                input: {
+                  readOnly: isEdit,
+                },
+              }}
               code="NGN"
               {...getTextFieldProps(formik, "amount")}
             />
@@ -321,12 +329,10 @@ export default function TransferAddEditBeneficiaryDialog(
         >
           {isEdit && (
             <LoadingButton
-              variant="soft"
+              variant="text"
               color="error"
               type="submit"
-              disabled
-              loadingPosition="end"
-              endIcon={<></>}
+              className="p-0 py-0 font-semibold"
             >
               Remove Recipient
             </LoadingButton>
@@ -340,7 +346,7 @@ export default function TransferAddEditBeneficiaryDialog(
             loadingPosition="end"
             endIcon={<></>}
           >
-            Save to List
+            {isEdit ? "Save & Next" : "Save to List"}
           </LoadingButton>
         </div>
       </DialogActions>

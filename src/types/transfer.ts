@@ -64,13 +64,13 @@ export type BulkTransferOtpVerificationApiRequest = ApiRequest<
   { otp: string },
   { batchNumber: string }
 >;
-export type BulkTransferOtpVerificationApiResponse = ApiResponse<{}>;
+export type BulkTransferOtpVerificationApiResponse = ApiResponse<any>;
 
 export type BulkTransferTransactionVerificationApiRequest = ApiRequest<
   { transactionPin: string },
   { batchNumber: string }
 >;
-export type BulkTransferTransactionVerificationApiResponse = ApiResponse<{}>;
+export type BulkTransferTransactionVerificationApiResponse = ApiResponse<any>;
 
 export type CompleteTransferApiRequest = ApiRequest<
   {

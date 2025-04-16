@@ -4,7 +4,7 @@
  * @param {number} wait
  * @returns {C & {flush: Function, cancel: Function}}
  */
-export function debounce<C extends Function>(callback: C, wait = 0) {
+export function debounce<C extends () => any>(callback: C, wait = 0) {
   let debounceTimer: any;
   let triggerArgs: any;
   let triggerThis: any;
@@ -24,7 +24,7 @@ export function debounce<C extends Function>(callback: C, wait = 0) {
     callback.apply(triggerThis, triggerArgs);
   };
 
-  return trigger as unknown as C & { flush: Function; cancel: Function };
+  return trigger
 }
 
 export default debounce;

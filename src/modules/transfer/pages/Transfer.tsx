@@ -130,7 +130,6 @@ export default function Transfer() {
           }
         }
       } catch (error) {
-        console.log("error", error);
         enqueueSnackbar(error?.message || error?.data?.message || "Failed", {
           variant: "error",
         });
@@ -213,8 +212,6 @@ export default function Transfer() {
   const parentStepIndex = parentSteps?.findIndex(
     (step) => step?.tab === currentStep?.parentTab
   );
-
-  console.log({ formik });
 
   return (
     <div>

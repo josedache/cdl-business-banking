@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import clsx from "clsx";
 import { Outlet } from "react-router-dom";
 import { Container } from "@mui/material";
@@ -23,6 +22,6 @@ function AppProtectedWithNavigation() {
   );
 }
 
-export default AppProtectedWithNavigation;
-
 export const Component = AppProtectedWithNavigation;
+
+export default AppProtectedWithNavigation;

@@ -25,6 +25,10 @@ import { beneficiaryApi } from "apis/beneficiary";
 import { BeneficiaryBatchReport } from "types/beneficiary";
 import CurrencyTypography from "components/CurrencyTypography";
 import { getCheckFieldProps } from "utils/formik/get-check-field-props";
+import useToggle from "hooks/use-toggle";
+import TransferAddEditBeneficiaryDialog from "./TransferAddEditBeneficiaryDialog";
+import { useSnackbar } from "notistack";
+import clsx from "clsx";
 
 type TransferBulkUploadReviewDetailsProps = {
   batchNumber: string;
@@ -43,6 +47,22 @@ export default function TransferBulkUploadReviewDetails(
   const { formik, batchNumber, stepper } = props;
   const [selectedTab, setSelectedTab] = useState("");
   const [isOpenIndex, setIsOpenIndex] = useState<number | undefined>();
+  const [beneficiaryInfo, setBeneficiaryInfo] = useState();
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [isOpenBeneficiaryAddEditDialog, toggleOpenBeneficiaryAddEditDialog] =
+    useToggle();
+
+  const handleOpenEditBeneficiaryDialog = (info) => {
+    setBeneficiaryInfo(info);
+    toggleOpenBeneficiaryAddEditDialog();
+  };
+
+  const handleCloseAddEditBeneficiaryDialog = () => {
+    setBeneficiaryInfo(undefined);
+    toggleOpenBeneficiaryAddEditDialog();
+  };
 
   const isActiveSelectedTab = (tab: string) => {
     return selectedTab === tab;
@@ -67,6 +87,10 @@ export default function TransferBulkUploadReviewDetails(
     return index === isOpenIndex;
   };
 
+  const [
+    resolveDuplicateBeneficiaryMutation,
+    resolveDuplicateBeneficiaryMutationResult,
+  ] = beneficiaryApi.useResolveDuplicateBeneficiaryMutation();
   const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery({
     path: {
       batchNumber,
@@ -182,7 +206,9 @@ export default function TransferBulkUploadReviewDetails(
                 <div>{(cell?.getValue() as string) || "---"}</div>
               )}
               {row?.original?.canEdit ? (
-                <IconButton>
+                <IconButton
+                  onClick={() => handleOpenEditBeneficiaryDialog(row?.original)}
+                >
                   <Icon
                     icon="lets-icons:edit-duotone"
                     width="20"
@@ -196,10 +222,14 @@ export default function TransferBulkUploadReviewDetails(
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   const selectedData = useMemo(() => {
+    if (allCompleted) {
+      return successFullUploads;
+    }
     if (selectedTab === TABS.SUCCESS) {
       return successFullUploads;
     } else if (selectedTab === TABS.FAILED) {
@@ -207,18 +237,35 @@ export default function TransferBulkUploadReviewDetails(
     }
     return emptyArray;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTab, isOpenIndex]);
+  }, [selectedTab, isOpenIndex, allCompleted]);
 
   const successTableInstance = useTable({
     columns,
     data: selectedData,
   });
 
+  const handleResolveDuplicateBeneficiary = async () => {
+    try {
+      await resolveDuplicateBeneficiaryMutation({
+        path: {
+          batchNumber,
+        },
+      }).unwrap();
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.error || "Error resolving duplicate beneficiaries",
+        {
+          variant: "error",
+        }
+      );
+    }
+  };
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">
       <div className="p-6">
         <ButtonBase
           disableRipple
+          disabled
           className="flex items-center gap-2"
           onClick={() => stepper.previous()}
         >
@@ -244,6 +291,7 @@ export default function TransferBulkUploadReviewDetails(
                 startIcon={<Icon icon="tabler:plus" />}
                 variant="soft"
                 className="mt-2"
+                onClick={toggleOpenBeneficiaryAddEditDialog}
               >
                 Add another Recipient
               </Button>
@@ -384,7 +432,26 @@ export default function TransferBulkUploadReviewDetails(
                             />
                             <Typography className="flex-1 font-medium text-neutral-700">
                               {failedGroup?.errorMessage} (
-                              {failedGroup?.items?.length})
+                              {failedGroup?.items?.length}){" "}
+                              {failedGroup?.items?.[0]?.responseType ===
+                              "duplicate" ? (
+                                <ButtonBase
+                                  className={clsx(
+                                    resolveDuplicateBeneficiaryMutationResult?.isLoading
+                                      ? "opacity-[0.6]"
+                                      : "",
+                                    "text-primary-main font-semibold"
+                                  )}
+                                  disabled={
+                                    resolveDuplicateBeneficiaryMutationResult?.isLoading
+                                  }
+                                  onClick={handleResolveDuplicateBeneficiary}
+                                >
+                                  Resolve All
+                                </ButtonBase>
+                              ) : (
+                                ""
+                              )}
                             </Typography>
                           </ListItemButton>
                           <Divider className="ml-10" />
@@ -442,6 +509,15 @@ export default function TransferBulkUploadReviewDetails(
           </LoadingButton>
         </div>
       </form>
+
+      {isOpenBeneficiaryAddEditDialog && (
+        <TransferAddEditBeneficiaryDialog
+          open={isOpenBeneficiaryAddEditDialog}
+          onClose={handleCloseAddEditBeneficiaryDialog}
+          batchNumber={batchNumber}
+          beneficiaryInfo={beneficiaryInfo}
+        />
+      )}
     </Paper>
   );
 }

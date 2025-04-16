@@ -21,6 +21,7 @@ import { beneficiaryApi } from "apis/beneficiary";
 import LoadingContent from "components/LoadingContent";
 import useToggle from "hooks/use-toggle";
 import TransferAddEditBeneficiaryDialog from "./TransferAddEditBeneficiaryDialog";
+import clsx from "clsx";
 
 type TransferBulkTabProps = {} & TransferContentProps;
 
@@ -54,6 +55,32 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
         loading={getAllBatchesQuery?.isLoading}
         error={getAllBatchesQuery?.isError}
         onRetry={getAllBatchesQuery?.refetch}
+        renderLoading={() => (
+          <div className="px-6 pt-6 pb-8 w-full">
+            <div className="flex justify-between items-center">
+              <Skeleton
+                variant="text"
+                className="h-[35px] w-full max-w-[132px]"
+              />
+              <Skeleton
+                variant="text"
+                className="h-[60px] w-full max-w-[142px]"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-1 mt-4">
+              {Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rectangular"
+                    className={clsx("h-[80px] w-full my-0 py-0")}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
       >
         {() => (
           <div>

@@ -1,13 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { LoadingButton } from "@mui/lab";
-import {
-  Button,
-  ButtonBase,
-  Divider,
-  Paper,
-  Typography,
-  Link as MuiLink,
-} from "@mui/material";
+import { Button, ButtonBase, Divider, Paper, Typography } from "@mui/material";
 
 import { TransferContentProps } from "../types/TransferStepForm";
 import OtpInput from "components/OtpInput";

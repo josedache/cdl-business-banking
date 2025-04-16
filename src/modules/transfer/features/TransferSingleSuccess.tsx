@@ -12,11 +12,6 @@ export default function TransferSingleSuccess(
 ) {
   const { formik } = props;
 
-  const handleDownloadReceipt = () => {
-    // Logic to download the receipt
-    console.log("Download receipt");
-  };
-
   return (
     <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
@@ -45,6 +40,7 @@ export default function TransferSingleSuccess(
               {
                 icon: "tdesign:share-filled",
                 text: "Share receipt",
+                onclick,
               },
               {
                 icon: "tabler:notes",

@@ -71,7 +71,7 @@ export default function TransferBulk() {
         },
       ][stepper.step],
     }),
-    onSubmit: async () => {
+    onSubmit: async (values) => {
       try {
         switch (stepper.step) {
           case TRANSFER_BUK_STEPS_ENUM.LIST: {

@@ -28,7 +28,7 @@ import Logo from "components/Logo";
 import useToggle from "hooks/use-toggle";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
-import { DASHBOARD, TRANSFER } from "constants/urls";
+import { DASHBOARD, TRANSACTION, TRANSFER } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 
@@ -79,8 +79,8 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:time-02",
           label: "Transactions",
-          to: "/test",
-          kycAllow: false,
+          to: TRANSACTION,
+          kycAllow: true,
         },
         {
           icon: "hugeicons:money-exchange-03",
@@ -106,7 +106,6 @@ function AppProtectedDrawer() {
 
   return (
     <div>
-      {" "}
       <div className="relative">
         <Drawer
           open={sideNavigation.isOpen}

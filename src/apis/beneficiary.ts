@@ -21,6 +21,8 @@ import {
   GetBeneficiaryBatchSummaryApiResponse,
   ProcessBeneficiaryBatchApiRequest,
   ProcessBeneficiaryBatchApiResponse,
+  ResolveDuplicateBeneficiaryRequest,
+  ResolveDuplicateBeneficiaryResponse,
   UpdateBeneficiaryApiRequest,
   UpdateBeneficiaryApiResponse,
   UpdateBeneficiaryBatchApiRequest,
@@ -184,6 +186,18 @@ export const beneficiaryApi = baseApi.injectEndpoints({
         ...config,
       }),
       providesTags: [{ type: BENEFICIARY }],
+    }),
+
+    resolveDuplicateBeneficiary: builder.mutation<
+      ResolveDuplicateBeneficiaryResponse,
+      ResolveDuplicateBeneficiaryRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/batch/${path?.batchNumber}/duplicate/resolve`,
+        method: "GET",
+        ...config,
+      }),
+      invalidatesTags: [{ type: BENEFICIARY }],
     }),
   }),
 });
