@@ -219,8 +219,6 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
               size="large"
               disabled={!formik.isValid || !formik.dirty}
               loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
             >
               Upload & Continue
             </LoadingButton>
@@ -232,7 +230,7 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
         <TransferAddEditBeneficiaryDialog
           open={isOpenBeneficiaryAddEditDialog}
           onClose={toggleOpenBeneficiaryAddEditDialog}
-          isNewBatch
+          createBeneficiaryType="new_beneficiary_new_manual_bulk_creation"
         />
       )}
     </>

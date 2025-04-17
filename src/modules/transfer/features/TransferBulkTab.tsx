@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Fragment } from "react";
+
 import { TransferContentProps } from "../types/TransferStepForm";
 import usePopover from "hooks/use-popover";
 import { generatePath, useNavigate } from "react-router-dom";
@@ -21,7 +22,6 @@ import { beneficiaryApi } from "apis/beneficiary";
 import LoadingContent from "components/LoadingContent";
 import useToggle from "hooks/use-toggle";
 import TransferAddEditBeneficiaryDialog from "./TransferAddEditBeneficiaryDialog";
-import clsx from "clsx";
 
 type TransferBulkTabProps = {} & TransferContentProps;
 
@@ -68,15 +68,21 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-1 mt-4">
-              {Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <Skeleton
-                    key={index}
-                    variant="rectangular"
-                    className={clsx("h-[80px] w-full my-0 py-0")}
-                  />
+            <div className="grid grid-cols-1 gap-2 pt-[18px] w-full">
+              {Array(5)
+                .fill(5)
+                .map(() => (
+                  <div className="flex items-center gap-2">
+                    <Skeleton variant="circular" width={40} height={40} />
+                    <div className="flex flex-col flex-1 w-full gap-1">
+                      <Skeleton variant="text" width={100} height={20} />
+                      <Skeleton
+                        variant="text"
+                        className="w-full max-w-[300px] h-[20px]"
+                      />
+                    </div>
+                    <Skeleton variant="text" width={50} height={20} />
+                  </div>
                 ))}
             </div>
           </div>
@@ -162,7 +168,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                         {
                           beneficiary_batch_name,
                           beneficiary_sample,
-                          beneficiary_batch,
+                          beneficiary_batch_number,
                           beneficiary_count,
                           ...rest
                         },
@@ -175,7 +181,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                             onClick={() => {
                               navigate(
                                 generatePath(TRANSFER_BULK_DETAILS, {
-                                  id: beneficiary_batch,
+                                  id: beneficiary_batch_number,
                                 })
                               );
                             }}
@@ -332,7 +338,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
         <TransferAddEditBeneficiaryDialog
           open={isOpenBeneficiaryAddEditDialog}
           onClose={toggleOpenBeneficiaryAddEditDialog}
-          isNewBatch
+          createBeneficiaryType="new_beneficiary_new_manual_bulk_creation"
         />
       )}
     </Fragment>

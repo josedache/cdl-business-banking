@@ -85,11 +85,12 @@ export type CompleteTransferApiResponse = ApiResponse<{
   message: string;
   reference: string;
   statusCode: string;
-  totalAmount: string;
+  totalAmount: number;
   beneficiaryAccountNumber: string;
   beneficiaryName: string;
   timeCreated: string;
   bankName: string;
+  transactionId: number;
 }>;
 
 export type GetTransferWalletsApiRequest = ApiRequest;
@@ -106,3 +107,37 @@ export type GetTransferWalletsApiResponse = ApiResponse<
     balance: number;
   }[]
 >;
+
+export type GetTransferBulkSummariesApiRequest = ApiRequest<
+  void,
+  void,
+  {
+    page: number;
+    limit: number;
+  }
+>;
+export type GetTransferBulkSummariesApiResponse = ApiResponse<
+  {
+    beneficiaryBatch: string;
+    beneficiaryBatchName: string;
+    transferBatch: string;
+    totalTransfers: string;
+    totalAmount: number;
+    success: {
+      total: number;
+      amount: number;
+    };
+    failed: {
+      total: number;
+      amount: number;
+    };
+  }[]
+>;
+
+export type GetTransferBulkSummaryApiRequest = ApiRequest<
+  void,
+  {
+    batchNumber: string;
+  }
+>;
+export type GetTransferBulkSummaryApiResponse = ApiResponse<any>;

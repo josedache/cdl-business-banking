@@ -17,6 +17,7 @@ export type Transaction = {
   amount: string;
   transaction_status: string;
   beneficiary_bank: string;
+  beneficiary_destination_code: string;
   beneficiary_account_number: string;
   beneficiary_account_name: string;
   sender_bank: string;
@@ -28,6 +29,7 @@ export type Transaction = {
   source_account_name: string;
   mobile_label: string;
   note: string;
+  icon: string;
 };
 
 export type TransactionReceipt = {

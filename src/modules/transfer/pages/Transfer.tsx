@@ -26,7 +26,8 @@ export default function Transfer() {
 
   const [transferMutation, transferMutationResult] =
     transferApi.useTransferMutation();
-  const [completeTransferMutation] = transferApi.useCompleteTransferMutation();
+  const [completeTransferMutation, completeTransferMutationResult] =
+    transferApi.useCompleteTransferMutation();
 
   const getValidationSchemas = [
     {
@@ -189,7 +190,15 @@ export default function Transfer() {
     {
       title: "Single payment Success",
       tab: TRANSFER_STEPS_ENUM.SINGLE_SUCCESS,
-      content: <TransferSingleSuccess {...contentProps} />,
+      content: (
+        <TransferSingleSuccess
+          {...contentProps}
+          transactionId={
+            String(completeTransferMutationResult?.data?.data?.transactionId) ||
+            ""
+          }
+        />
+      ),
       parentTab: TRANSFER_STEPS_ENUM.SINGLE,
       parent: false,
       external: true,
@@ -251,7 +260,13 @@ export default function Transfer() {
 
       {currentStep.hideTransaction ? null : (
         <div className="mt-4">
-          <TransferRecentTransactions />
+          <TransferRecentTransactions
+            transactionType={
+              stepper.step === TRANSFER_STEPS_ENUM.SINGLE
+                ? "transfer"
+                : "bulk_transfer"
+            }
+          />
         </div>
       )}
     </div>

@@ -4,6 +4,8 @@ import { BENEFICIARY } from "constants/tags.ts";
 import {
   CreateBeneficiaryApiRequest,
   CreateBeneficiaryApiResponse,
+  DeleteBeneficiaryBatchReportApiRequest,
+  DeleteBeneficiaryBatchReportApiResponse,
   DownloadBeneficiariesTemplateSampleRequest,
   DownloadBeneficiariesTemplateSampleResponse,
   GetBeneficiariesApiRequest,
@@ -176,12 +178,12 @@ export const beneficiaryApi = baseApi.injectEndpoints({
       providesTags: [{ type: BENEFICIARY }],
     }),
 
-    getBeneficiaryBatchSummary: builder.query<
+    getBeneficiaryBulkSummary: builder.query<
       GetBeneficiaryBatchSummaryApiResponse,
       GetBeneficiaryBatchSummaryApiRequest
     >({
       query: ({ path, ...config }) => ({
-        url: BASE_URL + `/batch/summary/${path?.batchNumber}`,
+        url: BASE_URL + `/bulk/summary/${path?.batchNumber}`,
         method: "GET",
         ...config,
       }),
@@ -195,6 +197,18 @@ export const beneficiaryApi = baseApi.injectEndpoints({
       query: ({ path, ...config }) => ({
         url: BASE_URL + `/batch/${path?.batchNumber}/duplicate/resolve`,
         method: "GET",
+        ...config,
+      }),
+      invalidatesTags: [{ type: BENEFICIARY }],
+    }),
+
+    deleteBeneficiaryBatchReport: builder.mutation<
+      DeleteBeneficiaryBatchReportApiResponse,
+      DeleteBeneficiaryBatchReportApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/batch/report/${path?.batchNumber}`,
+        method: "DELETE",
         ...config,
       }),
       invalidatesTags: [{ type: BENEFICIARY }],

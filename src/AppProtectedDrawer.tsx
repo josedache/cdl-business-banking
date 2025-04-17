@@ -126,7 +126,7 @@ function AppProtectedDrawer() {
             {islg && (
               <div className="flex items-center justify-between w-full">
                 <div>
-                  <Logo />
+                  <Logo variant="2" />
                 </div>
 
                 <IconButton

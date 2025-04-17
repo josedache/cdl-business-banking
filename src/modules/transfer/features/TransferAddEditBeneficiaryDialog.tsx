@@ -30,22 +30,38 @@ import { TRANSFER_BULK_DETAILS } from "constants/urls";
 import { BeneficiaryBatchReport } from "types/beneficiary";
 
 type TransferAddEditBeneficiaryDialogProps = {
-  isNewBatch?: boolean;
+  createBeneficiaryType?:
+    | "new_beneficiary_existing_bulk_upload"
+    | "new_beneficiary_new_manual_bulk_creation"
+    | "new_beneficiary_existing_bulk_upload"
+    | "bulk_upload_error_resolution";
   batchNumber?: string;
   beneficiaryInfo?: BeneficiaryBatchReport;
+  stepInfo?: string;
   onClose: () => void;
 } & Omit<DialogProps, "children">;
 
 export default function TransferAddEditBeneficiaryDialog(
   props: TransferAddEditBeneficiaryDialogProps
 ) {
-  const { onClose, beneficiaryInfo, batchNumber, isNewBatch, ...rest } = props;
+  const {
+    onClose,
+    beneficiaryInfo,
+    createBeneficiaryType,
+    batchNumber,
+    stepInfo,
+    ...rest
+  } = props;
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const isEdit = !!beneficiaryInfo;
 
   const [addBeneficiaryMutation] =
     beneficiaryApi.useCreateBeneficiaryMutation();
+  const [
+    deleteBeneficiaryBatchReportMutation,
+    deleteBeneficiaryBatchReportMutationResult,
+  ] = beneficiaryApi.useDeleteBeneficiaryBatchReportMutation();
 
   const formik = useFormik({
     initialValues: {
@@ -73,10 +89,10 @@ export default function TransferAddEditBeneficiaryDialog(
         if (isEdit) {
           await addBeneficiaryMutation({
             body: {
-              type: "transfer",
+              createBeneficiaryType: "bulk_upload_error_resolution",
+              beneficiaryType: "transfer",
               nameEnquiryReference: values?.nameEnquiryReference,
               amount: Number(values?.amount),
-              checkForExistence: false,
               batchNumber,
               batchRecordId: beneficiaryInfo?._id,
             },
@@ -84,16 +100,17 @@ export default function TransferAddEditBeneficiaryDialog(
         } else {
           const resp = await addBeneficiaryMutation({
             body: {
-              type: "transfer",
+              createBeneficiaryType,
+              beneficiaryType: "transfer",
               nameEnquiryReference: values?.nameEnquiryReference,
-              isNewBatch,
               amount: Number(values?.amount),
-              checkForExistence: false,
               batchNumber,
             },
           }).unwrap();
           navigate(
-            generatePath(TRANSFER_BULK_DETAILS, { id: resp?.data?.batch })
+            generatePath(TRANSFER_BULK_DETAILS, {
+              id: resp?.data?.batch_number,
+            })
           );
         }
         onClose();
@@ -147,6 +164,28 @@ export default function TransferAddEditBeneficiaryDialog(
       );
     } catch (error) {
       console.error("error", error);
+    }
+  };
+
+  const handleDeleteBeneficiaryBatchReport = async (batchNumber: string) => {
+    try {
+      await deleteBeneficiaryBatchReportMutation({
+        path: { batchNumber },
+      }).unwrap();
+      enqueueSnackbar("Recipient removed successfully", {
+        variant: "success",
+      });
+      onClose();
+    } catch (error) {
+      console.error("error", error);
+      enqueueSnackbar(
+        error?.data?.error ||
+          error?.data?.message ||
+          "Error removing recipient, please try again",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 
@@ -331,23 +370,38 @@ export default function TransferAddEditBeneficiaryDialog(
             <LoadingButton
               variant="text"
               color="error"
-              type="submit"
-              className="p-0 py-0 font-semibold"
+              className={clsx(
+                deleteBeneficiaryBatchReportMutationResult?.isLoading
+                  ? "opacity-[0.5]"
+                  : "",
+                "p-0 py-0 font-semibold"
+              )}
+              // loading={deleteBeneficiaryBatchReportMutationResult?.isLoading}
+              onClick={() =>
+                handleDeleteBeneficiaryBatchReport(beneficiaryInfo?._id)
+              }
             >
               Remove Recipient
             </LoadingButton>
           )}
 
-          <LoadingButton
-            variant="gradient"
-            type="submit"
-            disabled={!formik.isValid || !formik.dirty}
-            loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
-          >
-            {isEdit ? "Save & Next" : "Save to List"}
-          </LoadingButton>
+          <div className="flex items-center gap-2">
+            {isEdit && <Typography>{stepInfo}</Typography>}
+            <LoadingButton
+              variant="gradient"
+              type="submit"
+              disabled={
+                !formik.isValid ||
+                !formik.dirty ||
+                deleteBeneficiaryBatchReportMutationResult?.isLoading
+              }
+              loading={formik.isSubmitting}
+              loadingPosition="end"
+              endIcon={<></>}
+            >
+              {isEdit ? "Save & Next" : "Save to List"}
+            </LoadingButton>
+          </div>
         </div>
       </DialogActions>
     </Dialog>

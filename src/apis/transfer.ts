@@ -8,6 +8,10 @@ import {
   BulkTransferTransactionVerificationApiResponse,
   CompleteTransferApiRequest,
   CompleteTransferApiResponse,
+  GetTransferBulkSummariesApiRequest,
+  GetTransferBulkSummariesApiResponse,
+  GetTransferBulkSummaryApiRequest,
+  GetTransferBulkSummaryApiResponse,
   GetTransferWalletsApiRequest,
   GetTransferWalletsApiResponse,
   TransferApiRequest,
@@ -82,7 +86,6 @@ export const transferApi = baseApi.injectEndpoints({
         method: "GET",
         ...config,
       }),
-      // providesTags: [{ type: TRANSFER }],
     }),
     completeTransfer: builder.mutation<
       CompleteTransferApiResponse,
@@ -97,6 +100,26 @@ export const transferApi = baseApi.injectEndpoints({
         ...config,
       }),
       invalidatesTags: [{ type: TRANSFER }, { type: BENEFICIARY }],
+    }),
+    getTransferBulkSummaries: builder.query<
+      GetTransferBulkSummariesApiResponse,
+      GetTransferBulkSummariesApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/bulk/summary",
+        method: "GET",
+        ...config,
+      }),
+    }),
+    getTransferBulkSummary: builder.query<
+      GetTransferBulkSummaryApiResponse,
+      GetTransferBulkSummaryApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/summary/${path?.batchNumber}`,
+        method: "GET",
+        ...config,
+      }),
     }),
   }),
 });

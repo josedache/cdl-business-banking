@@ -575,7 +575,7 @@ export default function TransferSingle(props: TransferSingleProps) {
           </div>
         </div>
         <Divider className="mt-6" />
-        <div className="px-6 py-6">
+        <div className="px-6 py-5">
           <LoadingButton
             variant="gradient"
             loading={formik.isSubmitting}

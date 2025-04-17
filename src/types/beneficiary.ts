@@ -121,9 +121,10 @@ export type UpdateBeneficiaryBatchApiRequest = ApiRequest<
 
 export type GetBeneficiaryBatchesApiResponse = ApiResponse<
   Array<{
-    beneficiary_batch: string | null;
-    beneficiary_batch_name: string | null;
+    beneficiary_batch_number: string;
+    beneficiary_batch_name: string;
     beneficiary_count: string;
+    latest_created_at: string;
     beneficiary_sample: string[];
   }>
 >;
@@ -163,31 +164,39 @@ export type GetBeneficiaryBatchApiRequest = ApiRequest<
 export type BeneficiaryBatchReport = {
   _id: string;
   userId: number;
-  clientId: string;
-  batch: string;
-  bankName: string | null;
-  bankCode: string | null;
-  accountNumber: string | null;
-  accountName: string | null;
-  resolvedAccountName: string | null;
-  accountNameMatchScore: number | null;
-  nameEnquiryReference: string | null;
-  amount: number | null;
+  batchNumber: string;
+  batchName: string;
+  bankName: string;
+  bankCode: string;
+  accountNumber: string;
+  accountName: string;
+  resolvedAccountName: string;
+  accountNameMatchScore: number;
+  nameEnquiryReference: string;
+  amount: number;
   shouldProcess: boolean;
   isProcessed: boolean;
-  isSuccess?: boolean;
+  isSuccess: boolean;
   canEdit: boolean;
   message: string;
-  responseType: "success" | "error" | "warning" | "duplicate";
-  response?: {
-    bankName: string;
-    accountNumber: string;
-    accountName: string;
-    referenceNumber: string;
+  responseType: string;
+  response: {
+    status: boolean;
+    message: string;
+    data: {
+      referenceNumber: string | null;
+      accountName: string;
+      responseCode: string | null;
+      bankVerificationNumber: string;
+      kycLevel: string;
+    };
   };
   uploadedFile: string;
+  showInBulkReport: boolean;
+  isInOriginalUpload: boolean;
   createdAt: string;
 };
+
 export type GetBeneficiaryBatchReportApiResponse = ApiResponse<{
   beneficiaries: Array<BeneficiaryBatchReport>;
   duplicates: Array<BeneficiaryBatchReport>;
@@ -218,17 +227,15 @@ export type GetBeneficiaryBatchSummaryApiRequest = ApiRequest<
 
 export type CreateBeneficiaryApiResponse = ApiResponse<{
   user_id: number;
-  client_id: string;
   bank_code: string;
   bank_name: string;
   bank_icon: string;
   account_number: string;
   account_name: string;
-  nickname: string | null;
-  batch: string;
-  batch_name: string | null;
-  type: "transfer";
+  type: string;
   nameEnquiryReference: string;
+  batch_number: string;
+  batch_name: string;
   amount: number;
   nip_account_name: string | null;
   deleted_at: string | null;
@@ -239,15 +246,17 @@ export type CreateBeneficiaryApiResponse = ApiResponse<{
 }>;
 export type CreateBeneficiaryApiRequest = {
   body: Partial<{
-    type: "transfer";
+    createBeneficiaryType:
+      | "new_beneficiary_existing_bulk_upload"
+      | "new_beneficiary_new_manual_bulk_creation"
+      | "new_beneficiary_existing_bulk_upload"
+      | "bulk_upload_error_resolution";
+    beneficiaryType: string;
     nameEnquiryReference: string;
-    nickName: string;
-    isNewBatch: boolean;
     batchNumber: string;
     batchName: string;
-    batchRecordId: string;
     amount: number;
-    checkForExistence: boolean;
+    batchRecordId: string;
   }>;
 };
 
@@ -268,4 +277,30 @@ export type ResolveDuplicateBeneficiaryRequest = ApiRequest<
   {
     batchNumber: string;
   }
+>;
+
+export type Beneficiary = {
+  user_id: number;
+  bank_code: string;
+  bank_name: string;
+  bank_icon: string;
+  account_number: string;
+  account_name: string;
+  type: string;
+  nameEnquiryReference: string;
+  batch_number: string;
+  batch_name: string;
+  amount: number;
+  nip_account_name: string | null;
+  deleted_at: string | null;
+  id: number;
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DeleteBeneficiaryBatchReportApiResponse = ApiResponse<any>;
+export type DeleteBeneficiaryBatchReportApiRequest = ApiRequest<
+  void,
+  { batchNumber: string }
 >;

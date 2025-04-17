@@ -18,10 +18,13 @@ import DashboardAccountSetupDialog from "../features/DashboardAccountSetupDialog
 import useAuthUser from "hooks/use-auth-user";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
+import { useNavigate } from "react-router-dom";
+import { TRANSFER } from "constants/urls";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
   const user = useAuthUser();
+  const navigate = useNavigate();
 
   const isKycCompleted = isKycCheckCompleted(user?.info);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
@@ -146,6 +149,7 @@ function Dashboard() {
                   background:
                     "linear-gradient(180deg, #EFC531 0%, #FF7849 100%)",
                 }}
+                onClick={() => navigate(TRANSFER)}
               >
                 <div>
                   <Icon
