@@ -69,7 +69,7 @@ export default function TransferBulk() {
     beneficiaryApi.useProcessBeneficiaryBatchMutation();
 
   const batchName =
-    getBatchReportQuery?.data?.data?.beneficiaries?.[0]?.bankName || "";
+    getBatchReportQuery?.data?.data?.beneficiaries?.[0]?.batchName || "";
 
   const formik = useFormik<TransferBulkFormikValues>({
     initialValues: {

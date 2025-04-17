@@ -164,31 +164,39 @@ export type GetBeneficiaryBatchApiRequest = ApiRequest<
 export type BeneficiaryBatchReport = {
   _id: string;
   userId: number;
-  clientId: string;
-  batch: string;
-  bankName: string | null;
-  bankCode: string | null;
-  accountNumber: string | null;
-  accountName: string | null;
-  resolvedAccountName: string | null;
-  accountNameMatchScore: number | null;
-  nameEnquiryReference: string | null;
-  amount: number | null;
+  batchNumber: string;
+  batchName: string;
+  bankName: string;
+  bankCode: string;
+  accountNumber: string;
+  accountName: string;
+  resolvedAccountName: string;
+  accountNameMatchScore: number;
+  nameEnquiryReference: string;
+  amount: number;
   shouldProcess: boolean;
   isProcessed: boolean;
-  isSuccess?: boolean;
+  isSuccess: boolean;
   canEdit: boolean;
   message: string;
-  responseType: "success" | "error" | "warning" | "duplicate";
-  response?: {
-    bankName: string;
-    accountNumber: string;
-    accountName: string;
-    referenceNumber: string;
+  responseType: string;
+  response: {
+    status: boolean;
+    message: string;
+    data: {
+      referenceNumber: string | null;
+      accountName: string;
+      responseCode: string | null;
+      bankVerificationNumber: string;
+      kycLevel: string;
+    };
   };
   uploadedFile: string;
+  showInBulkReport: boolean;
+  isInOriginalUpload: boolean;
   createdAt: string;
 };
+
 export type GetBeneficiaryBatchReportApiResponse = ApiResponse<{
   beneficiaries: Array<BeneficiaryBatchReport>;
   duplicates: Array<BeneficiaryBatchReport>;
