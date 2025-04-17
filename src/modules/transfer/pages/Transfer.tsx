@@ -260,7 +260,13 @@ export default function Transfer() {
 
       {currentStep.hideTransaction ? null : (
         <div className="mt-4">
-          <TransferRecentTransactions />
+          <TransferRecentTransactions
+            transactionType={
+              stepper.step === TRANSFER_STEPS_ENUM.SINGLE
+                ? "transfer"
+                : "bulk_transfer"
+            }
+          />
         </div>
       )}
     </div>

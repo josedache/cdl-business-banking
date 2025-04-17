@@ -230,7 +230,7 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
         <TransferAddEditBeneficiaryDialog
           open={isOpenBeneficiaryAddEditDialog}
           onClose={toggleOpenBeneficiaryAddEditDialog}
-          isNewBatch
+          createBeneficiaryType="new_beneficiary_new_manual_bulk_creation"
         />
       )}
     </>

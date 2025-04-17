@@ -53,14 +53,29 @@ export default function TransferBulk() {
   const [verifyTransactionPinMutation] =
     transferApi.useBulkTransferPinVerificationMutation();
 
+  const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery(
+    {
+      path: {
+        batchNumber,
+      },
+    },
+    {
+      skip:
+        !batchNumber || stepper.step !== TRANSFER_BUK_STEPS_ENUM.LIST_REVIEW,
+    }
+  );
+
   const [processBatchMutation] =
     beneficiaryApi.useProcessBeneficiaryBatchMutation();
+
+  const batchName =
+    getBatchReportQuery?.data?.data?.beneficiaries?.[0]?.bankName || "";
 
   const formik = useFormik<TransferBulkFormikValues>({
     initialValues: {
       file: "",
       transactionPin: "",
-      name: "",
+      name: batchName || "",
       otp: "",
       confirmList: false,
     },
@@ -71,6 +86,7 @@ export default function TransferBulk() {
         },
       ][stepper.step],
     }),
+    enableReinitialize: true,
     onSubmit: async (values) => {
       try {
         switch (stepper.step) {

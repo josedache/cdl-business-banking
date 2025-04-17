@@ -45,11 +45,21 @@ export default function TransferBulkUploadReviewDetails(
   props: TransferBulkUploadReviewDetailsProps
 ) {
   const { formik, batchNumber, stepper } = props;
+  const { enqueueSnackbar } = useSnackbar();
+
   const [selectedTab, setSelectedTab] = useState("");
   const [isOpenIndex, setIsOpenIndex] = useState<number | undefined>();
   const [beneficiaryInfo, setBeneficiaryInfo] = useState();
 
-  const { enqueueSnackbar } = useSnackbar();
+  const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery({
+    path: {
+      batchNumber,
+    },
+  });
+  const [
+    resolveDuplicateBeneficiaryMutation,
+    resolveDuplicateBeneficiaryMutationResult,
+  ] = beneficiaryApi.useResolveDuplicateBeneficiaryMutation();
 
   const [isOpenBeneficiaryAddEditDialog, toggleOpenBeneficiaryAddEditDialog] =
     useToggle();
@@ -63,10 +73,10 @@ export default function TransferBulkUploadReviewDetails(
     setBeneficiaryInfo(undefined);
     toggleOpenBeneficiaryAddEditDialog();
   };
-
   const isActiveSelectedTab = (tab: string) => {
     return selectedTab === tab;
   };
+
   const handleSelectTab = (tab: string) => {
     if (isActiveSelectedTab(tab)) {
       setSelectedTab("");
@@ -87,30 +97,20 @@ export default function TransferBulkUploadReviewDetails(
     return index === isOpenIndex;
   };
 
-  const [
-    resolveDuplicateBeneficiaryMutation,
-    resolveDuplicateBeneficiaryMutationResult,
-  ] = beneficiaryApi.useResolveDuplicateBeneficiaryMutation();
-  const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery({
-    path: {
-      batchNumber,
-    },
-  });
-
-  const allCompleted =
+  const isAllBatchesSuccessful =
     getBatchReportQuery?.data?.data?.meta?.total ===
       getBatchReportQuery?.data?.data?.meta?.success || false;
 
-  const successFullUploads = useMemo(
+  const noSuccessfulUploads =
+    getBatchReportQuery?.data?.data?.meta?.success === 0;
+
+  const allSuccessfulBatches = useMemo(
     () =>
       getBatchReportQuery?.data?.data?.beneficiaries?.filter(
         (beneficiary) => beneficiary.responseType === "success"
       ),
     [getBatchReportQuery?.data?.data?.beneficiaries]
   );
-
-  const noSuccessfulUploads =
-    getBatchReportQuery?.data?.data?.meta?.success === 0;
 
   const failedUploads = useMemo(
     () =>
@@ -227,17 +227,22 @@ export default function TransferBulkUploadReviewDetails(
   );
 
   const selectedData = useMemo(() => {
-    if (allCompleted) {
-      return successFullUploads;
+    if (isAllBatchesSuccessful) {
+      return allSuccessfulBatches;
     }
     if (selectedTab === TABS.SUCCESS) {
-      return successFullUploads;
+      return allSuccessfulBatches;
     } else if (selectedTab === TABS.FAILED) {
       return failedUploadsGroupedByErrorMessagesArray?.[isOpenIndex]?.items;
     }
     return emptyArray;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTab, isOpenIndex, allCompleted]);
+  }, [
+    selectedTab,
+    isOpenIndex,
+    isAllBatchesSuccessful,
+    getBatchReportQuery?.data,
+  ]);
 
   const successTableInstance = useTable({
     columns,
@@ -298,7 +303,7 @@ export default function TransferBulkUploadReviewDetails(
             </div>
           </div>
 
-          {allCompleted ? (
+          {isAllBatchesSuccessful ? (
             <div>
               <TanStandardTable
                 loading={getBatchReportQuery.isFetching}
@@ -338,7 +343,7 @@ export default function TransferBulkUploadReviewDetails(
                     className="text-[#12B76A]"
                   />
                   <Typography className="flex-1 font-semibold">
-                    {successFullUploads?.length} successfully uploaded
+                    {allSuccessfulBatches?.length} successfully uploaded
                   </Typography>
 
                   <div className="flex-1"></div>
@@ -516,6 +521,19 @@ export default function TransferBulkUploadReviewDetails(
           onClose={handleCloseAddEditBeneficiaryDialog}
           batchNumber={batchNumber}
           beneficiaryInfo={beneficiaryInfo}
+          createBeneficiaryType={
+            beneficiaryInfo === undefined
+              ? "new_beneficiary_existing_bulk_upload"
+              : "bulk_upload_error_resolution"
+          }
+          stepInfo={
+            beneficiaryInfo &&
+            `${
+              failedUploads.findIndex(
+                (item) => item._id === (beneficiaryInfo as any)?._id
+              ) + 1
+            }/${failedUploads?.length}`
+          }
         />
       )}
     </Paper>
