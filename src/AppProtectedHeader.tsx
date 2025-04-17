@@ -111,7 +111,7 @@ function AppProtectedHeader(props: AppBarProps) {
           </div>
 
           <div className="flex md:hidden items-center justify-between gap-2 px-8 w-full">
-            <Logo />
+            <Logo variant="2" />
 
             <IconButton onClick={() => sideNavigation.toggle()}>
               <Icon>

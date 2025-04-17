@@ -1,7 +1,28 @@
 import { ButtonBase, Paper, Typography } from "@mui/material";
+import { transactionApi } from "apis/transaction";
+import { transferApi } from "apis/transfer";
 import CurrencyTypography from "components/CurrencyTypography";
 
 export default function TransferRecentTransactions() {
+  const transferWalletsQueryResult =
+    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWallets = transferWalletsQueryResult.data?.data;
+
+  const mainWallet = transferWallets?.find(
+    (wallet) => wallet.businessType === "Group"
+  );
+
+  const getSingleTransaction =
+    transactionApi.useGetTransactionSavingsHistoryQuery(
+      {
+        path: { savingsAccountId: mainWallet?.walletId },
+        params: {
+          page: 1,
+          limit: 5,
+        },
+      },
+      { skip: !mainWallet?.walletId }
+    );
   return (
     <Paper elevation={0} className="mx-auto rounded-2xl max-w-[520px] p-6 ">
       <div className="flex justify-between items-center">
@@ -13,41 +34,20 @@ export default function TransferRecentTransactions() {
       </div>
 
       <div>
-        {[
-          {
-            accountName: "John Doe",
-            accountNumber: "98734738828",
-            bankName: "UBA",
-            amount: 50000,
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            accountName: "Jane Doe",
-            accountNumber: "98734738828",
-            bankName: "GTB",
-            amount: 50000,
-            image: "https://via.placeholder.com/150",
-          },
-          {
-            accountName: "John Smith",
-            accountNumber: "98734738828",
-            bankName: "Zenith Bank",
-            amount: 50000,
-            image: "https://via.placeholder.com/150",
-          },
-        ].map((item, index) => (
+        {getSingleTransaction?.data?.data?.map((item, index) => (
           <div key={index} className="flex items-center gap-4 pt-[18px]">
             <img
-              src={item.image}
+              src={""}
               alt="user"
               className="w-[40px] h-[40px] rounded-full"
             />
             <div className="flex flex-col gap-1">
               <Typography className="font-medium text-neutral-900">
-                {item.accountName}
+                {item.beneficiary_account_name}
               </Typography>
               <Typography className="text-neutral-500">
-                {item.accountNumber} {item.bankName}
+                {item.beneficiary_account_number}{" "}
+                {item.beneficiary_account_name}
               </Typography>
             </div>
             <CurrencyTypography className="font-medium text-neutral-900 ml-auto">

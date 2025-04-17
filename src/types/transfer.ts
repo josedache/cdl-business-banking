@@ -85,11 +85,12 @@ export type CompleteTransferApiResponse = ApiResponse<{
   message: string;
   reference: string;
   statusCode: string;
-  totalAmount: string;
+  totalAmount: number;
   beneficiaryAccountNumber: string;
   beneficiaryName: string;
   timeCreated: string;
   bankName: string;
+  transactionId: number;
 }>;
 
 export type GetTransferWalletsApiRequest = ApiRequest;

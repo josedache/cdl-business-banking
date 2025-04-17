@@ -239,15 +239,13 @@ export type CreateBeneficiaryApiResponse = ApiResponse<{
 }>;
 export type CreateBeneficiaryApiRequest = {
   body: Partial<{
-    type: "transfer";
+    createBeneficiaryType: string;
+    beneficiaryType: string;
     nameEnquiryReference: string;
-    nickName: string;
-    isNewBatch: boolean;
     batchNumber: string;
     batchName: string;
-    batchRecordId: string;
     amount: number;
-    checkForExistence: boolean;
+    batchRecordId: string;
   }>;
 };
 

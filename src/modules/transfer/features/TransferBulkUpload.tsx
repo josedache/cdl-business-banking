@@ -219,8 +219,6 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
               size="large"
               disabled={!formik.isValid || !formik.dirty}
               loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
             >
               Upload & Continue
             </LoadingButton>

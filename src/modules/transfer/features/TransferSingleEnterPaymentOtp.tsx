@@ -110,7 +110,7 @@ export default function TransferSingleEnterPaymentOtp(
                 }}
                 numInputs={6}
                 shouldAutoFocus
-                // inputType="password"
+                inputType="password"
                 slot={{ input: NumberInput }}
                 slotProps={{
                   input: {
@@ -210,8 +210,6 @@ export default function TransferSingleEnterPaymentOtp(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>

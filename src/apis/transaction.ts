@@ -11,6 +11,7 @@ import {
   GetTransactionApiResponse,
   GetTransactionApiRequest,
 } from "types/transaction-api";
+import downloadUrl from "utils/file/downloadUrl";
 
 export const BASE_URL = "/transaction";
 
@@ -52,7 +53,7 @@ export const transactionApi = baseApi.injectEndpoints({
       providesTags: [{ type: TRANSACTION }],
     }),
 
-    generateTransactionReceipt: builder.query<
+    generateTransactionReceipt: builder.mutation<
       GenerateTransactionReceiptApiResponse,
       GenerateTransactionReceiptApiRequest
     >({
@@ -61,7 +62,14 @@ export const transactionApi = baseApi.injectEndpoints({
         method: "GET",
         ...config,
       }),
-      providesTags: [{ type: TRANSACTION }],
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          downloadUrl(data?.data?.pdf, data?.data?.pdf);
+        } catch (error) {
+          console.error(error);
+        }
+      },
     }),
   }),
 });
