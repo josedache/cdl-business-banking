@@ -1,70 +1,271 @@
+import { Fragment, useMemo, useState } from "react";
 import {
   Button,
   ButtonBase,
   Checkbox,
-  Chip,
   Collapse,
   Divider,
   FormControlLabel,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
-  ListItemText,
   Paper,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { LoadingButton } from "@mui/lab";
+import { ColumnDef } from "@tanstack/react-table";
 
 import { TransferBulkContentProps } from "../types/TransferBulkStepForm";
-import { Fragment, useState } from "react";
+import TanStandardTable from "components/TanStandardTable";
+import useTable from "hooks/use-table";
+import { beneficiaryApi } from "apis/beneficiary";
+import { BeneficiaryBatchReport } from "types/beneficiary";
+import CurrencyTypography from "components/CurrencyTypography";
+import { getCheckFieldProps } from "utils/formik/get-check-field-props";
+import useToggle from "hooks/use-toggle";
+import TransferAddEditBeneficiaryDialog from "./TransferAddEditBeneficiaryDialog";
+import { useSnackbar } from "notistack";
+import clsx from "clsx";
 
-type TransferBulkUploadReviewDetailsProps = {} & TransferBulkContentProps;
+type TransferBulkUploadReviewDetailsProps = {
+  batchNumber: string;
+} & TransferBulkContentProps;
+
+const emptyArray = [];
+
+const TABS = {
+  SUCCESS: "success",
+  FAILED: "failed",
+};
 
 export default function TransferBulkUploadReviewDetails(
   props: TransferBulkUploadReviewDetailsProps
 ) {
-  const { formik, stepper } = props;
-  const [open, setOpen] = useState(false);
+  const { formik, batchNumber, stepper } = props;
+  const [selectedTab, setSelectedTab] = useState("");
+  const [isOpenIndex, setIsOpenIndex] = useState<number | undefined>();
+  const [beneficiaryInfo, setBeneficiaryInfo] = useState();
 
-  const handleClick = () => {
-    setOpen(!open);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [isOpenBeneficiaryAddEditDialog, toggleOpenBeneficiaryAddEditDialog] =
+    useToggle();
+
+  const handleOpenEditBeneficiaryDialog = (info) => {
+    setBeneficiaryInfo(info);
+    toggleOpenBeneficiaryAddEditDialog();
   };
 
-  // const successFullUploads = [
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     amount: 1000,
-  //     status: "success",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jane Smith",
-  //     amount: 2000,
-  //     status: "success",
-  //   },
-  // ];
+  const handleCloseAddEditBeneficiaryDialog = () => {
+    setBeneficiaryInfo(undefined);
+    toggleOpenBeneficiaryAddEditDialog();
+  };
 
-  const failedUploads = [
-    {
-      id: 1,
-      name: "John Doe",
-      amount: 1000,
-      status: "failed",
+  const isActiveSelectedTab = (tab: string) => {
+    return selectedTab === tab;
+  };
+  const handleSelectTab = (tab: string) => {
+    if (isActiveSelectedTab(tab)) {
+      setSelectedTab("");
+      setIsOpenIndex([]);
+    } else {
+      setSelectedTab(tab);
+    }
+  };
+  const handleOpenFailedChildTab = (index: number) => {
+    if (isActiveChild(index)) {
+      setIsOpenIndex(undefined as number | undefined);
+    } else {
+      setIsOpenIndex(Number(index));
+    }
+  };
+
+  const isActiveChild = (index: number) => {
+    return index === isOpenIndex;
+  };
+
+  const [
+    resolveDuplicateBeneficiaryMutation,
+    resolveDuplicateBeneficiaryMutationResult,
+  ] = beneficiaryApi.useResolveDuplicateBeneficiaryMutation();
+  const getBatchReportQuery = beneficiaryApi.useGetBeneficiaryBatchReportQuery({
+    path: {
+      batchNumber,
     },
-    {
-      id: 2,
-      name: "Jane Smith",
-      amount: 2000,
-      status: "failed",
+  });
+
+  const allCompleted =
+    getBatchReportQuery?.data?.data?.meta?.total ===
+      getBatchReportQuery?.data?.data?.meta?.success || false;
+
+  const successFullUploads = useMemo(
+    () =>
+      getBatchReportQuery?.data?.data?.beneficiaries?.filter(
+        (beneficiary) => beneficiary.responseType === "success"
+      ),
+    [getBatchReportQuery?.data?.data?.beneficiaries]
+  );
+
+  const noSuccessfulUploads =
+    getBatchReportQuery?.data?.data?.meta?.success === 0;
+
+  const failedUploads = useMemo(
+    () =>
+      getBatchReportQuery?.data?.data?.beneficiaries?.filter(
+        (beneficiary) => beneficiary.responseType !== "success"
+      ),
+    [getBatchReportQuery?.data?.data?.beneficiaries]
+  );
+  const failedUploadsGroupedByErrorMessages = failedUploads?.reduce(
+    (acc, item) => {
+      const errorMessage = item.message || "Unknown error";
+      if (!acc[errorMessage]) {
+        acc[errorMessage] = [];
+      }
+      acc[errorMessage].push(item);
+      return acc;
     },
-  ];
+    {} as Record<string, BeneficiaryBatchReport[]>
+  );
+  const failedUploadsGroupedByErrorMessagesArray = Object.entries(
+    failedUploadsGroupedByErrorMessages || {}
+  ).map(([errorMessage, items]) => ({
+    errorMessage,
+    items,
+  }));
+
+  const columns: ColumnDef<BeneficiaryBatchReport>[] = useMemo(
+    () => [
+      {
+        header: "Name",
+        accessorKey: "accountName",
+        cell: ({ cell }) => (
+          <div className="max-w-[100px]">
+            <Tooltip title={cell?.getValue() as string}>
+              <Typography className="text-neutral-700" noWrap>
+                {(cell?.getValue() as string) || "----"}
+              </Typography>
+            </Tooltip>
+          </div>
+        ),
+      },
+      {
+        header: "Name retrieved",
+        accessorKey: "resolvedAccountName",
+        cell: ({ cell }) => (
+          <div className="max-w-[100px]">
+            <Tooltip title={cell?.getValue() as string}>
+              <Typography className="text-neutral-700" noWrap>
+                {(cell?.getValue() as string) || "----"}
+              </Typography>
+            </Tooltip>
+          </div>
+        ),
+      },
+      {
+        header: "Bank",
+        accessorKey: "bankName",
+        cell: ({ cell }) => (
+          <div className="max-w-[100px]">
+            <Tooltip title={cell?.getValue() as string}>
+              <Typography className="text-neutral-700" noWrap>
+                {(cell?.getValue() as string) || "----"}
+              </Typography>
+            </Tooltip>
+          </div>
+        ),
+      },
+      {
+        header: "Account No.",
+        accessorKey: "accountNumber",
+        cell: ({ cell }) => (
+          <div className="max-w-[80px]">
+            <Tooltip title={cell?.getValue() as string}>
+              <Typography className="text-neutral-700" noWrap>
+                {(cell?.getValue() as string) || "----"}
+              </Typography>
+            </Tooltip>
+          </div>
+        ),
+      },
+      {
+        header: "Amount",
+        accessorKey: "amount",
+
+        cell: ({ cell, row }) => {
+          return (
+            <div className="flex items-center gap-2">
+              {cell?.getValue() ? (
+                <CurrencyTypography className="text-[#B96C07]">
+                  {cell?.getValue() as string}
+                </CurrencyTypography>
+              ) : (
+                <div>{(cell?.getValue() as string) || "---"}</div>
+              )}
+              {row?.original?.canEdit ? (
+                <IconButton
+                  onClick={() => handleOpenEditBeneficiaryDialog(row?.original)}
+                >
+                  <Icon
+                    icon="lets-icons:edit-duotone"
+                    width="20"
+                    height="20"
+                    className="text-primary-main"
+                  />
+                </IconButton>
+              ) : null}
+            </div>
+          );
+        },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const selectedData = useMemo(() => {
+    if (allCompleted) {
+      return successFullUploads;
+    }
+    if (selectedTab === TABS.SUCCESS) {
+      return successFullUploads;
+    } else if (selectedTab === TABS.FAILED) {
+      return failedUploadsGroupedByErrorMessagesArray?.[isOpenIndex]?.items;
+    }
+    return emptyArray;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTab, isOpenIndex, allCompleted]);
+
+  const successTableInstance = useTable({
+    columns,
+    data: selectedData,
+  });
+
+  const handleResolveDuplicateBeneficiary = async () => {
+    try {
+      await resolveDuplicateBeneficiaryMutation({
+        path: {
+          batchNumber,
+        },
+      }).unwrap();
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.error || "Error resolving duplicate beneficiaries",
+        {
+          variant: "error",
+        }
+      );
+    }
+  };
   return (
     <Paper elevation={0} className="mx-auto max-w-[768px]">
       <div className="p-6">
         <ButtonBase
           disableRipple
+          disabled
           className="flex items-center gap-2"
           onClick={() => stepper.previous()}
         >
@@ -75,7 +276,7 @@ export default function TransferBulkUploadReviewDetails(
 
       <Divider />
       <form onSubmit={formik.handleSubmit}>
-        <div className="space-y-4 p-6 h-[440px] overflow-y-auto scroll-hidden">
+        <div className="space-y-4 p-6 h-[440px] overflow-y-auto scrollbar-hidden">
           <div>
             <div>
               <Typography variant="h5" className="font-semibold">
@@ -90,126 +291,196 @@ export default function TransferBulkUploadReviewDetails(
                 startIcon={<Icon icon="tabler:plus" />}
                 variant="soft"
                 className="mt-2"
+                onClick={toggleOpenBeneficiaryAddEditDialog}
               >
                 Add another Recipient
               </Button>
             </div>
           </div>
 
-          <div>
-            <List
-              sx={{ width: "100%", bgcolor: "background.paper" }}
-              component="nav"
-            >
-              <ListItemButton
-                onClick={handleClick}
-                className="flex items-center gap-2"
-              >
-                {open ? (
-                  <Icon icon="ic:baseline-expand-less" width="12" height="12" />
-                ) : (
-                  <Icon icon="ic:baseline-expand-more" width="12" height="12" />
-                )}
-                <Icon
-                  icon="carbon:checkmark-outline"
-                  width="20"
-                  height="20"
-                  className="text-[#12B76A]"
-                />
-                <Typography className="flex-1 font-semibold">
-                  Fix [No.] accountsd
-                </Typography>
+          {allCompleted ? (
+            <div>
+              <TanStandardTable
+                loading={getBatchReportQuery.isFetching}
+                error={getBatchReportQuery.isError}
+                onErrorRetry={getBatchReportQuery.refetch}
+                onEmptyRetry={getBatchReportQuery.refetch}
+                instance={successTableInstance}
+                pagination={false}
+              />
+            </div>
+          ) : (
+            <div>
+              <List disablePadding>
+                <ListItemButton
+                  onClick={() => handleSelectTab(TABS.SUCCESS)}
+                  className="flex items-center gap-2 py-3"
+                >
+                  {isActiveSelectedTab(TABS.SUCCESS) ? (
+                    <Icon
+                      icon="ic:baseline-expand-less"
+                      width="16"
+                      height="16"
+                      className="text-neutral-500"
+                    />
+                  ) : (
+                    <Icon
+                      icon="ic:baseline-expand-more"
+                      width="16"
+                      height="16"
+                      className="text-neutral-500"
+                    />
+                  )}
+                  <Icon
+                    icon="carbon:checkmark-outline"
+                    width="20"
+                    height="20"
+                    className="text-[#12B76A]"
+                  />
+                  <Typography className="flex-1 font-semibold">
+                    {successFullUploads?.length} successfully uploaded
+                  </Typography>
 
-                <div className="flex-1"></div>
+                  <div className="flex-1"></div>
+                </ListItemButton>
+                <Divider />
+                <Collapse
+                  in={isActiveSelectedTab(TABS.SUCCESS)}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    <ListItem>
+                      <TanStandardTable
+                        loading={getBatchReportQuery.isFetching}
+                        error={getBatchReportQuery.isError}
+                        onErrorRetry={getBatchReportQuery.refetch}
+                        onEmptyRetry={getBatchReportQuery.refetch}
+                        instance={successTableInstance}
+                        pagination={false}
+                      />
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </List>
 
-                <Chip label="3 results Found" color="info" />
-              </ListItemButton>
-              <Divider />
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemText primary="Starred" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            </List>
+              <List disablePadding>
+                <ListItemButton
+                  onClick={() => handleSelectTab(TABS.FAILED)}
+                  className="flex items-center gap-2 py-3"
+                >
+                  {isActiveSelectedTab(TABS.FAILED) ? (
+                    <Icon
+                      icon="ic:baseline-expand-less"
+                      width="16"
+                      height="16"
+                      className="text-neutral-500"
+                    />
+                  ) : (
+                    <Icon
+                      icon="ic:baseline-expand-more"
+                      width="16"
+                      height="16"
+                      className="text-neutral-500"
+                    />
+                  )}
 
-            <List
-              sx={{ width: "100%", bgcolor: "background.paper" }}
-              disablePadding
-              component="nav"
-            >
-              <ListItemButton
-                onClick={handleClick}
-                className="flex items-center gap-2"
-              >
-                {open ? (
-                  <Icon icon="ic:baseline-expand-less" width="12" height="12" />
-                ) : (
-                  <Icon icon="ic:baseline-expand-more" width="12" height="12" />
-                )}
+                  <Icon
+                    icon="hugeicons:alert-02"
+                    width="20"
+                    height="20"
+                    className="text-[#F79009]"
+                  />
+                  <Typography className="flex-1 font-semibold">
+                    Fix {failedUploads?.length} Accounts
+                  </Typography>
 
-                <Icon
-                  icon="hugeicons:alert-02"
-                  width="20"
-                  height="20"
-                  className="text-[#F79009]"
-                />
-                <Typography className="flex-1 font-semibold">
-                  132 Recepients matched
-                </Typography>
-
-                <div className="flex-1"></div>
-
-                <Chip label="3 results Found" color="info" />
-              </ListItemButton>
-              <Divider />
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {failedUploads.map((item) => (
-                    <Fragment>
-                      <ListItem key={item.id}>
-                        <ListItemButton
-                          key={item.id}
-                          sx={{ ml: 4 }}
-                          className="flex items-center gap-2"
-                        >
-                          {open ? (
+                  <div className="flex-1"></div>
+                </ListItemButton>
+                <Divider />
+                <Collapse
+                  in={isActiveSelectedTab(TABS.FAILED)}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    {failedUploadsGroupedByErrorMessagesArray.map(
+                      (failedGroup, index) => (
+                        <Fragment>
+                          <ListItemButton
+                            onClick={() => handleOpenFailedChildTab(index)}
+                            className="flex items-center gap-2 ml-10 mt-1 py-3"
+                          >
+                            {isActiveChild(index) ? (
+                              <Icon
+                                icon="ic:baseline-expand-less"
+                                width="12"
+                                height="12"
+                              />
+                            ) : (
+                              <Icon
+                                icon="ic:baseline-expand-more"
+                                width="12"
+                                height="12"
+                              />
+                            )}
                             <Icon
-                              icon="ic:baseline-expand-less"
-                              width="12"
-                              height="12"
+                              icon="hugeicons:alert-02"
+                              width="20"
+                              height="20"
+                              className="text-[#F79009]"
                             />
-                          ) : (
-                            <Icon
-                              icon="ic:baseline-expand-more"
-                              width="12"
-                              height="12"
-                            />
-                          )}
-                          <ListItemText primary={item.name} />
-                        </ListItemButton>
-                        <Divider />
-                      </ListItem>
-
-                      <Collapse
-                        in={open}
-                        className="ml-20"
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        <List component="div" disablePadding>
-                          <ListItemButton sx={{ pl: 4 }}>
-                            <ListItemText primary="Starred" />
+                            <Typography className="flex-1 font-medium text-neutral-700">
+                              {failedGroup?.errorMessage} (
+                              {failedGroup?.items?.length}){" "}
+                              {failedGroup?.items?.[0]?.responseType ===
+                              "duplicate" ? (
+                                <ButtonBase
+                                  className={clsx(
+                                    resolveDuplicateBeneficiaryMutationResult?.isLoading
+                                      ? "opacity-[0.6]"
+                                      : "",
+                                    "text-primary-main font-semibold"
+                                  )}
+                                  disabled={
+                                    resolveDuplicateBeneficiaryMutationResult?.isLoading
+                                  }
+                                  onClick={handleResolveDuplicateBeneficiary}
+                                >
+                                  Resolve All
+                                </ButtonBase>
+                              ) : (
+                                ""
+                              )}
+                            </Typography>
                           </ListItemButton>
-                        </List>
-                      </Collapse>
-                    </Fragment>
-                  ))}
-                </List>
-              </Collapse>
-            </List>
-          </div>
+                          <Divider className="ml-10" />
+
+                          <Collapse
+                            in={isActiveChild(index)}
+                            className="ml-10"
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List component="div">
+                              <TanStandardTable
+                                loading={getBatchReportQuery.isFetching}
+                                error={getBatchReportQuery.isError}
+                                onErrorRetry={getBatchReportQuery.refetch}
+                                onEmptyRetry={getBatchReportQuery.refetch}
+                                instance={successTableInstance}
+                                pagination={false}
+                              />
+                            </List>
+                          </Collapse>
+                        </Fragment>
+                      )
+                    )}
+                  </List>
+                </Collapse>
+              </List>
+            </div>
+          )}
         </div>
 
         <Divider />
@@ -217,6 +488,7 @@ export default function TransferBulkUploadReviewDetails(
         <div className="px-4 py-4 gap-2 flex justify-between items-center">
           <FormControlLabel
             control={<Checkbox />}
+            {...getCheckFieldProps(formik, "confirmList")}
             className="text-neutral-500 font-light"
             label="I confirm that the details have been cross-checked and is accurate  "
           />
@@ -224,15 +496,28 @@ export default function TransferBulkUploadReviewDetails(
             variant="gradient"
             type="submit"
             size="large"
-            disabled={!formik.isValid || !formik.dirty}
+            disabled={
+              !formik.isValid ||
+              !formik?.values?.confirmList ||
+              noSuccessfulUploads
+            }
             loading={formik.isSubmitting}
             loadingPosition="end"
             endIcon={<></>}
           >
-            Upload & Continue
+            Continue
           </LoadingButton>
         </div>
       </form>
+
+      {isOpenBeneficiaryAddEditDialog && (
+        <TransferAddEditBeneficiaryDialog
+          open={isOpenBeneficiaryAddEditDialog}
+          onClose={handleCloseAddEditBeneficiaryDialog}
+          batchNumber={batchNumber}
+          beneficiaryInfo={beneficiaryInfo}
+        />
+      )}
     </Paper>
   );
 }

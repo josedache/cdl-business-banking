@@ -61,7 +61,7 @@ export default function DashboardAccountSetupBusinessCacReg(
               },
             }}
             label="CAC Number"
-            placeholder="RC718688"
+            placeholder="e.g RC718688"
             className="mt-10"
             {...getTextFieldProps(formik, "rcNumber")}
           />

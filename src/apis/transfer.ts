@@ -1,13 +1,19 @@
 import { baseApi } from "configs/store-query";
 
-import { TRANSFER } from "constants/tags.ts";
+import { BENEFICIARY, TRANSFER } from "constants/tags.ts";
 import {
+  BulkTransferOtpVerificationApiRequest,
+  BulkTransferOtpVerificationApiResponse,
+  BulkTransferTransactionVerificationApiRequest,
+  BulkTransferTransactionVerificationApiResponse,
   CompleteTransferApiRequest,
   CompleteTransferApiResponse,
   GetTransferWalletsApiRequest,
   GetTransferWalletsApiResponse,
   TransferApiRequest,
   TransferApiResponse,
+  TransferBulkApiRequest,
+  TransferBulkApiResponse,
 } from "types/transfer";
 
 export const BASE_URL = "/transfer";
@@ -18,6 +24,48 @@ export const transferApi = baseApi.injectEndpoints({
       query: (config) => ({
         url: BASE_URL,
         method: "post",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
+    bulkTransfer: builder.mutation<
+      TransferBulkApiResponse,
+      TransferBulkApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/bulk",
+        method: "post",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
+    bulkTransferOtpVerification: builder.mutation<
+      BulkTransferOtpVerificationApiResponse,
+      BulkTransferOtpVerificationApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/${path?.batchNumber}/otp`,
+        method: "PATCH",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
+    bulkTransferPinVerification: builder.mutation<
+      BulkTransferTransactionVerificationApiResponse,
+      BulkTransferTransactionVerificationApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/${path?.batchNumber}/pin`,
+        method: "PATCH",
         headers: {
           "x-channel-code": "web",
         },
@@ -48,7 +96,7 @@ export const transferApi = baseApi.injectEndpoints({
         },
         ...config,
       }),
-      invalidatesTags: [{ type: TRANSFER }],
+      invalidatesTags: [{ type: TRANSFER }, { type: BENEFICIARY }],
     }),
   }),
 });

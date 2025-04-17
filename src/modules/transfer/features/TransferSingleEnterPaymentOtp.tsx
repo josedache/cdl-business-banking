@@ -1,13 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { LoadingButton } from "@mui/lab";
-import {
-  Button,
-  ButtonBase,
-  Divider,
-  Paper,
-  Typography,
-  Link as MuiLink,
-} from "@mui/material";
+import { Button, ButtonBase, Divider, Paper, Typography } from "@mui/material";
 
 import { TransferContentProps } from "../types/TransferStepForm";
 import OtpInput from "components/OtpInput";
@@ -28,7 +21,6 @@ export default function TransferSingleEnterPaymentOtp(
   const { formik, phone, stepper } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
-  // const authUser = useAuthUser();
 
   const [resendOtpMutation, resendOtpMutationResult] =
     userApi.useUserSendOtpMutation();
@@ -165,7 +157,6 @@ export default function TransferSingleEnterPaymentOtp(
                               disableRipple
                               color="primary"
                               disabled={resendOtpMutationResult?.isLoading}
-                              component={MuiLink}
                               onClick={sendOtp}
                               className="font-semibold text-primary-main"
                             >

@@ -40,12 +40,13 @@ export default function TransferSingleSuccess(
               {
                 icon: "tdesign:share-filled",
                 text: "Share receipt",
+                onclick,
               },
               {
                 icon: "tabler:notes",
                 text: "View details",
               },
-            ].map(({ icon, text }) => (
+            ].map(({ icon, text, ...rest }) => (
               <div
                 key={text}
                 className="flex flex-col items-center gap-2 px-4 py-2 text-sm"
@@ -54,6 +55,7 @@ export default function TransferSingleSuccess(
                   variant="contained"
                   size="large"
                   className="bg-[#F6F8FB] border border-[#E8E8E8] rounded-lg"
+                  {...rest}
                 >
                   <Icon icon={icon} width="20" height="20" />
                 </IconButton>

@@ -46,6 +46,32 @@ export type TransferApiResponse = ApiResponse<{
   phone: string;
 }>;
 
+export type TransferBulkApiRequest = ApiRequest<{
+  walletId?: number;
+  beneficiaryBatchNumber: string;
+  narration?: string;
+}>;
+export type TransferBulkApiResponse = ApiResponse<{
+  transferBatchNumber: string;
+  phone: string;
+  meta: {
+    count: number;
+    total: number;
+  };
+}>;
+
+export type BulkTransferOtpVerificationApiRequest = ApiRequest<
+  { otp: string },
+  { batchNumber: string }
+>;
+export type BulkTransferOtpVerificationApiResponse = ApiResponse<any>;
+
+export type BulkTransferTransactionVerificationApiRequest = ApiRequest<
+  { transactionPin: string },
+  { batchNumber: string }
+>;
+export type BulkTransferTransactionVerificationApiResponse = ApiResponse<any>;
+
 export type CompleteTransferApiRequest = ApiRequest<
   {
     shouldAddBeneficiary: boolean;
