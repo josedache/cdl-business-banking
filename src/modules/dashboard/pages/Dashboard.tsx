@@ -36,7 +36,7 @@ function Dashboard() {
   return (
     <>
       <Typography className="font-semibold capitalize" noWrap variant="h4">
-        Welcome, {businessName}
+        {businessName ? `Welcome, ${businessName}` : "Welcome"}
       </Typography>
 
       {!isKycCompleted ? (

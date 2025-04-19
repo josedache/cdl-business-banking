@@ -49,9 +49,11 @@ export default function TransferRecentTransactions(
   );
 
   return (
-    <Paper elevation={0} className="mx-auto rounded-2xl max-w-[520px] p-6 ">
+    <Paper elevation={0} className="rounded-2xl p-6 w-full">
       <div className="flex justify-between items-center">
-        <Typography className="text-netral-600">Recent Transactions</Typography>
+        <Typography className="text-neutral-600">
+          Recent Transactions
+        </Typography>
 
         <ButtonBase
           onClick={() => navigate(TRANSACTION)}
@@ -69,6 +71,7 @@ export default function TransferRecentTransactions(
           }
           error={getSingleTransaction?.isError}
           // onRetry={getSingleTransaction.refetch}
+          // onEmptied={() => <TransferRecentTransactionEmpty />}
           renderLoading={() => <TransferRecentTransactionSkeleton />}
         >
           {getSingleTransaction?.data?.data?.map((item, index) => (
@@ -109,6 +112,7 @@ export default function TransferRecentTransactions(
           loading={getBulkTransactionsQuery.isLoading}
           error={getBulkTransactionsQuery?.isError}
           // onRetry={getBulkTransactionsQuery.refetch}
+          // onEmptied={() => <TransferRecentTransactionEmpty />}
           renderLoading={() => <TransferRecentTransactionSkeleton />}
         >
           {getBulkTransactionsQuery?.data?.data?.map((item, index) => (
@@ -163,3 +167,11 @@ function TransferRecentTransactionSkeleton() {
     </div>
   );
 }
+
+// function TransferRecentTransactionEmpty() {
+//   return (
+//     <div className="flex justify-center items-center h-full">
+//       <Typography className="text-neutral-500">No transactions</Typography>
+//     </div>
+//   );
+// }
