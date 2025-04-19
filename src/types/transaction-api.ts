@@ -21,12 +21,12 @@ export type GetTransactionSavingsHistoryApiRequest = ApiRequest<
   }
 >;
 
-export type GetTransactionApiResponse = ApiResponse<Transaction[]>;
+export type GetTransactionApiResponse = ApiResponse<Transaction>;
 
 export type GetTransactionApiRequest = ApiRequest<
   void,
   {
-    id: string;
+    id: string | number;
   },
   {
     tier: string;

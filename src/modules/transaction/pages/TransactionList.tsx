@@ -14,9 +14,15 @@ import SearchTextField from "components/SearchTextField.tsx";
 import * as dfns from "date-fns";
 import useDebouncedState from "hooks/use-debounced-state.ts";
 import useDataRef from "hooks/use-data-ref.ts";
+import TransactionFilter, {
+  TransactionFilterState,
+} from "modules/transaction/features/TransactionFilter.tsx";
+import DateFormat from "enums/date-format.ts";
 
 function TransactionList() {
   const [activeTab, setActiveTab] = useState(0);
+
+  const [filter, setFilter] = useState<TransactionFilterState>(null!);
 
   const transactionsParentRef = useRef(null);
 
@@ -50,6 +56,14 @@ function TransactionList() {
             page: pageState.pageIndex + 1,
             limit: pageState.limit,
             accountNumber: debouncedSearchQ || undefined,
+            transactionType: filter?.transactionType || undefined,
+            dateFormat: DateFormat.HYPHEN_yyyy_MM_dd,
+            fromDate: filter?.startDate
+              ? dfns.format(filter.startDate, DateFormat.HYPHEN_yyyy_MM_dd)
+              : undefined,
+            toDate: filter?.endDate
+              ? dfns.format(filter?.endDate, DateFormat.HYPHEN_yyyy_MM_dd)
+              : undefined,
           },
         }),
         [
@@ -57,6 +71,7 @@ function TransactionList() {
           pageState.limit,
           pageState.pageIndex,
           debouncedSearchQ,
+          filter,
         ]
       ),
       { skip: !mainWallet?.walletId }
@@ -195,19 +210,24 @@ function TransactionList() {
               onChange={(e) => setSearchQ(e.target.value)}
             />
             <div className="flex-1" />
-            <Button
-              className="min-w-[100px]"
-              color="inherit"
-              variant="outlined"
-              size="small"
-              startIcon={
-                <Icon>
-                  <Iconify icon="tabler:filter" />
-                </Icon>
-              }
-            >
-              Filter
-            </Button>
+            <TransactionFilter filter={filter} onFilterApply={setFilter}>
+              {({ toggleOpen }) => (
+                <Button
+                  className="min-w-[100px]"
+                  color="inherit"
+                  variant="outlined"
+                  size="small"
+                  startIcon={
+                    <Icon>
+                      <Iconify icon="tabler:filter" />
+                    </Icon>
+                  }
+                  onClick={toggleOpen}
+                >
+                  Filter
+                </Button>
+              )}
+            </TransactionFilter>
           </div>
         </div>
 
