@@ -10,7 +10,7 @@ import useStepper from "hooks/use-stepper.ts";
 import { DASHBOARD, TRANSFER_BULK } from "constants/urls";
 import TransferBulkTab from "../features/TransferBulkTab";
 import TransferSingle from "../features/TransferSingle";
-import TransferRecentTransactions from "../features/TransferRecentTransactions";
+import TransferRecentTransactions from "../features/TransferRecentTransactions.tsx";
 import TransferSingleConfirmNewTransfer from "../features/TransferSingleConfirmNewTransfer";
 import { TRANSFER_STEPS_ENUM } from "../enums/TransferStepsEnum";
 import TransferSingleEnterPaymentPin from "../features/TransferSingleEnterPaymentPin";
@@ -259,7 +259,7 @@ export default function Transfer() {
       )}
 
       {currentStep.hideTransaction ? null : (
-        <div className="mt-4">
+        <div className="mt-4 max-w-[520px] mx-auto">
           <TransferRecentTransactions
             transactionType={
               stepper.step === TRANSFER_STEPS_ENUM.SINGLE

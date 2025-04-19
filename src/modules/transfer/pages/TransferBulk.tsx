@@ -24,6 +24,7 @@ import TransferBulkUploadPaymentOtpDialog from "../features/TransferBulkUploadPa
 import useToggle from "hooks/use-toggle";
 import { DASHBOARD } from "constants/urls";
 import { transferApi } from "apis/transfer";
+import TransferRecentTransactions from "../features/TransferRecentTransactions";
 
 export default function TransferBulk() {
   const { id } = useParams();
@@ -302,6 +303,9 @@ export default function TransferBulk() {
         </Stepper>
         <div className="mt-5">{currentStep?.content}</div>
       </Container>
+      <div className="mt-5 max-w-[768px] mx-auto">
+        <TransferRecentTransactions transactionType="bulk_transfer" />
+      </div>
       {openOtpVerificationDialog && (
         <TransferBulkUploadPaymentOtpDialog
           onClose={toggleOpenOtpVerificationDialog}
