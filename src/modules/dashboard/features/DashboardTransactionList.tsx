@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Paper, Tab, Tabs, Typography } from "@mui/material";
 import TransactionListFeature from "modules/transaction/features/TransactionList.tsx";
 
-function TransactionList() {
+function DashboardTransactionList() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
@@ -19,12 +19,11 @@ function TransactionList() {
             >
               {[
                 { label: "All", value: 0 },
-                { label: "Transfers", value: 1 },
+                { label: "Received", value: 1 },
                 {
-                  label: "Airtime & Data",
+                  label: "Sent",
                   value: 2,
                 },
-                { label: "Savings", value: 3 },
               ].map((tab, index) => (
                 <Tab key={index} {...tab} value={index} />
               ))}
@@ -32,12 +31,12 @@ function TransactionList() {
           </div>
         </div>
 
-        <TransactionListFeature />
+        <TransactionListFeature hideFilter noPagination />
       </Paper>
     </>
   );
 }
 
-export const Component = TransactionList;
+export const Component = DashboardTransactionList;
 
-export default TransactionList;
+export default DashboardTransactionList;

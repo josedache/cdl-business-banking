@@ -21,6 +21,7 @@ import DatePicker from "components/DatePicker.tsx";
 import CurrencyTextField from "components/CurrencyTextField.tsx";
 import { TransactionType } from "modules/transaction/enums/transaction-type.ts";
 import { getTextFieldHelperTextAndError } from "utils/formik/get-text-field-helper-text-and-error.ts";
+import { PAGE_LIMIT } from "constants/pagination.ts";
 
 function TransactionFilter(props: TransactionFilterProps) {
   const { filter, onFilterApply, children, onClose, ...restProps } = props;
@@ -31,6 +32,8 @@ function TransactionFilter(props: TransactionFilterProps) {
 
   const formik = useFormik<TransactionFilterState>({
     initialValues: {
+      pageIndex: filter.pageIndex ?? 0,
+      limit: filter?.limit ?? PAGE_LIMIT,
       period: filter?.period ?? "",
       startDate: filter?.startDate ?? null,
       endDate: filter?.endDate ?? null,
@@ -222,6 +225,8 @@ export type TransactionFilterProps = {
 } & Omit<DialogProps, "children" | "open" | "id">;
 
 export type TransactionFilterState = {
+  pageIndex: number;
+  limit: number;
   period: string;
   startDate: Date;
   endDate: Date;

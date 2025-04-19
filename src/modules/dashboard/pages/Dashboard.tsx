@@ -20,6 +20,7 @@ import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
 import { useNavigate } from "react-router-dom";
 import { TRANSFER } from "constants/urls";
+import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
@@ -179,6 +180,10 @@ function Dashboard() {
           </div>
         </Paper>
       </Card>
+
+      <div className="mt-4">
+        <DashboardTransactionList />
+      </div>
 
       {isAccountSetup && (
         <DashboardAccountSetupDialog
