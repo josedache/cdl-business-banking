@@ -21,6 +21,7 @@ import getKycVerificationPercentage from "utils/function/get-kyc-verification-pe
 import { useNavigate } from "react-router-dom";
 import { TRANSFER } from "constants/urls";
 import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
+import { transferApi } from "apis/transfer.ts";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
@@ -33,6 +34,14 @@ function Dashboard() {
   const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
 
   const businessName = user?.info?.businesses?.[0]?.name;
+
+  const transferWalletsQueryResult =
+    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWallets = transferWalletsQueryResult.data?.data;
+
+  const mainWallet = transferWallets?.find(
+    (wallet) => wallet.businessType === "Group"
+  );
 
   return (
     <>
@@ -134,7 +143,7 @@ function Dashboard() {
               className="font-semibold mt-4"
               blur={isBlurWalletBalance}
             >
-              0.0
+              {mainWallet?.balance}
             </CurrencyTypography>
             <Typography className="font-semibold mt-1">4.0% PA</Typography>
           </div>

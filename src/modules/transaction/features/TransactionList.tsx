@@ -59,8 +59,8 @@ function TransactionList(props: TransactionListProps) {
         () => ({
           path: { savingsAccountId: mainWallet?.walletId },
           params: {
-            page: filter.pageIndex + 1,
-            limit: filter.limit,
+            page: filter?.pageIndex + 1,
+            limit: filter?.limit,
             accountNumber: debouncedSearchQ || undefined,
             transactionType: filter?.transactionType || undefined,
             dateFormat: DateFormat.HYPHEN_yyyy_MM_dd,
@@ -74,8 +74,8 @@ function TransactionList(props: TransactionListProps) {
         }),
         [
           mainWallet?.walletId,
-          filter.limit,
-          filter.pageIndex,
+          // filter.limit,
+          // filter.pageIndex,
           debouncedSearchQ,
           filter,
         ]
