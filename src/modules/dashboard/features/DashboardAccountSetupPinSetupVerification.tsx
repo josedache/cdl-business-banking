@@ -15,7 +15,7 @@ export default function DashboardAccountSetupPinSetupVerification(
   const { formik, stepper } = props;
 
   return (
-    <Paper className="mx-auto max-w-[600px]">
+    <Paper elevation={0} className="mx-auto max-w-[600px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase

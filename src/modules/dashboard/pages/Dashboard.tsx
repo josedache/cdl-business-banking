@@ -21,12 +21,12 @@ import getKycVerificationPercentage from "utils/function/get-kyc-verification-pe
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
-  const [isAccountSetup, toggleAccountSetup] = useToggle(true);
-
   const user = useAuthUser();
 
   const isKycCompleted = isKycCheckCompleted(user?.info);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
+
+  const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
 
   const businessName = user?.info?.businesses?.[0]?.name;
 
@@ -120,7 +120,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <Paper elevation={0} className="bg-[#F8F9FB] mt-6">
+        <Paper elevation={0} elevation={0} className="bg-[#F8F9FB] mt-6">
           <div className="px-4 pt-4">
             <Typography className="font-semibold text-[#686A71]">
               Main wallet balance

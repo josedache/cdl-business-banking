@@ -1,35 +1,28 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-
 import { LoadingButton } from "@mui/lab";
-import {
-  Button,
-  ButtonBase,
-  Divider,
-  Paper,
-  Typography,
-  Link as MuiLink,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Button, ButtonBase, Divider, Paper, Typography } from "@mui/material";
 
-import Countdown from "components/Countdown";
-import NumberInput from "components/NumberInput";
+import { TransferContentProps } from "../types/TransferStepForm";
 import OtpInput from "components/OtpInput";
-import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
-import getCountdownDate from "utils/date/get-countdown-date";
+import NumberInput from "components/NumberInput";
+import { useEffect, useState } from "react";
 import { userApi } from "apis/user";
 import { useSnackbar } from "notistack";
+import Countdown from "components/Countdown";
+import getCountdownDate from "utils/date/get-countdown-date";
+import useAuthUser from "hooks/use-auth-user";
 
-type DashboardAccountSetupNinVerificationProps = {
+type TransferSingleEnterPaymentOtpProps = {
   phone: string;
-  expiration: number;
-} & DashboardAccountSetupContentProps;
+} & TransferContentProps;
 
-export default function DashboardAccountSetupNinVerification(
-  props: DashboardAccountSetupNinVerificationProps
+export default function TransferSingleEnterPaymentOtp(
+  props: TransferSingleEnterPaymentOtpProps
 ) {
-  const { phone, expiration, formik, stepper } = props;
-  const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
+  const { formik, phone, stepper } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
+  const authUser = useAuthUser();
 
   const [resendOtpMutation, resendOtpMutationResult] =
     userApi.useUserSendOtpMutation();
@@ -40,10 +33,10 @@ export default function DashboardAccountSetupNinVerification(
     try {
       const resp = await resendOtpMutation({
         body: {
-          reason: "verify_nin",
+          reason: "complete_transfer",
         },
       }).unwrap();
-      setCountdownDate(getCountdownDate(expiration));
+      setCountdownDate(getCountdownDate(300));
 
       enqueueSnackbar(resp?.message || "OTP sent successfully", {
         variant: "success",
@@ -76,16 +69,17 @@ export default function DashboardAccountSetupNinVerification(
   };
 
   useEffect(() => {
-    setCountdownDate(getCountdownDate(expiration));
+    setCountdownDate(getCountdownDate(300));
 
     return () => {
       setCountdownDate(0);
     };
   }, []);
 
+  const identifier = phone;
   return (
     <Paper elevation={0} className="mx-auto max-w-[520px]">
-      <form onSubmit={formik.handleSubmit} className="max-w-[520px]">
+      <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase
             disableRipple
@@ -98,16 +92,16 @@ export default function DashboardAccountSetupNinVerification(
         </div>
 
         <Divider />
-        <div className="px-6 pt-6 pb-8 flex justify-center items-center w-full">
+        <div className="px-6 pt-6 flex justify-center items-center w-full">
           <div className="max-w-[416px] w-full">
             <div className="flex items-center flex-col w-full">
               <Typography variant="h5" className="text-center">
-                Verification Required
+                Final Verification Required
               </Typography>
               <Typography className="text-neutral-500 text-center max-w-[354px] w-full">
                 A 6-digit OTP has been sent to{" "}
-                <span className="text-neutral-900">{phone}</span> Input the code
-                here to continue
+                <span className="text-neutral-900">{identifier}</span> Input the
+                code here to continue
               </Typography>
             </div>
             <div className="grid justify-center gap-4 mt-8">
@@ -181,6 +175,7 @@ export default function DashboardAccountSetupNinVerification(
             </div>
           </div>
         </div>
+
         <Typography className="mt-8 text-center font-semibold">Or</Typography>
 
         <div className="grid grid-cols-2 px-6 gap-4 mt-6">
@@ -210,12 +205,11 @@ export default function DashboardAccountSetupNinVerification(
             USSD Code
           </Button>
         </div>
-        <Divider className="mt-12 mb-5" />
-        <div className="px-6 pb-6">
+        <Divider className="mt-12" />
+        <div className="px-4 py-4 flex justify-end">
           <LoadingButton
             variant="gradient"
             type="submit"
-            fullWidth
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}

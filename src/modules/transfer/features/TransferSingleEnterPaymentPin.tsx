@@ -2,20 +2,19 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { LoadingButton } from "@mui/lab";
 import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
 
-import NumberInput from "components/NumberInput";
+import { TransferContentProps } from "../types/TransferStepForm";
 import OtpInput from "components/OtpInput";
-import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
+import NumberInput from "components/NumberInput";
 
-type DashboardAccountSetupPinSetupProps =
-  {} & DashboardAccountSetupContentProps;
+type TransferSingleEnterPaymentPinProps = {} & TransferContentProps;
 
-export default function DashboardAccountSetupPinSetup(
-  props: DashboardAccountSetupPinSetupProps
+export default function TransferSingleEnterPaymentPin(
+  props: TransferSingleEnterPaymentPinProps
 ) {
   const { formik, stepper } = props;
 
   return (
-    <Paper elevation={0} className="mx-auto max-w-[600px]">
+    <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
         <div className="p-6">
           <ButtonBase
@@ -29,14 +28,13 @@ export default function DashboardAccountSetupPinSetup(
         </div>
 
         <Divider />
-        <div className="px-6 pt-6 pb-8 flex justify-center items-center w-full">
-          <div className="w-full">
-            <Typography variant="h5">Create 6-digit transaction Pin</Typography>
-            <Typography className="text-neutral-500 w-full">
-              Use a PIN you can remember, it’ll be used for all
-              transactions{" "}
-            </Typography>
-            <div className="grid justify-center gap-4 mt-10">
+        <div className="px-6 py-6">
+          <Typography variant="h5" className="text-center">
+            Enter Payment Pin
+          </Typography>
+
+          <div className="mt-[21px]">
+            <div className="grid justify-center gap-4">
               <OtpInput
                 value={formik.values.transactionPin}
                 onChange={(otp) => {
@@ -53,21 +51,26 @@ export default function DashboardAccountSetupPinSetup(
                   },
                 }}
               />
+
+              <ButtonBase disableRipple onClick={() => stepper.previous()}>
+                Forgot payment PIN?
+              </ButtonBase>
             </div>
-            <LoadingButton
-              variant="gradient"
-              type="submit"
-              fullWidth
-              disabled={!formik.isValid || !formik.dirty}
-              size="large"
-              loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
-              className="mt-15"
-            >
-              Next
-            </LoadingButton>
           </div>
+        </div>
+        <Divider />
+        <div className="px-4 py-4 flex justify-end">
+          <LoadingButton
+            variant="gradient"
+            type="submit"
+            disabled={!formik.isValid || !formik.dirty}
+            size="large"
+            loading={formik.isSubmitting}
+            loadingPosition="end"
+            endIcon={<></>}
+          >
+            Continue
+          </LoadingButton>
         </div>
       </form>
     </Paper>

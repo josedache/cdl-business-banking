@@ -155,7 +155,7 @@ function AuthSignup() {
             open={passwordPopover.isOpen}
             anchorEl={passwordPopover.anchorEl}
           >
-            <Paper className="p-4 space-y-4">
+            <Paper elevation={0} className="p-4 space-y-4">
               <Typography variant="h6">Your Password must contain</Typography>
               <div className="space-y-4">
                 {[
@@ -363,7 +363,9 @@ function AuthSignup() {
 
   return (
     <>
-      <Paper className="p-4 md:p-8">{[step1, step2][stepper.step]}</Paper>
+      <Paper elevation={0} className="p-4 md:p-8">
+        {[step1, step2][stepper.step]}
+      </Paper>
     </>
   );
 }
