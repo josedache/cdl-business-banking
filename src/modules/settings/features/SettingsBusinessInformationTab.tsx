@@ -51,7 +51,7 @@ const SettingsBusinessInformationTab = () => {
       onClick: () => {},
     },
   ];
-
+  
   const complianceInfo = [
     {
       title: "Directors",

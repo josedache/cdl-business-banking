@@ -15,13 +15,13 @@ const SettingsGeneralTab = () => {
   const personalInfo = [
     {
       title: "Full Name",
-      value: `${authUser?.info?.firstName ?? 'N/A'} ${authUser?.info?.lastName ?? ''}` ,
+      value: `${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`,
       canEdit: false,
       onClick: () => {},
     },
     {
       title: "Email Address",
-      value: `${authUser?.info?.email ?? 'N/A'} `,
+      value: `${authUser?.info?.email ?? "N/A"} `,
       canEdit: true,
       onClick: () => {
         setOpenEditEmailDialog(true);
@@ -29,7 +29,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Phone Number",
-      value: `${authUser?.info?.phone ?? 'N/A'} `,
+      value: `${authUser?.info?.phone ?? "N/A"} `,
       canEdit: false,
       onClick: () => {},
     },
@@ -63,7 +63,11 @@ const SettingsGeneralTab = () => {
 
   const referralDetails = [
     { title: "Referral Code", value: "CPA_00WJBK4HR9" },
-    { title: "Referral Link", value: "https://ww...4HR9" },
+    {
+      title: "Referral Link",
+      value:
+        "https://www.4HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR9",
+    },
   ];
 
   async function handleSelfieUpdate(file: File) {
@@ -95,7 +99,7 @@ const SettingsGeneralTab = () => {
   return (
     <div className="grid xl:grid-cols-5 gap-6">
       <div className="xl:col-span-3">
-        <Paper className="py-5 mt-6 ">
+        <Paper className="py-5 mt-6 " elevation={0}>
           <div className="flex items-center mb-6 px-10 ">
             <ButtonBase className="rounded-full p-5 bg-gray-500">
               <Iconify
@@ -113,7 +117,6 @@ const SettingsGeneralTab = () => {
                 Segun.smute@gmail.com
               </Typography>
             </div>
-
             <Dropzone
               multiple={false}
               maxSize={1024 * 1024 * 2}
@@ -213,7 +216,7 @@ const SettingsGeneralTab = () => {
       </div>
 
       <div className="xl:col-span-2">
-        <Paper className="py-6 mt-6 ">
+        <Paper className="py-6 mt-6 " elevation={0}>
           <div className="mb-6 px-10">
             <Typography className="font-semibold text-gray-800 text-lg">
               Refer a Friend Both Earn X amount
@@ -231,21 +234,27 @@ const SettingsGeneralTab = () => {
                 return (
                   <div
                     key={index}
-                    className="flex justify-between items-center w-full py-3 px-4 mt-2 border border-neutral-200  rounded-lg "
+                    className="grid grid-cols-2 w-full py-3 px-4 mt-2 border border-neutral-200  rounded-lg "
                   >
-                    <Typography className="text-neutral-700">
+                    <Typography className="text-neutral-700" noWrap>
                       {opt.title}
                     </Typography>
-                    <Typography className="font-medium text-neutral-800">
-                      {opt.value}{" "}
+
+                    <div className="flex gap-1 justify-end">
+                      <Typography
+                        className="font-medium text-neutral-800"
+                        noWrap
+                      >
+                        {opt.value}
+                      </Typography>
                       <ButtonBase>
                         <Iconify
-                          fontSize={16}
-                          icon="hugeicons:copy-01"
+                          fontSize={18}
+                          icon="solar:copy-bold"
                           className="cursor-pointer text-neutral-300"
                         />
                       </ButtonBase>
-                    </Typography>
+                    </div>
                   </div>
                 );
               })}
