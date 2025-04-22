@@ -9,6 +9,7 @@ export type UserLoginApiRequest = ApiRequest<{
 export type UserLoginApiResponse = ApiResponse<{
   token: string;
   expireTime: number;
+  is_verified: number;
   message: string;
 }>;
 
@@ -63,25 +64,25 @@ export type UserResetPasswordSendApiRequest = ApiRequest<{
 export type UserResetPasswordSendApiResponse = ApiResponse<{
   token: string;
   message: string;
-  statusCode :string;
+  statusCode: string;
 }>;
 
 export type UserResetPasswordVerifyApiRequest = ApiRequest<{
-  email:string;
+  email: string;
   otp: string;
 }>;
 
 export type UserResetPasswordVerifyApiResponse = ApiResponse<{
-  token:string;
+  token: string;
 }>;
 
 export type UserResetPasswordApiRequest = ApiRequest<{
-  email:string;
-  password:string;
-  confirmPassword :string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }>;
 
-export type UserResetPasswordApiResponse = ApiResponse
+export type UserResetPasswordApiResponse = ApiResponse;
 
 export type UserKycApiRequest = ApiRequest<{
   nin?: string;

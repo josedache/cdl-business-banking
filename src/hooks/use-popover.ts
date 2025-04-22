@@ -4,7 +4,7 @@ function usePopover() {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const togglePopover = useCallback((event?: any) => {
-    setAnchorEl((p) => (p ? null : event?.currentTarget));
+    setAnchorEl((p) => (p ? null : event?.currentTarget ?? event?.target));
   }, []);
 
   return {
