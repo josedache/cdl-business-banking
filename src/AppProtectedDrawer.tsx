@@ -27,7 +27,7 @@ import Logo from "components/Logo";
 import useToggle from "hooks/use-toggle";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
-import { DASHBOARD, TRANSFER } from "constants/urls";
+import { DASHBOARD, SETTINGS, TRANSFER } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 
@@ -91,6 +91,12 @@ function AppProtectedDrawer() {
     },
     {
       links: [
+        {
+          icon: "hugeicons:setting-07",
+          label: "Settings",
+          to: SETTINGS,
+          kycAllow: true,
+        },
         {
           icon: "hugeicons:customer-support",
           label: "Support",
