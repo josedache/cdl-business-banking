@@ -16,6 +16,7 @@ import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import { BusinessCacRegInfo } from "types/user-api";
 import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
 import useToggle from "hooks/use-toggle";
+import { format } from "date-fns";
 
 type DashboardAccountSetupBusinessCacRegProps = {
   previewInfo?: BusinessCacRegInfo;
@@ -33,7 +34,9 @@ export default function DashboardAccountSetupBusinessCacReg(
     { title: "Company Type", value: previewInfo?.companyType || "N/A" },
     {
       title: "Date of Registration / Incorporation",
-      value: previewInfo?.registrationDate || "N/A",
+      value: previewInfo?.registrationDate
+        ? format(new Date(previewInfo?.registrationDate), "PP")
+        : "N/A",
     },
     {
       title: "Company Status",

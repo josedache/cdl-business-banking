@@ -410,7 +410,11 @@ function DashboardAccountSetup() {
       content: (
         <DashboardAccountSetupBusinessCacRegVerification
           {...contentProps}
-          phone={registerMerchantCacMutationResult?.data?.data?.phone || ""}
+          phone={
+            registerMerchantCacMutationResult?.data?.data?.phone ||
+            registerMerchantCacMutationResult?.data?.data?.email ||
+            ""
+          }
           expiration={
             registerMerchantCacMutationResult?.data?.data?.expiry || 0
           }

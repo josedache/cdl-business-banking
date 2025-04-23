@@ -77,7 +77,11 @@ function Dashboard() {
             </div>
 
             <div>
-              <Button onClick={toggleAccountSetup} size="large">
+              <Button
+                onClick={toggleAccountSetup}
+                variant="gradient"
+                size="large"
+              >
                 Unlock Full Access
               </Button>
             </div>

@@ -118,6 +118,7 @@ export type UserKycApiRequest = ApiRequest<{
 export type UserKycApiResponse = ApiResponse<{
   expiry: number;
   phone: string;
+  email?: string;
 }>;
 
 export type UserPinApiRequest = ApiRequest<

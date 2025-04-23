@@ -12,6 +12,7 @@ export type MerchantRegistrationNonCacApiRequest = ApiRequest<{
 export type MerchantRegistrationCacApiResponse = ApiResponse<{
   expiry: number;
   phone: string;
+  email?: string;
 }>;
 
 export type MerchantRegistrationCacApiRequest = ApiRequest<
