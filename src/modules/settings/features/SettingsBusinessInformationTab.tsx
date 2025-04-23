@@ -242,7 +242,7 @@ const SettingsBusinessInformationTab = () => {
             }}
             className="flex flex-col flex-wrap gap-4 p-6 mt-6"
           >
-            <div className="flex items-cente gap-4 ">
+            <div className="flex items-center gap-4 ">
               <div>
                 <CircularProgressWithLabel
                   value={verificationPercentage || 0}
