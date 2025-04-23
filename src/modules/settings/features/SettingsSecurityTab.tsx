@@ -40,10 +40,10 @@ const SettingsSecurityTab = () => {
   return (
     <div className="grid xl:grid-cols-5 gap-6">
       <div className="xl:col-span-3">
-        <div className="divide-y divide-gray-100 mt-6">
+        <Paper className=" divide-y divide-gray-100 mt-6" elevation={0}>
           {securityDetails?.map((opt, index) => {
             return (
-              <Paper key={index} className="py-6 px-10 ">
+              <div key={index} className="py-6 px-10 ">
                 <Typography className="font-semibold text-neutral-900">
                   {opt.title}
                 </Typography>
@@ -65,20 +65,18 @@ const SettingsSecurityTab = () => {
                   </Typography>
                   <Typography
                     className={`font-semibold cursor-pointer ${opt.canEdit ? "text-primary-main " : " text-primary-main/25"}`}
-                    onClick={() => {
-                      opt.onClick?.();
-                    }}
+                    onClick={opt.onClick}
                   >
                     Update
                   </Typography>
                 </div>
-              </Paper>
+              </div>
             );
           })}
-        </div>
+        </Paper>
       </div>
 
-      <Paper className="xl:col-span-2 py-6 px-10 mt-6 h-fit">
+      <Paper className="xl:col-span-2 py-6 px-10 mt-6 h-fit" elevation={0}>
         <Typography className="font-semibold text-neutral-900">
           Need help?
         </Typography>

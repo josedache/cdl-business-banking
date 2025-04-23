@@ -24,19 +24,16 @@ const SettingsDirectorProfileDialog = (
 
   const formik = useFormik<SettingsDirectorProfileValues>({
     initialValues: {
-      name: ""
+      name: "",
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
     onSubmit: async (values) => {
       try {
       } catch (error: any) {
-        enqueueSnackbar(
-          error?.data?.message || "Failed to process",
-          {
-            variant: "error",
-          }
-        );
+        enqueueSnackbar(error?.data?.message || "Failed to process", {
+          variant: "error",
+        });
       }
     },
   });

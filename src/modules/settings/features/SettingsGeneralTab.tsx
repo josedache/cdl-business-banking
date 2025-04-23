@@ -104,13 +104,16 @@ const SettingsGeneralTab = () => {
             <ButtonBase className="rounded-full p-5 bg-gray-500">
               <Iconify
                 icon="mingcute:user-3-fill"
-                fontSize={46}
+                fontSize={48}
                 className=" text-white"
               />
             </ButtonBase>
 
             <div className="ml-6 ">
-              <Typography className="font-semibold">
+              <Typography
+                variant="h6"
+                className="font-semibold text-neutral-800"
+              >
                 Segun Akinnibosun
               </Typography>
               <Typography className="font-medium text-neutral-500 ">
@@ -148,8 +151,11 @@ const SettingsGeneralTab = () => {
             <div className="space-y-3 mt-4">
               {personalInfo?.map((opt, index) => {
                 return (
-                  <div className="flex justify-between items-center">
-                    <div key={index} className="py-1">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center"
+                  >
+                    <div className="py-1">
                       <Typography className="font-medium text-neutral-900">
                         {opt.title}
                       </Typography>
@@ -159,9 +165,7 @@ const SettingsGeneralTab = () => {
                     </div>
                     <Typography
                       className={`font-semibold ${opt.canEdit ? "text-primary-main cursor-pointer " : " text-primary-main/25"}`}
-                      onClick={() => {
-                        opt.onClick?.();
-                      }}
+                      onClick={opt.onClick}
                     >
                       Edit
                     </Typography>
@@ -191,9 +195,7 @@ const SettingsGeneralTab = () => {
                     {opt.canEdit ? (
                       <Typography
                         className="text-primary-main font-semibold"
-                        onClick={() => {
-                          opt.onClick?.();
-                        }}
+                        onClick={opt.onClick}
                       >
                         Edit
                       </Typography>
