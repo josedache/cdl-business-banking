@@ -68,7 +68,7 @@ function AuthSignin() {
               }
             );
 
-            if (!data?.data?.is_verified) {
+            if (!data?.data?.is_verified && !data?.data?.token) {
               return navigate(SIGNUP, { state: { step: 1 } });
             }
 
