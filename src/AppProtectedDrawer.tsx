@@ -63,13 +63,13 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:wallet-add-01",
           label: "Main Wallet",
-          to: "/test",
+          to: "/main-wallet",
           kycAllow: false,
         },
         {
           icon: "hugeicons:money-receive-02",
           label: "Collections",
-          to: "/test",
+          to: "/collections",
           kycAllow: false,
         },
       ],
@@ -80,7 +80,7 @@ function AppProtectedDrawer() {
           icon: "hugeicons:time-02",
           label: "Transactions",
           to: TRANSACTION,
-          kycAllow: true,
+          kycAllow: isKycCompleted,
         },
         {
           icon: "hugeicons:money-exchange-03",

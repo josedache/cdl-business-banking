@@ -10,7 +10,6 @@ import {
 import clsx from "clsx";
 import CircularProgressWithLabel from "components/CircularProgress";
 import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
-import CheckMark from "assets/imgs/check.png";
 import { useNavigate } from "react-router-dom";
 import { ACCOUNT_SETUP } from "constants/urls";
 import useAuthUser from "hooks/use-auth-user";
@@ -79,11 +78,15 @@ export default function DashboardAccountSetupDialog(
       <DialogTitleXCloseButton onClose={onClose}></DialogTitleXCloseButton>
       <DialogContent>
         <div className="flex justify-center mt-5">
-          <img
-            alt="checkmark"
-            src={CheckMark}
-            className="w-full h-full max-w-[60px]"
-          />
+          <div className="bg-[#12B76A] border-6 border-[#DBF4E9] w-16 h-16 rounded-full flex items-center justify-center">
+            <Icon
+              icon="charm:tick"
+              width="35"
+              stroke="100"
+              height="35"
+              className="text-white"
+            />
+          </div>
         </div>
 
         <Typography variant="h5" className="text-center font-semibold mt-2">

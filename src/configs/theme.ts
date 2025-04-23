@@ -602,6 +602,7 @@ export const theme = responsiveFontSizes(
       MuiPaper: {
         defaultProps: {
           shape: "circular",
+          elevation: 1,
         },
         styleOverrides: {
           root: ({ ownerState }) => {

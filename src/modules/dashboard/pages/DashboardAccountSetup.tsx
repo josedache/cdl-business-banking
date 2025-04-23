@@ -6,9 +6,8 @@ import useStepper from "hooks/use-stepper.ts";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-
 import { useFormik } from "formik";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 
 import { ONBOARDING_STEPS } from "../enums/onboardingStepsEnum";
 import { DASHBOARD } from "constants/urls";
@@ -40,11 +39,10 @@ function DashboardAccountSetup() {
   });
 
   const [userKyCMutation, userKyCMutationResult] = userApi.useUserKycMutation();
-  const [verifyOtpMutation] = userApi.useVerifyUserOtpMutation();
+  const [verifyOtpMutation, verifyOtpMutationResult] =
+    userApi.useVerifyUserOtpMutation();
   const [registerMerchantCacMutation, registerMerchantCacMutationResult] =
     merchantApi.useMerchantRegistrationCacMutation();
-  const [registerMerchantNonCacMutation] =
-    merchantApi.useMerchantRegistrationNonCacMutation();
   const [userPinMutation] = userApi.useUserPinMutation();
 
   const formik = useFormik<DashboardAccountSetupFormikValues>({
@@ -55,7 +53,7 @@ function DashboardAccountSetup() {
 
       rcNumber: "",
 
-      businessType: "",
+      businessTypeId: "",
       businessName: "",
       annualTurnOver: "",
       businessSector: "",
@@ -65,47 +63,59 @@ function DashboardAccountSetup() {
       confirmTransactionPin: "",
     },
     validationSchema: yup.object({
-      ...[
-        {
-          nin: yup.string().label("NIN").max(11),
-        },
-        {
-          otp: yup.string().label("Otp").max(6),
-        },
-        {
-          bvn: yup.string().label("BVN").max(11),
-        },
-        {
-          otp: yup.string().label("Otp").max(6),
-        },
-        {},
-        {
-          rcNumber: yup.string().label("RC Number"),
-        },
-        {
-          otp: yup.string().label("Otp").max(6),
-        },
-        {
-          businessType: yup.string().label("Business Type").required(),
-          businessName: yup.string().label("Business Name").required(),
-          annualTurnOver: yup.string().label("Annual Turn Over"),
-          businessSector: yup
-            .string()
-            .label("Business Sector Subcategory")
-            .required(),
-          businessSectorParent: yup
-            .string()
-            .label("Business Sector")
-            .required(),
-        },
-        {
-          transactionPin: yup.string().label("Pin").max(6),
-        },
-        {
-          confirmTransactionPin: yup.string().label("Pin").max(6),
-        },
-        {},
-      ][stepper.step],
+      ...(() => {
+        switch (stepper.step) {
+          case ONBOARDING_STEPS.NIN:
+            return {
+              nin: yup.string().label("NIN").max(11),
+            };
+          case ONBOARDING_STEPS.NIN_VERIFICATION:
+            return {
+              otp: yup.string().label("Otp").max(6),
+            };
+          case ONBOARDING_STEPS.BVN:
+            return {
+              bvn: yup.string().label("BVN").max(11),
+            };
+          case ONBOARDING_STEPS.BVN_VERIFICATION:
+            return {
+              otp: yup.string().label("Otp").max(6),
+            };
+          case ONBOARDING_STEPS.BUSINESS:
+            return {};
+          case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION:
+            return {
+              rcNumber: yup.string().label("RC Number"),
+            };
+          case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION:
+            return {
+              otp: yup.string().label("Otp").max(6),
+            };
+          case ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION:
+            return {
+              businessTypeId: yup.string().label("Business Type").required(),
+              annualTurnOver: yup.string().label("Annual Turn Over"),
+              businessSector: yup
+                .string()
+                .label("Business Sector Subcategory")
+                .required(),
+              businessSectorParent: yup
+                .string()
+                .label("Business Sector")
+                .required(),
+            };
+          case ONBOARDING_STEPS.PIN_SETUP:
+            return {
+              transactionPin: yup.string().label("Pin").max(6),
+            };
+          case ONBOARDING_STEPS.PIN_SETUP_VERIFICATION:
+            return {
+              confirmTransactionPin: yup.string().label("Pin").max(6),
+            };
+          default:
+            return {};
+        }
+      })(),
     }),
     onSubmit: async (values) => {
       try {
@@ -146,10 +156,15 @@ function DashboardAccountSetup() {
                 otp: values.otp,
               },
             }).unwrap();
-            stepper.go(ONBOARDING_STEPS.BVN);
+            stepper.go(ONBOARDING_STEPS.NIN_PREVIEW);
+            formik.setFieldValue("otp", "");
             enqueueSnackbar(resp?.message || "Successful!", {
               variant: "success",
             });
+            break;
+          }
+          case ONBOARDING_STEPS.NIN_PREVIEW: {
+            stepper.go(ONBOARDING_STEPS.BVN);
             break;
           }
           case ONBOARDING_STEPS.BVN: {
@@ -184,13 +199,28 @@ function DashboardAccountSetup() {
                 otp: values.otp,
               },
             }).unwrap();
+            stepper.go(ONBOARDING_STEPS.BVN_PREVIEW);
+            formik.setFieldValue("otp", "");
+            break;
+          }
+          case ONBOARDING_STEPS.BVN_PREVIEW: {
             stepper.go(ONBOARDING_STEPS.BUSINESS);
+            break;
+          }
+          case ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION: {
+            stepper.go(ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION);
             break;
           }
           case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION: {
             const resp = await registerMerchantCacMutation({
-              params: {
+              body: {
                 rcNumber: values.rcNumber,
+                businessType: Number(values.businessTypeId),
+                businessSector: Number(values.businessSectorParent),
+                businessSubSector: Number(values.businessSector),
+                ...(values.annualTurnOver && {
+                  annualTurnOver: Number(values.annualTurnOver),
+                }),
               },
             }).unwrap();
 
@@ -220,28 +250,18 @@ function DashboardAccountSetup() {
               },
             }).unwrap();
 
+            stepper.go(ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_PREVIEW);
+            formik.setFieldValue("otp", "");
+            enqueueSnackbar(resp?.message || "Successful!", {
+              variant: "success",
+            });
+            break;
+          }
+          case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_PREVIEW: {
             stepper.go(ONBOARDING_STEPS.PIN_SETUP);
+            break;
+          }
 
-            enqueueSnackbar(resp?.message || "Successful!", {
-              variant: "success",
-            });
-            break;
-          }
-          case ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION: {
-            const resp = await registerMerchantNonCacMutation({
-              body: {
-                businessType: values.businessType,
-                businessName: values.businessName,
-                annualTurnOver: values.annualTurnOver,
-                businessSector: values.businessSector,
-              },
-            }).unwrap();
-            stepper.go(ONBOARDING_STEPS.PIN_SETUP);
-            enqueueSnackbar(resp?.message || "Successful!", {
-              variant: "success",
-            });
-            break;
-          }
           case ONBOARDING_STEPS.PIN_SETUP: {
             const resp = await userPinMutation({
               body: {
@@ -311,6 +331,20 @@ function DashboardAccountSetup() {
       hasStepper: false,
     },
     {
+      title: "NIN Preview",
+      tab: ONBOARDING_STEPS.NIN_PREVIEW,
+      parentTab: ONBOARDING_STEPS.NIN,
+      parent: false,
+      content: (
+        <DashboardAccountSetupNin
+          previewInfo={verifyOtpMutationResult?.data?.data?.nin}
+          {...contentProps}
+        />
+      ),
+      verified: true,
+      hasStepper: true,
+    },
+    {
       title: "Provide BVN",
       tab: ONBOARDING_STEPS.BVN,
       parentTab: ONBOARDING_STEPS.BVN,
@@ -332,6 +366,19 @@ function DashboardAccountSetup() {
       hasStepper: false,
     },
     {
+      title: "BVN Preview",
+      tab: ONBOARDING_STEPS.BVN_PREVIEW,
+      parentTab: ONBOARDING_STEPS.BVN,
+      parent: false,
+      content: (
+        <DashboardAccountSetupBvn
+          previewInfo={verifyOtpMutationResult?.data?.data?.bvn}
+          {...contentProps}
+        />
+      ),
+      hasStepper: true,
+    },
+    {
       title: "Business Details",
       tab: ONBOARDING_STEPS.BUSINESS,
       parentTab: ONBOARDING_STEPS.BUSINESS,
@@ -339,7 +386,14 @@ function DashboardAccountSetup() {
       content: <DashboardAccountSetupBusiness {...contentProps} />,
       hasStepper: true,
     },
-
+    {
+      title: "Business NON CAC Registration",
+      tab: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
+      parentTab: ONBOARDING_STEPS.BUSINESS,
+      parent: false,
+      content: <DashboardAccountSetupBusinessNonCacReg {...contentProps} />,
+      hasStepper: true,
+    },
     {
       title: "Business CAC Registration",
       tab: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION,
@@ -349,7 +403,7 @@ function DashboardAccountSetup() {
       hasStepper: true,
     },
     {
-      title: "Verify Business CAC Registration",
+      title: "Business CAC Verification",
       tab: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION,
       parentTab: ONBOARDING_STEPS.BUSINESS,
       parent: false,
@@ -365,13 +419,19 @@ function DashboardAccountSetup() {
       hasStepper: false,
     },
     {
-      title: "Business NON CAC Registration",
-      tab: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
+      title: "Business CAC Registration Preview",
+      tab: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_PREVIEW,
       parentTab: ONBOARDING_STEPS.BUSINESS,
       parent: false,
-      content: <DashboardAccountSetupBusinessNonCacReg {...contentProps} />,
+      content: (
+        <DashboardAccountSetupBusinessCacReg
+          previewInfo={verifyOtpMutationResult?.data?.data?.business}
+          {...contentProps}
+        />
+      ),
       hasStepper: true,
     },
+
     {
       title: "Setup PIN",
       tab: ONBOARDING_STEPS.PIN_SETUP,
@@ -405,22 +465,36 @@ function DashboardAccountSetup() {
   );
 
   return (
-    <Container className="mt-18 mx-auto">
-      <Stepper
-        activeStep={parentStepIndex}
-        connector={<StepperConnector />}
-        className={clsx(
-          "mb-5 max-w-[600px] mx-auto",
-          currentStep?.hasStepper ? "visible" : "invisible"
-        )}
-      >
-        {parentSteps.map(({ title }) => (
-          <Step key={title}>
-            <StepLabel StepIconComponent={StepperIcon}>{title}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <div className="mt-5">{currentStep?.content}</div>
+    <Container className="relative lg:block flex flex-col">
+      <div className="mt-18 mx-auto">
+        <Stepper
+          activeStep={parentStepIndex}
+          connector={<StepperConnector />}
+          className={clsx(
+            "mb-5 max-w-[600px] mx-auto",
+            currentStep?.hasStepper ? "visible" : "invisible"
+          )}
+        >
+          {parentSteps.map(({ title }) => (
+            <Step key={title}>
+              <StepLabel StepIconComponent={StepperIcon}>{title}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <div className="mt-5">{currentStep?.content}</div>
+      </div>
+      {![ONBOARDING_STEPS.ACCOUNT_SETUP_COMPLETED].includes(stepper.step) && (
+        <Button
+          variant="outlined"
+          color="inherit"
+          className="absolute top-3 right-3 border border-neutral-300"
+          onClick={() => {
+            navigate(DASHBOARD);
+          }}
+        >
+          Save & continue later
+        </Button>
+      )}
     </Container>
   );
 }
