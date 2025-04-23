@@ -9,6 +9,7 @@ export type UserLoginApiRequest = ApiRequest<{
 export type UserLoginApiResponse = ApiResponse<{
   token: string;
   expireTime: number;
+  is_verified: number;
   message: string;
 }>;
 

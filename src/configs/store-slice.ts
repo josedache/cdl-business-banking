@@ -56,12 +56,14 @@ export const slice = createSlice({
       .addMatcher(
         userApi.endpoints.loginUser.matchFulfilled,
         (state, { payload }) => {
-          state.authUser = {
-            token: payload?.data?.token,
-            expiresIn: String(
-              addSeconds(new Date(), payload?.data?.expireTime)
-            ),
-          } as AuthUser;
+          if (payload?.data?.is_verified) {
+            state.authUser = {
+              token: payload?.data?.token,
+              expiresIn: String(
+                addSeconds(new Date(), payload?.data?.expireTime)
+              ),
+            } as AuthUser;
+          }
         }
       )
       .addMatcher(
@@ -98,7 +100,7 @@ export const slice = createSlice({
       .addMatcher(
         userApi.endpoints.sendUserResetPassword.matchFulfilled,
         (state, { payload }) => {
-          state.authUser = { token : payload?.token }
+          state.authUser = { token: payload?.token };
         }
       )
       .addMatcher(
