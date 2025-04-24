@@ -176,8 +176,6 @@ export default function DashboardAccountSetupBusinessCacReg(
             // disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
             className="my-5"
           >
             {isPreview ? "Continue" : "Verify Business Details"}

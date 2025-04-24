@@ -210,10 +210,6 @@ export default function TransferBulkUploadPaymentOtpDialog(
               type="submit"
               disabled={!formik.isValid || !formik.dirty}
               size="large"
-              loading={formik.isSubmitting}
-              loadingPosition="end"
-              fullWidth
-              endIcon={<></>}
             >
               Verify Otp
             </LoadingButton>

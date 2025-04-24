@@ -59,8 +59,6 @@ export default function TransferSingleFailed(props: TransferSingleFailedProps) {
             size="large"
             disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>
