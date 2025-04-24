@@ -74,8 +74,6 @@ export default function TransferBulkUploadPaymentPinVerification(
             size="large"
             disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Pay
           </LoadingButton>

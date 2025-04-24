@@ -322,8 +322,6 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                     className="w-full  text-white"
                     type="submit"
                     size="large"
-                    loading={formik.isSubmitting}
-                    loadingPosition="end"
                   >
                     Continue
                   </Button>
