@@ -38,8 +38,6 @@ export default function TransferBulkUploadPaymentScheduled(
             size="large"
             disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Go back to Dashboard
           </LoadingButton>

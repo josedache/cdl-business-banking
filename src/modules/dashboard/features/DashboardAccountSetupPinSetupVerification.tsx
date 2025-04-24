@@ -62,8 +62,6 @@ export default function DashboardAccountSetupPinSetupVerification(
               disabled={!formik.isValid || !formik.dirty}
               size="large"
               loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
               className="mt-15"
             >
               Next

@@ -143,8 +143,6 @@ export default function TransferBulkUploadProgress(
             size="large"
             disabled={isLoading}
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             {isLoading ? "Uploading..." : "Continue"}
           </LoadingButton>

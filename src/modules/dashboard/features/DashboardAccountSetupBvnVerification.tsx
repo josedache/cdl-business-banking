@@ -219,8 +219,6 @@ export default function DashboardAccountSetupBvnVerification(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>

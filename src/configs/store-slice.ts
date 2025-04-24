@@ -56,7 +56,7 @@ export const slice = createSlice({
       .addMatcher(
         userApi.endpoints.loginUser.matchFulfilled,
         (state, { payload }) => {
-          if (payload?.data?.is_verified) {
+          if (payload?.data?.token) {
             state.authUser = {
               token: payload?.data?.token,
               expiresIn: String(

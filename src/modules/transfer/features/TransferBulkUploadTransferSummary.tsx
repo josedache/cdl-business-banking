@@ -114,8 +114,6 @@ export default function TransferBulkUploadTransferSummary(
             size="large"
             disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting || getBatchSummaryQuery.isLoading}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Pay
           </LoadingButton>

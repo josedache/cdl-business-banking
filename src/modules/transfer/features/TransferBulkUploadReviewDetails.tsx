@@ -507,8 +507,6 @@ export default function TransferBulkUploadReviewDetails(
               noSuccessfulUploads
             }
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>
