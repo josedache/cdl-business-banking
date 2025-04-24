@@ -14,6 +14,7 @@ import SecuredDataBadge from "components/SecuredDataBadge";
 
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
+import { lookupApi } from "apis/lookup";
 
 type DashboardAccountSetupBusinessNonCacRegProps =
   {} & DashboardAccountSetupContentProps;
@@ -28,16 +29,16 @@ export default function DashboardAccountSetupBusinessNonCacReg(
     },
   });
 
-  const getBusinessSectorQuery = merchantApi.useGetMerchantBusinessDataQuery({
-    params: {
-      details_type: "Business_Sector",
-    },
-  });
+  const getBusinessSectorQuery = lookupApi.useSectorsLookupQuery();
 
-  const getSubcategories =
-    getBusinessSectorQuery?.data?.data?.find(
-      (item) => item.key === formik.values.businessSectorParent
-    )?.subcategories || [];
+  const getSubcategories = lookupApi.useSubSectorsLookupQuery(
+    {
+      path: {
+        sectorId: Number(formik.values.businessSectorParent),
+      },
+    },
+    { skip: !formik.values.businessSectorParent }
+  );
 
   return (
     <Paper elevation={0} className="mx-auto max-w-[600px]">
@@ -65,16 +66,9 @@ export default function DashboardAccountSetupBusinessNonCacReg(
           <div className="grid grid-cols-1 gap-6 mt-4">
             <TextField
               fullWidth
-              label="Business Name"
-              placeholder="Enter Business Name"
-              {...getTextFieldProps(formik, "businessName")}
-            />
-
-            <TextField
-              fullWidth
               label="Business Type"
               placeholder="Enter Business Type"
-              {...getTextFieldProps(formik, "businessType")}
+              {...getTextFieldProps(formik, "businessTypeId")}
               select
             >
               {getBusinessTypeQuery.isLoading ? (
@@ -83,7 +77,7 @@ export default function DashboardAccountSetupBusinessNonCacReg(
                 </MenuItem>
               ) : null}
               {getBusinessTypeQuery?.data?.data?.map?.((item) => (
-                <MenuItem key={item.key} value={item.key}>
+                <MenuItem key={item.key} value={item.cba_id}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -101,7 +95,7 @@ export default function DashboardAccountSetupBusinessNonCacReg(
                 </MenuItem>
               ) : null}
               {getBusinessSectorQuery?.data?.data?.map?.((item) => (
-                <MenuItem key={item.key} value={item.key}>
+                <MenuItem key={item.cba_id} value={item.cba_id}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -123,9 +117,9 @@ export default function DashboardAccountSetupBusinessNonCacReg(
                   Loading...
                 </MenuItem>
               ) : null}
-              {getSubcategories?.map?.((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
+              {getSubcategories?.data?.data?.map?.((item) => (
+                <MenuItem key={item.cba_id} value={item.cba_id}>
+                  {item.name}
                 </MenuItem>
               ))}
             </TextField>

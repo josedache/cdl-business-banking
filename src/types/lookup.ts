@@ -24,3 +24,26 @@ export type BankLookupApiResponse = ApiResponse<
     icon: string;
   }>
 >;
+
+export type sectorsLookupApiResponse = ApiResponse<
+  Array<{
+    name: string;
+    cba_id: number;
+    is_active: boolean;
+    description?: string;
+  }>
+>;
+
+export type SubSectorsLookupApiRequest = ApiRequest<
+  void,
+  { sectorId?: number }
+>;
+
+export type SubSectorsLookupApiResponse = ApiResponse<
+  Array<{
+    name: string;
+    cba_id: number;
+    is_active: boolean;
+    business_sector_id: number;
+  }>
+>;

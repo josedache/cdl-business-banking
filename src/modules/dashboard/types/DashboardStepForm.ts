@@ -5,7 +5,7 @@ export type DashboardAccountSetupFormikValues = {
   bvn: string;
   otp: string;
   rcNumber: string;
-  businessType: string;
+  businessTypeId: string;
   businessName: string;
   annualTurnOver: string;
   businessSector: string;

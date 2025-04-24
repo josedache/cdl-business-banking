@@ -18,10 +18,15 @@ import DashboardAccountSetupDialog from "../features/DashboardAccountSetupDialog
 import useAuthUser from "hooks/use-auth-user";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
+import { useNavigate } from "react-router-dom";
+import { TRANSFER } from "constants/urls";
+import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
+import { transferApi } from "apis/transfer.ts";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
   const user = useAuthUser();
+  const navigate = useNavigate();
 
   const isKycCompleted = isKycCheckCompleted(user?.info);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
@@ -30,10 +35,18 @@ function Dashboard() {
 
   const businessName = user?.info?.businesses?.[0]?.name;
 
+  const transferWalletsQueryResult =
+    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWallets = transferWalletsQueryResult.data?.data;
+
+  const mainWallet = transferWallets?.find(
+    (wallet) => wallet.businessType === "Group"
+  );
+
   return (
     <>
       <Typography className="font-semibold capitalize" noWrap variant="h4">
-        Welcome, {businessName}
+        {businessName ? `Welcome, ${businessName}` : "Welcome"}
       </Typography>
 
       {!isKycCompleted ? (
@@ -64,7 +77,11 @@ function Dashboard() {
             </div>
 
             <div>
-              <Button onClick={toggleAccountSetup} size="large">
+              <Button
+                onClick={toggleAccountSetup}
+                variant="gradient"
+                size="large"
+              >
                 Unlock Full Access
               </Button>
             </div>
@@ -120,7 +137,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <Paper elevation={0} elevation={0} className="bg-[#F8F9FB] mt-6">
+        <Paper elevation={0} className="bg-[#F8F9FB] mt-6">
           <div className="px-4 pt-4">
             <Typography className="font-semibold text-[#686A71]">
               Main wallet balance
@@ -130,7 +147,7 @@ function Dashboard() {
               className="font-semibold mt-4"
               blur={isBlurWalletBalance}
             >
-              0.0
+              {mainWallet?.balance}
             </CurrencyTypography>
             <Typography className="font-semibold mt-1">4.0% PA</Typography>
           </div>
@@ -146,6 +163,7 @@ function Dashboard() {
                   background:
                     "linear-gradient(180deg, #EFC531 0%, #FF7849 100%)",
                 }}
+                onClick={() => navigate(TRANSFER)}
               >
                 <div>
                   <Icon
@@ -175,6 +193,10 @@ function Dashboard() {
           </div>
         </Paper>
       </Card>
+
+      <div className="mt-4">
+        <DashboardTransactionList />
+      </div>
 
       {isAccountSetup && (
         <DashboardAccountSetupDialog

@@ -1,5 +1,6 @@
-import { TextField, InputAdornment, Icon, TextFieldProps } from "@mui/material";
+import { TextField, InputAdornment, TextFieldProps } from "@mui/material";
 import { forwardRef } from "react";
+import { Icon as Iconify } from "@iconify/react";
 
 const SearchTextField = forwardRef(function SearchTextField(
   props: TextFieldProps,
@@ -17,7 +18,7 @@ const SearchTextField = forwardRef(function SearchTextField(
         input: {
           startAdornment: (
             <InputAdornment position="start">
-              <Icon color="primary">search</Icon>
+              <Iconify icon="lucide:search" fontSize={18} />
             </InputAdornment>
           ),
           ...(slotProps?.input as any)?.startAdornment,

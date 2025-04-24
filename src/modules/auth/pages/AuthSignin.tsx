@@ -67,6 +67,11 @@ function AuthSignin() {
                 variant: "success",
               }
             );
+
+            if (!data?.data?.is_verified && !data?.data?.token) {
+              return navigate(SIGNUP, { state: { step: 1 } });
+            }
+
             setCountdownDate(getCountdownDate());
             stepper.next();
             break;

@@ -6,7 +6,7 @@ import isObject from "utils/object/is-object.ts";
  * @param {{allowEmptyArray: boolean}} options
  * @returns
  */
-export function removeEmptyProperties<T extends {}>(
+export function removeEmptyProperties<T extends object>(
   values: T,
   options = {} as { allowEmptyArray?: boolean }
 ) {
@@ -21,7 +21,7 @@ export function removeEmptyProperties<T extends {}>(
         (isObject(value as any) && Object.entries(value).length !== 0)
       ) {
         newTarget[key as any] =
-          value instanceof File ? value : removeEmptyProperties(value);
+          value instanceof File ? value : removeEmptyProperties(value as object);
       } else if (
         value !== undefined &&
         value !== null &&
@@ -29,7 +29,7 @@ export function removeEmptyProperties<T extends {}>(
         !Array.isArray(value) &&
         !isObject(value as any)
       ) {
-        newTarget[key as any] = removeEmptyProperties(value);
+        newTarget[key as any] = removeEmptyProperties(value as object);
       }
     }
   }

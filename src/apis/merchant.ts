@@ -31,7 +31,7 @@ export const merchantApi = baseApi.injectEndpoints({
     >({
       query: (config) => ({
         url: BASE_URL + "/kyb",
-        method: "GET",
+        method: "POST",
         ...config,
       }),
       invalidatesTags: [{ type: MERCHANT }],

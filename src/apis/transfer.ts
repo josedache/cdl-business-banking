@@ -1,13 +1,23 @@
 import { baseApi } from "configs/store-query";
 
-import { TRANSFER } from "constants/tags.ts";
+import { BENEFICIARY, TRANSFER } from "constants/tags.ts";
 import {
+  BulkTransferOtpVerificationApiRequest,
+  BulkTransferOtpVerificationApiResponse,
+  BulkTransferTransactionVerificationApiRequest,
+  BulkTransferTransactionVerificationApiResponse,
   CompleteTransferApiRequest,
   CompleteTransferApiResponse,
+  GetTransferBulkSummariesApiRequest,
+  GetTransferBulkSummariesApiResponse,
+  GetTransferBulkSummaryApiRequest,
+  GetTransferBulkSummaryApiResponse,
   GetTransferWalletsApiRequest,
   GetTransferWalletsApiResponse,
   TransferApiRequest,
   TransferApiResponse,
+  TransferBulkApiRequest,
+  TransferBulkApiResponse,
 } from "types/transfer";
 
 export const BASE_URL = "/transfer";
@@ -25,6 +35,48 @@ export const transferApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: TRANSFER }],
     }),
+    bulkTransfer: builder.mutation<
+      TransferBulkApiResponse,
+      TransferBulkApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/bulk",
+        method: "post",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
+    bulkTransferOtpVerification: builder.mutation<
+      BulkTransferOtpVerificationApiResponse,
+      BulkTransferOtpVerificationApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/${path?.batchNumber}/otp`,
+        method: "PATCH",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
+    bulkTransferPinVerification: builder.mutation<
+      BulkTransferTransactionVerificationApiResponse,
+      BulkTransferTransactionVerificationApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/${path?.batchNumber}/pin`,
+        method: "PATCH",
+        headers: {
+          "x-channel-code": "web",
+        },
+        ...config,
+      }),
+      invalidatesTags: [{ type: TRANSFER }],
+    }),
     getTransferWallets: builder.query<
       GetTransferWalletsApiResponse,
       GetTransferWalletsApiRequest
@@ -34,7 +86,6 @@ export const transferApi = baseApi.injectEndpoints({
         method: "GET",
         ...config,
       }),
-      // providesTags: [{ type: TRANSFER }],
     }),
     completeTransfer: builder.mutation<
       CompleteTransferApiResponse,
@@ -48,7 +99,27 @@ export const transferApi = baseApi.injectEndpoints({
         },
         ...config,
       }),
-      invalidatesTags: [{ type: TRANSFER }],
+      invalidatesTags: [{ type: TRANSFER }, { type: BENEFICIARY }],
+    }),
+    getTransferBulkSummaries: builder.query<
+      GetTransferBulkSummariesApiResponse,
+      GetTransferBulkSummariesApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL + "/bulk/summary",
+        method: "GET",
+        ...config,
+      }),
+    }),
+    getTransferBulkSummary: builder.query<
+      GetTransferBulkSummaryApiResponse,
+      GetTransferBulkSummaryApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/bulk/summary/${path?.batchNumber}`,
+        method: "GET",
+        ...config,
+      }),
     }),
   }),
 });

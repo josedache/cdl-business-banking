@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 import clsx from "clsx";
 import "./EmptyUI.css";
 import { ComponentPropsWithoutRef } from "react";
-import EmptyPlanSvg from "assets/svgs/empty-state.svg";
+// import EmptyPlanSvg from "assets/svgs/empty-state.svg";
 
 /**
  *
@@ -14,7 +14,7 @@ export function EmptyTableUI(props: EmptyTableUIProps) {
   return (
     <div className={clsx("EmptyUI", className)} {...rest}>
       <div className={clsx("EmptyUI__icon")}>
-        <img src={EmptyPlanSvg} alt="no data icon" />
+        {/* <img src={EmptyPlanSvg} alt="no data icon" /> */}
       </div>
       <Typography
         variant="h3"

@@ -4,14 +4,40 @@ import currencyjs from "currency.js";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 import { TransferContentProps } from "../types/TransferStepForm";
+import { transactionApi } from "apis/transaction";
+import { useSnackbar } from "notistack";
 
-type TransferSingleSuccessProps = {} & TransferContentProps;
+type TransferSingleSuccessProps = {
+  transactionId: string;
+} & TransferContentProps;
 
 export default function TransferSingleSuccess(
   props: TransferSingleSuccessProps
 ) {
-  const { formik } = props;
+  const { formik, transactionId } = props;
+  const { enqueueSnackbar } = useSnackbar();
 
+  const [generateReceiptMutation, generateReceiptMutationResult] =
+    transactionApi.useGenerateTransactionReceiptMutation();
+
+  const handleDownloadReceipt = async () => {
+    try {
+      await generateReceiptMutation({
+        path: {
+          id: transactionId,
+        },
+      }).unwrap();
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.error ||
+          error?.data?.message ||
+          "Error downloading receipt",
+        {
+          variant: "error",
+        }
+      );
+    }
+  };
   return (
     <Paper elevation={0} className="mx-auto max-w-[520px]">
       <form onSubmit={formik.handleSubmit}>
@@ -29,7 +55,7 @@ export default function TransferSingleSuccess(
           </div>
 
           <Typography variant="h5" className="text-center font-semibold mt-6">
-            {currencyjs(formik.values.amount || 0).format({
+            {currencyjs(formik?.values?.amount || 0).format({
               symbol: "₦",
             })}{" "}
             successfully sent to {formik?.values?.accountName}{" "}
@@ -40,12 +66,15 @@ export default function TransferSingleSuccess(
               {
                 icon: "tdesign:share-filled",
                 text: "Share receipt",
+                onClick: handleDownloadReceipt,
+                disabled: generateReceiptMutationResult?.isLoading,
               },
               {
                 icon: "tabler:notes",
                 text: "View details",
+                disabled: true,
               },
-            ].map(({ icon, text }) => (
+            ].map(({ icon, text, ...rest }) => (
               <div
                 key={text}
                 className="flex flex-col items-center gap-2 px-4 py-2 text-sm"
@@ -54,6 +83,7 @@ export default function TransferSingleSuccess(
                   variant="contained"
                   size="large"
                   className="bg-[#F6F8FB] border border-[#E8E8E8] rounded-lg"
+                  {...rest}
                 >
                   <Icon icon={icon} width="20" height="20" />
                 </IconButton>

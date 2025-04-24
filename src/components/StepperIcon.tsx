@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
-const CustomStepIconRoot = styled("div")(() => ({
+const CustomStepIconRoot = styled("div")<{ ownerState: { active: boolean } }>(() => ({
   color: "#eaeaf0",
   display: "flex",
   height: 22,

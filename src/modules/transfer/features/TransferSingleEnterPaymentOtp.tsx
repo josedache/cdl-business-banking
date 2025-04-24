@@ -10,7 +10,6 @@ import { userApi } from "apis/user";
 import { useSnackbar } from "notistack";
 import Countdown from "components/Countdown";
 import getCountdownDate from "utils/date/get-countdown-date";
-import useAuthUser from "hooks/use-auth-user";
 
 type TransferSingleEnterPaymentOtpProps = {
   phone: string;
@@ -22,7 +21,6 @@ export default function TransferSingleEnterPaymentOtp(
   const { formik, phone, stepper } = props;
   const { enqueueSnackbar } = useSnackbar();
   const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
-  const authUser = useAuthUser();
 
   const [resendOtpMutation, resendOtpMutationResult] =
     userApi.useUserSendOtpMutation();
@@ -112,7 +110,7 @@ export default function TransferSingleEnterPaymentOtp(
                 }}
                 numInputs={6}
                 shouldAutoFocus
-                // inputType="password"
+                inputType="password"
                 slot={{ input: NumberInput }}
                 slotProps={{
                   input: {
@@ -159,7 +157,6 @@ export default function TransferSingleEnterPaymentOtp(
                               disableRipple
                               color="primary"
                               disabled={resendOtpMutationResult?.isLoading}
-                              component={MuiLink}
                               onClick={sendOtp}
                               className="font-semibold text-primary-main"
                             >
@@ -213,8 +210,6 @@ export default function TransferSingleEnterPaymentOtp(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>
