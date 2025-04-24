@@ -1,8 +1,8 @@
 import { Button, Card, Paper, Skeleton, Typography } from "@mui/material";
-import CheckMark from "assets/imgs/check.png";
 import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import { transactionApi } from "apis/transaction";
 import CurrencyTypography from "components/CurrencyTypography";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 type DashboardAccountSetupPinSetupCompletedProps =
   {} & DashboardAccountSetupContentProps;
@@ -21,12 +21,16 @@ export default function DashboardAccountSetupPinSetupCompleted(
   return (
     <Paper elevation={0} className="mx-auto max-w-[600px] p-6">
       <div>
-        <div className="flex justify-center">
-          <img
-            alt="checkmark"
-            src={CheckMark}
-            className="w-full h-full max-w-[80px]"
-          />
+        <div className="flex justify-center mt-5">
+          <div className="bg-[#12B76A] border-6 border-[#DBF4E9] w-20 h-20 rounded-full flex items-center justify-center">
+            <Icon
+              icon="charm:tick"
+              width="45"
+              stroke="100"
+              height="45"
+              className="text-white"
+            />
+          </div>
         </div>
 
         <Typography variant="h5" className="text-center font-semibold mt-8">
@@ -54,14 +58,12 @@ export default function DashboardAccountSetupPinSetupCompleted(
             {
               title: "Transfer limit",
               amount:
-                getTransactionLimitQuery?.data?.data?.[0]
-                  ?.single_transaction_limit,
+                getTransactionLimitQuery?.data?.data?.single_transaction_limit,
             },
             {
               title: "Cumulative daily limit",
               amount:
-                getTransactionLimitQuery?.data?.data?.[0]
-                  ?.cumulative_daily_limit,
+                getTransactionLimitQuery?.data?.data?.cumulative_daily_limit,
             },
           ].map(({ title, amount }) => (
             <div key={title} className="flex justify-between items-center py-2">

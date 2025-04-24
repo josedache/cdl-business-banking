@@ -26,13 +26,39 @@ export type UserVerifyOtpApiRequest = ApiRequest<{
   rcNumber?: string;
 }>;
 
+export type NinBvnInfo = {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+  maritalStatus: string;
+  phoneNumber: string;
+  email: string;
+  nin: string;
+  bvn: string;
+  nationality: string;
+  localGovernment: string;
+  residentialAddress: string;
+  image: string;
+};
+
+export type BusinessCacRegInfo = {
+  name: string;
+  registrationDate: string;
+  address?: string;
+  active?: boolean;
+  companyType?: string;
+};
 export type UserVerifyOtpApiResponse = ApiResponse<{
   token: string;
   loginExpiry: number;
   login_expiry: number;
   refreshToken: string;
   refreshExpiry: number;
-  user: User;
+  user?: User;
+  nin?: NinBvnInfo;
+  bvn?: NinBvnInfo;
+  business?: BusinessCacRegInfo;
 }>;
 
 export type UserSignupApiRequest = ApiRequest<{
@@ -92,6 +118,7 @@ export type UserKycApiRequest = ApiRequest<{
 export type UserKycApiResponse = ApiResponse<{
   expiry: number;
   phone: string;
+  email?: string;
 }>;
 
 export type UserPinApiRequest = ApiRequest<

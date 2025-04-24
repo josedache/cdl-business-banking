@@ -33,7 +33,7 @@ export type GetTransactionApiRequest = ApiRequest<
   }
 >;
 
-export type GetTransactionLimitApiResponse = ApiResponse<TransactionLimit[]>;
+export type GetTransactionLimitApiResponse = ApiResponse<TransactionLimit>;
 
 export type GetTransactionLimitApiRequest = ApiRequest<
   void,

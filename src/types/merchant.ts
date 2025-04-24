@@ -12,21 +12,26 @@ export type MerchantRegistrationNonCacApiRequest = ApiRequest<{
 export type MerchantRegistrationCacApiResponse = ApiResponse<{
   expiry: number;
   phone: string;
+  email?: string;
 }>;
 
 export type MerchantRegistrationCacApiRequest = ApiRequest<
-  void,
-  void,
   {
     rcNumber: string;
-    id?: string;
-  }
+    businessType: number;
+    registrationType?: number;
+    businessSubSector: number;
+    businessSector: number;
+    annualTurnOver: number;
+  },
+  void
 >;
 
 export type GetMerchantBusinessDataApiResponse = ApiResponse<
   {
     name: string;
     key: string;
+    cba_id: string;
     subcategories?: string[];
   }[]
 >;
