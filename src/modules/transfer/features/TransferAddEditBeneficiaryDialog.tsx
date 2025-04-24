@@ -396,8 +396,6 @@ export default function TransferAddEditBeneficiaryDialog(
                 deleteBeneficiaryBatchReportMutationResult?.isLoading
               }
               loading={formik.isSubmitting}
-              loadingPosition="end"
-              endIcon={<></>}
             >
               {isEdit ? "Save & Next" : "Save to List"}
             </LoadingButton>

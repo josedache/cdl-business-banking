@@ -181,8 +181,6 @@ export default function DashboardAccountSetupNin(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
             className="my-5"
           >
             {isPreview ? "Continue" : "Verify NIN"}

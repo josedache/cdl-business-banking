@@ -169,8 +169,6 @@ export default function DashboardAccountSetupBvn(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
             className="my-5"
           >
             Continue

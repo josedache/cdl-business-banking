@@ -58,8 +58,6 @@ export default function TransferBulkUploadNameUpdate(
             size="large"
             disabled={!formik.isValid || !formik.dirty}
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>
