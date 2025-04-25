@@ -21,9 +21,11 @@ export type UserVerifyOtpApiRequest = ApiRequest<{
     | "verify_main_phone_number"
     | "verify_business"
     | "complete_transfer"
-    | "verify_login_2fa";
+    | "verify_login_2fa"
+    | "update_email";
   otp: string;
   rcNumber?: string;
+  email?: string;
 }>;
 
 export type NinBvnInfo = {
@@ -155,3 +157,23 @@ export type UserSendOtpApiResponse = ApiResponse<{
 export type UserGetVoiceOtpApiRequest = ApiRequest<unknown>;
 
 export type UserGetVoiceOtpApiResponse = ApiResponse<unknown>;
+
+export type UserUpdateUsersDetailsRequest = ApiRequest<{
+  oldEmail: string;
+  newEmail: string;
+}>;
+export type UserUpdateUsersDetailsResponse = ApiResponse<unknown>;
+
+export type UserUpdatePasswordRequest = ApiRequest<{
+  newPassword: string;
+  oldPassword: string;
+  confirmNewPassword: string;
+}>;
+export type UserUpdatePasswordResponse = ApiResponse<unknown>;
+
+export type UserUpdatePinRequest = ApiRequest<{
+  oldPin: string;
+  confirmNewPin: string;
+  newPin: string;
+}>;
+export type UserUpdatePinResponse = ApiResponse<unknown>;

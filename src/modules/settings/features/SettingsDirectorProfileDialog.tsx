@@ -67,17 +67,17 @@ const SettingsDirectorProfileDialog = (
                 <div className="flex">
                   <Avatar
                     src={opt.avatar}
-                    className="w-14 h-14 font-medium bg-warning-100 text-warning-700"
+                    className="w-14 h-14 font-medium bg-warning-100/80 text-warning-700"
                   >
                     {opt?.firstName?.[0]}
                     {opt?.lastName?.[0]}
                   </Avatar>
 
                   <div className="ml-4">
-                    <Typography className="font-medium text-lg">
+                    <Typography variant="h6" className="font-medium">
                       {opt?.firstName} {opt?.lastName}
                     </Typography>
-                    <Typography className="text-neutral-500 text-lg">
+                    <Typography className="text-neutral-500">
                       {opt?.phoneNumber}{" "}
                     </Typography>
                   </div>
@@ -91,7 +91,7 @@ const SettingsDirectorProfileDialog = (
           })}
 
           <div className="mt-6 mb-6">
-            <Typography className="font-semibold text-lg text-primary-main ml-4">
+            <Typography className="font-semibold text-primary-main ml-4">
               + Add Another Director
             </Typography>
           </div>

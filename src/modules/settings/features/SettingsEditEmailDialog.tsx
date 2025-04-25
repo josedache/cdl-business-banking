@@ -20,6 +20,8 @@ import NumberInput from "components/NumberInput";
 import Countdown from "components/Countdown";
 import { LoadingButton } from "@mui/lab";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
+import { userApi } from "apis/user";
+import useAuthUser from "hooks/use-auth-user";
 
 type SettingsEditEmailDialogProps = {
   onClose: () => void;
@@ -31,26 +33,11 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
   const [countdownDate, setCountdownDate] = useState(getCountdownDate);
   const { enqueueSnackbar } = useSnackbar();
   const enumStep = stepper.step;
+  const authUser = useAuthUser();
 
-  const handleResendOtpReset = async () => {
-    try {
-      // const data = await sendUserResetPasswordMutation({
-      //   body: { email: formik.values.email },
-      // }).unwrap();
-      setCountdownDate(getCountdownDate());
-      // enqueueSnackbar(data?.message || "Password reset otp sent", {
-      //   variant: "success",
-      // });
-    } catch (error: any) {
-      enqueueSnackbar(
-        error?.data?.message || "Failed to resend password reset otp",
-        {
-          variant: "error",
-        }
-      );
-    }
-  };
-  
+  const [userEditEmaildMutation] = userApi.useUpdateUsersDetailsMutation();
+  const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
+
   const formik = useFormik<SettingsEditEmailValues>({
     initialValues: {
       oldEmail: "",
@@ -74,29 +61,31 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
       try {
         switch (enumStep) {
           case SettingsEditEmailStep.CHANGE: {
-            // const data = await sendUserResetPasswordMutation({
-            //   body: { email: values.email},
-            // }).unwrap()
-            // setCountdownDate(getCountdownDate());
-            // enqueueSnackbar(data?.message || "Password reset otp sent", {
-            //   variant: "success",
-            // });
+            const data = await userEditEmaildMutation({
+              body: { oldEmail: values.oldEmail, newEmail: values.newEmail },
+            }).unwrap();
+            setCountdownDate(getCountdownDate());
+            enqueueSnackbar(data?.message || "Edit email otp sent", {
+              variant: "success",
+            });
             break;
           }
           case SettingsEditEmailStep.VERIFY: {
-            // const data = await verifyUserResetPasswordMutation({
-            //   body: {
-            //     otp: values.otp,
-            //     email: values.email
-            //   },
-            // }).unwrap();
-            // enqueueSnackbar(data?.message || "OTP verified successfully!", {
-            //   variant: "success",
-            // });
+            const data = await verifyUserOtpMutation({
+              body: {
+                reason: "update_email",
+                otp: values.otp,
+                email: values.newEmail,
+                rcNumber: authUser?.info?.businesses[0]?.rcNumber,
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "OTP verified successfully!", {
+              variant: "success",
+            });
             break;
           }
           case SettingsEditEmailStep.SUCCESS: {
-            onClose()
+            onClose();
             break;
           }
           default:
@@ -105,15 +94,31 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
 
         return stepper.next();
       } catch (error: any) {
-        enqueueSnackbar(
-          error?.data?.message || "Failed to process password reset",
-          {
-            variant: "error",
-          }
-        );
+        enqueueSnackbar(error?.data?.message || "Failed to update email", {
+          variant: "error",
+        });
       }
     },
   });
+
+  const handleResendOtpReset = async () => {
+    try {
+      const data = await userEditEmaildMutation({
+        body: {
+          oldEmail: formik.values.oldEmail,
+          newEmail: formik.values.newEmail,
+        },
+      }).unwrap();
+      setCountdownDate(getCountdownDate());
+      enqueueSnackbar(data?.message || "Edit email otp sent", {
+        variant: "success",
+      });
+    } catch (error: any) {
+      enqueueSnackbar(error?.data?.message || "Failed to resend otp", {
+        variant: "error",
+      });
+    }
+  };
 
   const tabs = [
     {
@@ -283,12 +288,14 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
             </Typography>
             <Typography className="text-text-secondary mx-auto text-center w-3/5 pb-2 text-sm font-medium mt-4">
               A 6-digit OTP has been sent to{" "}
-              <span className="text-black"> *******un50@gmail.com.</span> Input
-              the code here to continue
+              <span className="text-black">
+                {authUser?.info?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                  "*******@***"}
+              </span>
+              . Input the code here to continue
             </Typography>
           </>
         ) : null}
-
         <div className="px-6">{tabs[stepper.step]?.content}</div>
         <Divider className="py-3" />
         <div className="sticky bottom-0 p-6 flex ml-auto">

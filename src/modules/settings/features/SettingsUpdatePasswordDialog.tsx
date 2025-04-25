@@ -16,6 +16,7 @@ import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import { SettingsUpdatePasswordStep } from "../enums/settings-updatepassword-step";
 import PasswordTextField from "components/PasswordTextField";
 import { SettingsUpdatePasswordValues } from "../types/settings-update-password";
+import { userApi } from "apis/user";
 
 type SettingsUpdatePasswordDialogProps = {
   onClose: () => void;
@@ -29,23 +30,22 @@ const SettingsUpdatePasswordDialog = (
     initialStep: SettingsUpdatePasswordStep.CHANGE,
   });
 
+  const [updatePasswordMutation] = userApi.useUpdatePasswordMutation();
+
   const { enqueueSnackbar } = useSnackbar();
   const enumStep = stepper.step;
 
   const formik = useFormik<SettingsUpdatePasswordValues>({
     initialValues: {
-        oldPassword: "",
-        newPassword: "",
-        confirmNewPassword: "",
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({
       ...{
         [SettingsUpdatePasswordStep.CHANGE]: {
-            oldPassword: yup
-            .string()
-            .label("Old Password")
-            .required(),
+          oldPassword: yup.string().label("Old Password").required(),
           newPassword: yup
             .string()
             .label("New Password")
@@ -61,7 +61,7 @@ const SettingsUpdatePasswordDialog = (
           confirmNewPassword: yup
             .string()
             .label("Confirm Password")
-            .oneOf([yup.ref("password")], "Passwords must match")
+            .oneOf([yup.ref("newPassword")], "Passwords must match")
             .required(),
         },
         [SettingsUpdatePasswordStep.SUCCESS]: {},
@@ -71,13 +71,16 @@ const SettingsUpdatePasswordDialog = (
       try {
         switch (enumStep) {
           case SettingsUpdatePasswordStep.CHANGE: {
-            // const data = await sendUserResetPasswordMutation({
-            //   body: { email: values.email},
-            // }).unwrap()
-            // setCountdownDate(getCountdownDate());
-            // enqueueSnackbar(data?.message || "Password reset otp sent", {
-            //   variant: "success",
-            // });
+            const data = await updatePasswordMutation({
+              body: {
+                oldPassword: values.oldPassword,
+                newPassword: values.newPassword,
+                confirmNewPassword: values.confirmNewPassword,
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "Password reset otp sent", {
+              variant: "success",
+            });
             break;
           }
           case SettingsUpdatePasswordStep.SUCCESS: {

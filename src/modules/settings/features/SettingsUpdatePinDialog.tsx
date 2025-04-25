@@ -16,6 +16,7 @@ import { SettingsUpdatePinStep } from "../enums/settings-updatepin-step";
 import OtpInput from "components/OtpInput";
 import NumberInput from "components/NumberInput";
 import { SettingsUpdatePinValues } from "../types/settings-update-pin";
+import { userApi } from "apis/user";
 
 type SettingsUpdatePinDialogProps = {
   onClose: () => void;
@@ -29,6 +30,8 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const enumStep = stepper.step;
+
+  const [updatePinMutation] = userApi.useUpdatePinMutation();
 
   const formik = useFormik<SettingsUpdatePinValues>({
     initialValues: {
@@ -51,13 +54,16 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
       try {
         switch (enumStep) {
           case SettingsUpdatePinStep.CHANGE: {
-            // const data = await sendUserResetPasswordMutation({
-            //   body: { email: values.email},
-            // }).unwrap()
-            // setCountdownDate(getCountdownDate());
-            // enqueueSnackbar(data?.message || "Password reset otp sent", {
-            //   variant: "success",
-            // });
+            const data = await updatePinMutation({
+              body: {
+                oldPin: values.oldPin,
+                newPin: values.newPin,
+                confirmNewPin: values.confirmNewPin,
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "Pin reset otp sent", {
+              variant: "success",
+            });
             break;
           }
           case SettingsUpdatePinStep.SUCCESS: {
@@ -153,7 +159,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
             />
           </ButtonBase>
           <Typography variant="h5" className="font-semibold mt-6">
-            Password changed successfully
+            Pin changed successfully
           </Typography>
         </div>
       ),

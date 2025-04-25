@@ -5,12 +5,15 @@ import useToggle from "hooks/use-toggle";
 import Dropzone from "react-dropzone";
 import { useSnackbar } from "notistack";
 import useAuthUser from "hooks/use-auth-user";
+import { getAssetInfo } from "utils/file/get-asset-info";
 
 const SettingsGeneralTab = () => {
   const authUser = useAuthUser();
   const { enqueueSnackbar } = useSnackbar();
   const [openEditEmailDialog, toggleEditEmailDialog, setOpenEditEmailDialog] =
     useToggle();
+
+  // console.log("12", authUser);
 
   const personalInfo = [
     {
@@ -45,13 +48,13 @@ const SettingsGeneralTab = () => {
     {
       title: "NIN",
       onClick: () => {},
-      canEdit: false,
+      canEdit: authUser?.info?.isNinVerified,
     },
     {
       title: "BVN",
       value: "",
       onClick: () => {},
-      canEdit: false,
+      canEdit: authUser?.info?.isBvnVerified,
     },
     {
       title: "ID Card",
@@ -62,7 +65,10 @@ const SettingsGeneralTab = () => {
   ];
 
   const referralDetails = [
-    { title: "Referral Code", value: "CPA_00WJBK4HR9" },
+    {
+      title: "Referral Code",
+      value: ` ${authUser?.info?.referralCode ?? "N/A"}`,
+    },
     {
       title: "Referral Link",
       value:
@@ -72,7 +78,7 @@ const SettingsGeneralTab = () => {
 
   async function handleSelfieUpdate(file: File) {
     try {
-      // const assetInfo = getAssetInfo(file);
+      const assetInfo = getAssetInfo(file);
       // const data = await uploadUserFileMutation({
       //   body: {
       //     file: file,
@@ -112,12 +118,12 @@ const SettingsGeneralTab = () => {
             <div className="ml-6 ">
               <Typography
                 variant="h6"
-                className="font-semibold text-neutral-800"
+                className="font-semibold text-neutral-800 capitalize"
               >
-                Segun Akinnibosun
+                {`${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`}
               </Typography>
               <Typography className="font-medium text-neutral-500 ">
-                Segun.smute@gmail.com
+                {`${authUser?.info?.email ?? "N/A"} `}
               </Typography>
             </div>
             <Dropzone
@@ -192,7 +198,7 @@ const SettingsGeneralTab = () => {
                         {opt.value}
                       </Typography>
                     </div>
-                    {opt.canEdit ? (
+                    {!opt.canEdit ? (
                       <Typography
                         className="text-primary-main font-semibold"
                         onClick={opt.onClick}
