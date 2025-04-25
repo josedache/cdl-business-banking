@@ -41,7 +41,7 @@ export default function DashboardAccountSetupPinSetupCompleted(
         </Typography>
 
         <div className="flex justify-center">
-          <Button variant="soft" className="mt-8 font-semibold">
+          <Button variant="soft" disabled className="mt-8 font-semibold">
             Fund Your Account
           </Button>
         </div>

@@ -36,9 +36,10 @@ import { lookupApi } from "apis/lookup";
 import { beneficiaryApi } from "apis/beneficiary";
 import { enquiryApi } from "apis/enquiry";
 import { getCheckFieldProps } from "utils/formik/get-check-field-props";
-import { transferApi } from "apis/transfer";
 import useAuthUser from "hooks/use-auth-user";
 import useDataRef from "hooks/use-data-ref";
+import { transactionApi } from "apis/transaction";
+import { walletApi } from "apis/wallet";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -49,8 +50,18 @@ export default function TransferSingle(props: TransferSingleProps) {
   const [width, setWidth] = useState(135);
   const authUser = useAuthUser();
 
-  const maximumAmount = 5000000;
-  const exceedsMaximumAmount = Number(formik.values.amount) >= maximumAmount;
+  const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery({
+    params: {
+      tier: String(1),
+    }, // TODO: get the tier automatically
+  });
+
+  const maximumAmount = Number(
+    getTransactionLimitQuery?.data?.data?.single_transaction_limit || 0
+  );
+  const exceedsMaximumAmount = getTransactionLimitQuery?.isLoading
+    ? null
+    : Number(formik.values.amount) > maximumAmount;
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -61,10 +72,10 @@ export default function TransferSingle(props: TransferSingleProps) {
     },
   });
 
-  const getAllWalletsQuery = transferApi.useGetTransferWalletsQuery({});
+  const getAllWalletsQuery = walletApi.useGetWalletsQuery({});
 
   const selectedWallet = getAllWalletsQuery?.data?.data?.find(
-    (item) => String(item.walletId) === formik.values.walletId
+    (item) => String(item.id) === formik.values.walletId
   );
 
   const getAllBeneficiariesQuery = beneficiaryApi.useGetBeneficiariesQuery({
@@ -201,6 +212,7 @@ export default function TransferSingle(props: TransferSingleProps) {
             >
               <div className="w-fit flex justify-center items-center mt-2  mx-auto">
                 <CurrencyTextField
+                  disabled={getTransactionLimitQuery?.isLoading}
                   sx={{
                     "& .MuiInputBase-root": {
                       borderRadius: "0.5rem",
@@ -271,12 +283,12 @@ export default function TransferSingle(props: TransferSingleProps) {
                     <>
                       {selectedWallet?.groupId
                         ? `Main wallet Balance ${currencyjs(
-                            selectedWallet?.balance || ""
+                            selectedWallet?.accountBalance || ""
                           ).format({
                             symbol: "₦",
                           })}`
                         : `${selectedWallet?.name}  ${currencyjs(
-                            selectedWallet?.balance || ""
+                            selectedWallet?.accountBalance || ""
                           ).format({
                             symbol: "₦",
                           })}`}
@@ -315,20 +327,19 @@ export default function TransferSingle(props: TransferSingleProps) {
                       placement === "bottom" ? "center top" : "center bottom",
                   }}
                 >
-                  <Paper className="rounded-2xl">
+                  <Paper className="rounded-2xl mt-2">
                     <ClickAwayListener onClickAway={handleClose}>
                       <MenuList id="split-button-menu" autoFocusItem>
                         {getAllWalletsQuery?.data?.data?.map((option) => (
                           <MenuItem
-                            key={option.walletId}
-                            disabled={!option.isActive}
+                            key={option.id}
                             selected={
-                              String(option.walletId) === formik.values.walletId
+                              String(option.id) === formik.values.walletId
                             }
                             onClick={() => {
                               formik.setFieldValue(
                                 "walletId",
-                                String(option.walletId)
+                                String(option.id)
                               );
                             }}
                           >
@@ -341,7 +352,9 @@ export default function TransferSingle(props: TransferSingleProps) {
                                 : option.name}
                             </Typography>{" "}
                             <Chip
-                              label={currencyjs(option.balance || "").format({
+                              label={currencyjs(
+                                option.accountBalance || ""
+                              ).format({
                                 symbol: "₦",
                               })}
                               className="ml-2"

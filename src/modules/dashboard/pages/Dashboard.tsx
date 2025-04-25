@@ -5,6 +5,7 @@ import {
   Divider,
   IconButton,
   Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import CircularProgressWithLabel from "components/CircularProgress";
@@ -21,7 +22,7 @@ import getKycVerificationPercentage from "utils/function/get-kyc-verification-pe
 import { useNavigate } from "react-router-dom";
 import { TRANSFER } from "constants/urls";
 import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
-import { transferApi } from "apis/transfer.ts";
+import { walletApi } from "apis/wallet";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
@@ -35,13 +36,10 @@ function Dashboard() {
 
   const businessName = user?.info?.businesses?.[0]?.name;
 
-  const transferWalletsQueryResult =
-    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
 
-  const mainWallet = transferWallets?.find(
-    (wallet) => wallet.businessType === "Group"
-  );
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
 
   return (
     <>
@@ -142,13 +140,22 @@ function Dashboard() {
             <Typography className="font-semibold text-[#686A71]">
               Main wallet balance
             </Typography>
-            <CurrencyTypography
-              variant="h2"
-              className="font-semibold mt-4"
-              blur={isBlurWalletBalance}
-            >
-              {mainWallet?.balance}
-            </CurrencyTypography>
+            {transferWalletsQueryResult?.isLoading ? (
+              <Skeleton
+                variant="text"
+                className="mt-4 w-full max-w-[200px]"
+                sx={{ fontSize: "4rem" }}
+              />
+            ) : (
+              <CurrencyTypography
+                variant="h2"
+                className="font-semibold mt-4 overflow-auto scrollbar-hidden"
+                blur={isBlurWalletBalance}
+              >
+                {mainWallet?.accountBalance}
+              </CurrencyTypography>
+            )}
+
             <Typography className="font-semibold mt-1">4.0% PA</Typography>
           </div>
           <Divider className="mt-4" />

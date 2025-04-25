@@ -1,5 +1,4 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { transferApi } from "apis/transfer.ts";
 import { transactionApi } from "apis/transaction.ts";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadingContent from "components/LoadingContent.tsx";
@@ -18,6 +17,7 @@ import TransactionFilter, {
   TransactionFilterState,
 } from "modules/transaction/features/TransactionFilter.tsx";
 import DateFormat from "enums/date-format.ts";
+import { walletApi } from "apis/wallet";
 
 function TransactionList(props: TransactionListProps) {
   const { hideFilter, noPagination } = props;
@@ -36,28 +36,20 @@ function TransactionList(props: TransactionListProps) {
     [x: string]: Transaction[];
   }>({});
 
-  // const [pageState, setPageState] = useState(() => ({
-  //   pageIndex: 0,
-  //   limit: PAGE_LIMIT,
-  // }));
-
   const [debouncedSearchQ, setSearchQ, searchQ] = useDebouncedState("", {
     wait: 500,
   });
 
-  const transferWalletsQueryResult =
-    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
 
-  const mainWallet = transferWallets?.find(
-    (wallet) => wallet.businessType === "Group"
-  );
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
 
   const transactionSavingsHistoryQueryResult =
     transactionApi.useGetTransactionSavingsHistoryQuery(
       useMemo(
         () => ({
-          path: { savingsAccountId: mainWallet?.walletId },
+          path: { savingsAccountId: mainWallet?.id },
           params: {
             page: filter?.pageIndex + 1,
             limit: filter?.limit,
@@ -73,14 +65,14 @@ function TransactionList(props: TransactionListProps) {
           },
         }),
         [
-          mainWallet?.walletId,
+          mainWallet?.id,
           // filter.limit,
           // filter.pageIndex,
           debouncedSearchQ,
           filter,
         ]
       ),
-      { skip: !mainWallet?.walletId }
+      { skip: !mainWallet?.id }
     );
 
   const transactionSections = (() => {

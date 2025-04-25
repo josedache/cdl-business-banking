@@ -7,6 +7,7 @@ import { transactionApi } from "apis/transaction";
 import { transferApi } from "apis/transfer";
 import LoadingContent from "components/LoadingContent";
 import { TRANSACTION } from "constants/urls";
+import { walletApi } from "apis/wallet";
 
 export type TransferRecentTransactionsProps = {
   transactionType: "transfer" | "bulk_transfer";
@@ -16,26 +17,23 @@ export default function TransferRecentTransactions(
   props: TransferRecentTransactionsProps
 ) {
   const { transactionType } = props;
-  const transferWalletsQueryResult =
-    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
 
   const navigate = useNavigate();
 
-  const mainWallet = transferWallets?.find(
-    (wallet) => wallet.businessType === "Group"
-  );
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
 
   const getSingleTransaction =
     transactionApi.useGetTransactionSavingsHistoryQuery(
       {
-        path: { savingsAccountId: mainWallet?.walletId },
+        path: { savingsAccountId: mainWallet?.id },
         params: {
           page: 1,
           limit: 5,
         },
       },
-      { skip: !mainWallet?.walletId || transactionType !== "transfer" }
+      { skip: !mainWallet?.id || transactionType !== "transfer" }
     );
 
   const getBulkTransactionsQuery = transferApi.useGetTransferBulkSummariesQuery(

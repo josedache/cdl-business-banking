@@ -5,3 +5,4 @@ export const ENQUIRY = "ENQUIRY";
 export const LOOKUP = "LOOKUP";
 export const TRANSACTION = "TRANSACTION";
 export const BENEFICIARY = "BENEFICIARY";
+export const WALLET = "WALLET";
