@@ -20,11 +20,11 @@ function TransactionList() {
               {[
                 { label: "All", value: 0 },
                 { label: "Transfers", value: 1 },
-                {
-                  label: "Airtime & Data",
-                  value: 2,
-                },
-                { label: "Savings", value: 3 },
+                // {
+                //   label: "Airtime & Data",
+                //   value: 2,
+                // },
+                // { label: "Savings", value: 3 },
               ].map((tab, index) => (
                 <Tab key={index} {...tab} value={index} />
               ))}

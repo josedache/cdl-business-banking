@@ -6,7 +6,13 @@ import { Transaction } from "types/transaction.ts";
 import { PAGE_LIMIT } from "constants/pagination.ts";
 import useIntersectionObserver from "hooks/use-intersection-observer.tsx";
 import { TransactionSection } from "modules/transaction/types/transaction.ts";
-import { Button, Icon, Skeleton, Typography } from "@mui/material";
+import {
+  Button,
+  Icon,
+  LinearProgress,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import TransactionListSection from "modules/transaction/features/TransactionListSection.tsx";
 import { Icon as Iconify } from "@iconify/react";
 import SearchTextField from "components/SearchTextField.tsx";
@@ -20,12 +26,14 @@ import DateFormat from "enums/date-format.ts";
 import { walletApi } from "apis/wallet";
 
 function TransactionList(props: TransactionListProps) {
-  const { hideFilter, noPagination } = props;
+  const { hideFilter, noPagination, filter: propFilter } = props;
+
+  const [pagination, setPagination] = useState(() => ({ pageIndex: 0 }));
 
   const [filter, setFilter] = useState(
     () =>
       ({
-        pageIndex: 0,
+        // pageIndex: 0,
         limit: PAGE_LIMIT,
       }) as TransactionFilterState
   );
@@ -51,7 +59,7 @@ function TransactionList(props: TransactionListProps) {
         () => ({
           path: { savingsAccountId: mainWallet?.id },
           params: {
-            page: filter?.pageIndex + 1,
+            page: pagination?.pageIndex + 1,
             limit: filter?.limit,
             accountNumber: debouncedSearchQ || undefined,
             transactionType: filter?.transactionType || undefined,
@@ -67,12 +75,12 @@ function TransactionList(props: TransactionListProps) {
         [
           mainWallet?.id,
           // filter.limit,
-          // filter.pageIndex,
+          pagination.pageIndex,
           debouncedSearchQ,
           filter,
         ]
       ),
-      { skip: !mainWallet?.id }
+      { skip: !mainWallet?.id, refetchOnMountOrArgChange: true }
     );
 
   const transactionSections = (() => {
@@ -117,7 +125,7 @@ function TransactionList(props: TransactionListProps) {
       // Math.ceil(pageState.offset / pageState.limit) + 1 <
       //   transactionsQueryResult.data?.data?.pageCount
     ) {
-      setFilter((p) => ({ ...p, pageIndex: p.pageIndex + 1 }));
+      setPagination((p) => ({ ...p, pageIndex: p.pageIndex + 1 }));
     }
   });
 
@@ -159,9 +167,21 @@ function TransactionList(props: TransactionListProps) {
     transactionSavingsHistoryQueryResult.data?.data,
   ]);
 
+  useEffect(() => {
+    if (propFilter) {
+      setFilter((p) => ({ ...p, ...propFilter }));
+    }
+  }, [propFilter]);
+
+  useEffect(() => {
+    setInfiniteTransactions({});
+    setPagination((p) => ({ ...p, pageIndex: 0 }));
+  }, [filter, debouncedSearchQ]);
+
   const isLoading =
     transferWalletsQueryResult.isLoading ||
-    transactionSavingsHistoryQueryResult.isLoading;
+    transactionSavingsHistoryQueryResult.isLoading ||
+    (transactionSavingsHistoryQueryResult.isFetching && !pagination.pageIndex);
   const isError =
     transferWalletsQueryResult.isError ||
     transactionSavingsHistoryQueryResult.isError;
@@ -212,6 +232,16 @@ function TransactionList(props: TransactionListProps) {
         ) : null}
 
         <div>
+          <div className="absolute top-0 left-0 right-0 z-10 bg-inherit ">
+            <div>
+              {transactionSavingsHistoryQueryResult.isFetching &&
+              !transactionSavingsHistoryQueryResult.isLoading ? (
+                <LinearProgress variant="indeterminate" />
+              ) : (
+                <div className="h-1" />
+              )}
+            </div>
+          </div>
           <LoadingContent
             loading={isLoading}
             error={isError}
@@ -295,6 +325,7 @@ export default TransactionList;
 export type TransactionListProps = {
   hideFilter?: boolean;
   noPagination?: boolean;
+  filter?: TransactionFilterState;
 };
 
 function TransferRecentTransactionSkeleton() {

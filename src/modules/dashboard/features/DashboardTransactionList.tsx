@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Paper, Tab, Tabs, Typography } from "@mui/material";
 import TransactionListFeature from "modules/transaction/features/TransactionList.tsx";
+import { TransactionType } from "modules/transaction/enums/transaction-type.ts";
+import { TransactionFilterState } from "modules/transaction/features/TransactionFilter.tsx";
 
 function DashboardTransactionList() {
   const [activeTab, setActiveTab] = useState(0);
+
+  const filter = useMemo(
+    () =>
+      ({
+        transactionType: activeTab ? String(activeTab) : undefined,
+      }) as TransactionFilterState,
+    [activeTab]
+  );
 
   return (
     <>
@@ -19,10 +29,10 @@ function DashboardTransactionList() {
             >
               {[
                 { label: "All", value: 0 },
-                { label: "Received", value: 1 },
+                { label: "Received", value: TransactionType.deposit },
                 {
                   label: "Sent",
-                  value: 2,
+                  value: TransactionType.withdrawal,
                 },
               ].map((tab, index) => (
                 <Tab key={index} {...tab} value={index} />
@@ -31,7 +41,7 @@ function DashboardTransactionList() {
           </div>
         </div>
 
-        <TransactionListFeature hideFilter noPagination />
+        <TransactionListFeature hideFilter noPagination filter={filter} />
       </Paper>
     </>
   );
