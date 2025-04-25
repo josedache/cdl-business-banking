@@ -300,7 +300,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                         <tbody>
                           {getBeneficiarySampleTemplateQuery?.data?.data.map(
                             (item) => (
-                              <tr key={item}>
+                              <tr key={String(item)}>
                                 {Object.values(item).map((item) => (
                                   <td
                                     key={item}

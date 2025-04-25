@@ -85,7 +85,7 @@ export default function TransferBulkUploadReviewDetails(
   const handleSelectTab = (tab: string) => {
     if (isActiveSelectedTab(tab)) {
       setSelectedTab("");
-      setIsOpenIndex([]);
+      setIsOpenIndex(undefined);
     } else {
       setSelectedTab(tab);
     }
