@@ -128,7 +128,7 @@ const SettingsBusinessInformationTab = () => {
     },
   ];
 
-  async function handleSelfieUpdate(file: File) {
+  async function handleSelfieUpdate() {
     try {
       // const assetInfo = getAssetInfo(file);
       // const data = await uploadUserFileMutation({

@@ -22,7 +22,7 @@ const SettingsAddressVerificationDialog = (
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       try {
       } catch (error: any) {
         enqueueSnackbar(

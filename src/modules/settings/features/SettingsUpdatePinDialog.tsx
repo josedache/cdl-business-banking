@@ -47,7 +47,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
         [SettingsUpdatePinStep.SUCCESS]: {},
       }[enumStep],
     }),
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       try {
         switch (enumStep) {
           case SettingsUpdatePinStep.CHANGE: {

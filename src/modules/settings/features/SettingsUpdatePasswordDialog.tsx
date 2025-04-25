@@ -67,7 +67,7 @@ const SettingsUpdatePasswordDialog = (
         [SettingsUpdatePasswordStep.SUCCESS]: {},
       }[enumStep],
     }),
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       try {
         switch (enumStep) {
           case SettingsUpdatePasswordStep.CHANGE: {

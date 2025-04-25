@@ -70,7 +70,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
         [SettingsEditEmailStep.SUCCESS]: {},
       }[enumStep],
     }),
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       try {
         switch (enumStep) {
           case SettingsEditEmailStep.CHANGE: {
