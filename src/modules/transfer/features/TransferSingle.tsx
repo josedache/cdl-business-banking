@@ -40,6 +40,8 @@ import useAuthUser from "hooks/use-auth-user";
 import useDataRef from "hooks/use-data-ref";
 import { transactionApi } from "apis/transaction";
 import { walletApi } from "apis/wallet";
+import { BANK_DEFAULT_ICON } from "constants/global";
+import usePopover from "hooks/use-popover";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -49,6 +51,8 @@ export default function TransferSingle(props: TransferSingleProps) {
   const spanRef = useRef(null);
   const [width, setWidth] = useState(135);
   const authUser = useAuthUser();
+
+  const actionPopover = usePopover();
 
   const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery({
     params: {
@@ -62,9 +66,6 @@ export default function TransferSingle(props: TransferSingleProps) {
   const exceedsMaximumAmount = getTransactionLimitQuery?.isLoading
     ? null
     : Number(formik.values.amount) > maximumAmount;
-
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
 
   const getALlBanksQuery = lookupApi.useBankLookupQuery({
     params: {
@@ -156,21 +157,6 @@ export default function TransferSingle(props: TransferSingleProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.accountNumber, formik.values.bankSortCode]);
-
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
-      return;
-    }
-
-    setOpen(false);
-  };
 
   return (
     <div>
@@ -266,14 +252,16 @@ export default function TransferSingle(props: TransferSingleProps) {
           </div>
 
           <div className="flex justify-center mt-4">
-            <div ref={anchorRef}>
+            <div>
               <CardActionArea
                 disabled={getAllWalletsQuery?.isLoading}
                 className={clsx(
                   getAllWalletsQuery?.isLoading ? "opacity-[0.4]" : "",
                   "bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit"
                 )}
-                onClick={handleToggle}
+                onClick={
+                  actionPopover.isOpen ? () => {} : actionPopover.togglePopover
+                }
               >
                 <Typography className="text-neutral-500 font-normal">
                   Transfer from
@@ -313,8 +301,8 @@ export default function TransferSingle(props: TransferSingleProps) {
 
             <Popper
               sx={{ zIndex: 1 }}
-              open={open}
-              anchorEl={anchorRef.current}
+              open={actionPopover.isOpen}
+              anchorEl={actionPopover.anchorEl}
               role={undefined}
               transition
               disablePortal
@@ -328,7 +316,9 @@ export default function TransferSingle(props: TransferSingleProps) {
                   }}
                 >
                   <Paper className="rounded-2xl mt-2">
-                    <ClickAwayListener onClickAway={handleClose}>
+                    <ClickAwayListener
+                      onClickAway={actionPopover.togglePopover}
+                    >
                       <MenuList id="split-button-menu" autoFocusItem>
                         {getAllWalletsQuery?.data?.data?.map((option) => (
                           <MenuItem
@@ -473,11 +463,16 @@ export default function TransferSingle(props: TransferSingleProps) {
                     >
                       <img
                         loading="lazy"
-                        className="rounded-full w-6 h-6 bg-black"
-                        src={option.icon || bankDefaultIcon}
+                        className={clsx(
+                          "rounded-full w-6 h-6",
+                          option?.icon !== "null"
+                            ? "bg-transparent"
+                            : "bg-neutral-500"
+                        )}
+                        src={option.icon || BANK_DEFAULT_ICON}
                         onError={(e: any) => {
                           e.target.onerror = null;
-                          e.target.src = bankDefaultIcon;
+                          e.target.src = BANK_DEFAULT_ICON;
                         }}
                         alt={option.name}
                       />
@@ -624,6 +619,3 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     borderRadius: 8,
   },
 }));
-
-const bankDefaultIcon =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12.512 2.634a1.74 1.74 0 0 0-1.023 0l-2.986.918A16.5 16.5 0 0 0 4.178 5.61c-.848.567-.446 1.89.574 1.89h14.496c1.02 0 1.422-1.323.575-1.89a16.5 16.5 0 0 0-4.326-2.058zM4.25 21a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75m2-4a.75.75 0 0 0 1.5 0v-6a.75.75 0 0 0-1.5 0zm5.75.75a.75.75 0 0 1-.75-.75v-6a.75.75 0 0 1 1.5 0v6a.75.75 0 0 1-.75.75m4.25-.75a.75.75 0 0 0 1.5 0v-6a.75.75 0 0 0-1.5 0z' stroke-width='0.5' stroke='%23fff'/%3E%3C/svg%3E";

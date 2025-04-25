@@ -54,7 +54,6 @@ export default function TransferBulkUploadProgress(
         <ButtonBase
           disableRipple
           className="flex items-center gap-2"
-          disabled
           onClick={() => stepper.previous()}
         >
           <Icon icon="weui:back-filled" fontSize={20} />

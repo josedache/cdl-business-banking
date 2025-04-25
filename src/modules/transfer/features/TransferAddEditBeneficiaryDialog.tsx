@@ -71,8 +71,10 @@ export default function TransferAddEditBeneficiaryDialog(
       accountName: beneficiaryInfo?.accountName || "",
       nameEnquiryReference: beneficiaryInfo?.nameEnquiryReference || "",
     },
-    validateOnChange: false,
-    validateOnBlur: false,
+    validateOnChange: true,
+    validateOnMount: true,
+    validateOnBlur: true,
+    // enableReinitialize: true,
     validationSchema: yup.object({
       accountName: yup.string().label("Account Name").required(),
       amount: yup.string().label("Amount").min(1).required(),
@@ -153,15 +155,11 @@ export default function TransferAddEditBeneficiaryDialog(
         },
       }).unwrap();
 
-      formik.setFieldValue(
-        "accountName",
-        resp.data?.responseContent?.accountName
-      );
-
-      formik.setFieldValue(
-        "nameEnquiryReference",
-        resp?.data?.responseContent?.referenceNumber
-      );
+      formik.setValues({
+        ...formik.values,
+        accountName: resp.data?.responseContent?.accountName,
+        nameEnquiryReference: resp?.data?.responseContent?.referenceNumber,
+      });
     } catch (error) {
       console.error("error", error);
     }
@@ -190,7 +188,11 @@ export default function TransferAddEditBeneficiaryDialog(
   };
 
   useEffect(() => {
-    formik.setFieldValue("accountName", "");
+    formik.setValues({
+      ...formik.values,
+      accountName: "",
+      nameEnquiryReference: "",
+    });
     if (
       formik.values.accountNumber.length === 10 &&
       formik.values.bankSortCode
@@ -392,7 +394,6 @@ export default function TransferAddEditBeneficiaryDialog(
               type="submit"
               disabled={
                 !formik.isValid ||
-                !formik.dirty ||
                 deleteBeneficiaryBatchReportMutationResult?.isLoading
               }
               loading={formik.isSubmitting}

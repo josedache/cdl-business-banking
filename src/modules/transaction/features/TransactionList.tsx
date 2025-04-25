@@ -6,7 +6,7 @@ import { Transaction } from "types/transaction.ts";
 import { PAGE_LIMIT } from "constants/pagination.ts";
 import useIntersectionObserver from "hooks/use-intersection-observer.tsx";
 import { TransactionSection } from "modules/transaction/types/transaction.ts";
-import { Button, Icon, Typography } from "@mui/material";
+import { Button, Icon, Skeleton, Typography } from "@mui/material";
 import TransactionListSection from "modules/transaction/features/TransactionListSection.tsx";
 import { Icon as Iconify } from "@iconify/react";
 import SearchTextField from "components/SearchTextField.tsx";
@@ -216,6 +216,7 @@ function TransactionList(props: TransactionListProps) {
             loading={isLoading}
             error={isError}
             onRetry={handleRefetch}
+            renderLoading={() => <TransferRecentTransactionSkeleton />}
           >
             {() => (
               <>
@@ -295,3 +296,26 @@ export type TransactionListProps = {
   hideFilter?: boolean;
   noPagination?: boolean;
 };
+
+function TransferRecentTransactionSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-4 pt-[18px] w-full">
+      {Array(5)
+        .fill(5)
+        .map(() => (
+          <div className="flex items-center gap-1">
+            <Skeleton variant="circular" width={40} height={40} />
+            <div className="flex flex-col flex-1 w-full gap-1">
+              <Skeleton variant="text" width={100} height={20} />
+              <Skeleton
+                variant="text"
+                className="w-full max-w-[200px]"
+                height={20}
+              />
+            </div>
+            <Skeleton variant="text" width={100} height={20} />
+          </div>
+        ))}
+    </div>
+  );
+}

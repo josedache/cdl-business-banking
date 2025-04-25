@@ -8,6 +8,8 @@ import { transferApi } from "apis/transfer";
 import LoadingContent from "components/LoadingContent";
 import { TRANSACTION } from "constants/urls";
 import { walletApi } from "apis/wallet";
+import { BANK_DEFAULT_ICON } from "constants/global";
+import clsx from "clsx";
 
 export type TransferRecentTransactionsProps = {
   transactionType: "transfer" | "bulk_transfer";
@@ -75,9 +77,16 @@ export default function TransferRecentTransactions(
           {getSingleTransaction?.data?.data?.map((item, index) => (
             <div key={index} className="flex items-center gap-4 pt-[18px]">
               <img
-                src={item.icon}
+                src={item.icon || BANK_DEFAULT_ICON}
                 alt="user"
-                className="w-[40px] h-[40px] rounded-full"
+                className={clsx(
+                  "w-[40px] h-[40px] rounded-full bg-neutral-300",
+                  item.icon && "bg-transparent"
+                )}
+                onError={(e: any) => {
+                  e.target.onerror = null;
+                  e.target.src = BANK_DEFAULT_ICON;
+                }}
               />
               <div className="flex flex-col">
                 <Typography

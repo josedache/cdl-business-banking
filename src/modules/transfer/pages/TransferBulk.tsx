@@ -233,6 +233,7 @@ export default function TransferBulk() {
       content: (
         <TransferBulkUploadReviewDetails
           {...contentProps}
+          isEdit={isEdit}
           batchNumber={batchNumber}
         />
       ),

@@ -25,7 +25,7 @@ import DashboardTransactionList from "modules/dashboard/features/DashboardTransa
 import { walletApi } from "apis/wallet";
 
 function Dashboard() {
-  const [isBlurWalletBalance, toggleIsBurWaller] = useToggle();
+  const [isBlurWalletBalance, toggleIsBurWaller] = useToggle(true);
   const user = useAuthUser();
   const navigate = useNavigate();
 
