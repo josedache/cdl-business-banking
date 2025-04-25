@@ -9,6 +9,7 @@ export type UserLoginApiRequest = ApiRequest<{
 export type UserLoginApiResponse = ApiResponse<{
   token: string;
   expireTime: number;
+  is_verified: number;
   message: string;
 }>;
 
@@ -25,13 +26,39 @@ export type UserVerifyOtpApiRequest = ApiRequest<{
   rcNumber?: string;
 }>;
 
+export type NinBvnInfo = {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+  maritalStatus: string;
+  phoneNumber: string;
+  email: string;
+  nin: string;
+  bvn: string;
+  nationality: string;
+  localGovernment: string;
+  residentialAddress: string;
+  image: string;
+};
+
+export type BusinessCacRegInfo = {
+  name: string;
+  registrationDate: string;
+  address?: string;
+  active?: boolean;
+  companyType?: string;
+};
 export type UserVerifyOtpApiResponse = ApiResponse<{
   token: string;
   loginExpiry: number;
   login_expiry: number;
   refreshToken: string;
   refreshExpiry: number;
-  user: User;
+  user?: User;
+  nin?: NinBvnInfo;
+  bvn?: NinBvnInfo;
+  business?: BusinessCacRegInfo;
 }>;
 
 export type UserSignupApiRequest = ApiRequest<{
@@ -63,27 +90,26 @@ export type UserResetPasswordSendApiRequest = ApiRequest<{
 export type UserResetPasswordSendApiResponse = ApiResponse<{
   token: string;
   message: string;
-  statusCode :string;
+  statusCode: string;
 }>;
 
 export type UserResetPasswordVerifyApiRequest = ApiRequest<{
-  email:string;
+  email: string;
   otp: string;
 }>;
 
 export type UserResetPasswordVerifyApiResponse = ApiResponse<{
-  token:string;
+  token: string;
 }>;
 
 export type UserResetPasswordApiRequest = ApiRequest<{
-  email:string;
-  password:string;
-  confirmPassword :string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }>;
 
-export type UserResetPasswordApiResponse = ApiResponse<{
- 
-}>;
+export type UserResetPasswordApiResponse = ApiResponse;
+
 export type UserKycApiRequest = ApiRequest<{
   nin?: string;
   bvn?: string;
@@ -92,6 +118,7 @@ export type UserKycApiRequest = ApiRequest<{
 export type UserKycApiResponse = ApiResponse<{
   expiry: number;
   phone: string;
+  email?: string;
 }>;
 
 export type UserPinApiRequest = ApiRequest<
@@ -104,7 +131,7 @@ export type UserPinApiRequest = ApiRequest<
   }
 >;
 
-export type UserPinApiResponse = ApiResponse<{}>;
+export type UserPinApiResponse = ApiResponse;
 
 export type UserSendOtpApiRequest = ApiRequest<{
   reason:

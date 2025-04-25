@@ -1,9 +1,18 @@
 import AppErrorBoundary from "./AppErrorBoundary";
-import { ACCOUNT_SETUP, DASHBOARD, ENTRY, TRANSFER } from "constants/urls";
+import {
+  ACCOUNT_SETUP,
+  DASHBOARD,
+  ENTRY,
+  SETTINGS,
+  TRANSACTION,
+  TRANSFER,
+} from "constants/urls";
 import AuthRoutes from "modules/auth/AuthRoutes";
 import DashboardRoutes from "modules/dashboard/DashboardRoutes";
+import SettingsRoutes from "modules/settings/SettingsRoutes";
 import TransferRoutes from "modules/transfer/TransferRoutes";
 import { createBrowserRouter } from "react-router-dom";
+import TransactionRoutes from "modules/transaction/TransactionRoutes.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +44,16 @@ const router = createBrowserRouter([
                 path: TRANSFER,
                 lazy: () => import("modules/transfer/Transfer"),
                 children: TransferRoutes,
+              },
+              {
+                path: SETTINGS,
+                lazy: () => import("modules/settings/Settings"),
+                children: SettingsRoutes,
+              },
+              {
+                path: TRANSACTION,
+                lazy: () => import("modules/transaction/Transaction"),
+                children: TransactionRoutes,
               },
             ],
           },

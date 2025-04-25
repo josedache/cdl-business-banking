@@ -19,7 +19,12 @@ import * as yup from "yup";
 import useStepper from "hooks/use-stepper.ts";
 import { Fragment, useMemo } from "react";
 import { LoadingButton } from "@mui/lab";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { DASHBOARD, SIGNIN } from "constants/urls.ts";
 import { Icon as Iconify } from "@iconify/react";
 import { getCheckFieldProps } from "utils/formik/get-check-field-props.ts";
@@ -33,15 +38,19 @@ function AuthSignup() {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+
+  const step = Number(location.state?.step || 0);
+
   const [searchParams] = useSearchParams();
-
-  const stepper = useStepper();
-
-  const [signupUserMutation] = userApi.useSignupUserMutation();
 
   const { yield_referral_code } = extractSearchParams(searchParams, {
     yield_referral_code: "",
   });
+
+  const stepper = useStepper({ initialStep: step });
+
+  const [signupUserMutation] = userApi.useSignupUserMutation();
 
   const passwordPopover = usePopover();
 
@@ -145,7 +154,7 @@ function AuthSignup() {
             label="Choose Password"
             placeholder="Enter your password"
             {...getTextFieldProps(formik, "password")}
-            onFocus={passwordPopover.setAnchorEl}
+            onFocus={(e) => passwordPopover.setAnchorEl(e.target)}
             onBlur={(e) => {
               formik.getFieldProps("password").onBlur(e);
               passwordPopover.setAnchorEl(null);
@@ -154,8 +163,9 @@ function AuthSignup() {
           <Popper
             open={passwordPopover.isOpen}
             anchorEl={passwordPopover.anchorEl}
+            className='z-10'
           >
-            <Paper elevation={0} className="p-4 space-y-4">
+            <Paper className="p-4 space-y-4">
               <Typography variant="h6">Your Password must contain</Typography>
               <div className="space-y-4">
                 {[

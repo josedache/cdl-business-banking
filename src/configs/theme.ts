@@ -283,6 +283,13 @@ export const theme = responsiveFontSizes(
           variant: "scrollable",
         },
       },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            minWidth: "auto",
+          },
+        },
+      },
       MuiLoadingButton: {
         defaultProps: {
           variant: "contained",

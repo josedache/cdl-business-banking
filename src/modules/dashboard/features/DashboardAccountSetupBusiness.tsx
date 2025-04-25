@@ -45,7 +45,7 @@ export default function DashboardAccountSetupBusiness(
             {
               icon: "hugeicons:building-03",
               title: "Business registered with CAC",
-              to: ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION,
+              to: ONBOARDING_STEPS.BUSINESS_NON_CAC_REGISTRATION,
               description: "You’ll need your CAC number to proceed",
             },
             // {

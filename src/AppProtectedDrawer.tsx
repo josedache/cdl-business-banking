@@ -16,10 +16,11 @@ import {
   ListItemIcon,
   Tooltip,
   Card,
+  Icon,
 } from "@mui/material";
 import clsx from "clsx";
 import { Link, matchPath, useLocation } from "react-router-dom";
-import { Icon, Icon as Iconify } from "@iconify/react";
+import { Icon as Iconify } from "@iconify/react";
 
 import useSideNavigation from "hooks/use-side-navigation";
 import MediaBreakpoint from "enums/media-breakpoint";
@@ -27,7 +28,7 @@ import Logo from "components/Logo";
 import useToggle from "hooks/use-toggle";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
-import { DASHBOARD, TRANSFER } from "constants/urls";
+import { DASHBOARD, TRANSACTION, TRANSFER, SETTINGS } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 
@@ -44,7 +45,7 @@ function AppProtectedDrawer() {
   const sideNavigation = useSideNavigation();
   const sidebarIcon = useSidebarIcon();
 
-  const [isSupport, toggleSupport] = useToggle();
+  // const [isSupport, toggleSupport] = useToggle();
 
   const NAV_LINKS = [
     {
@@ -62,13 +63,13 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:wallet-add-01",
           label: "Main Wallet",
-          to: "/test",
+          to: "/main-wallet",
           kycAllow: false,
         },
         {
           icon: "hugeicons:money-receive-02",
           label: "Collections",
-          to: "/test",
+          to: "/collections",
           kycAllow: false,
         },
       ],
@@ -78,8 +79,8 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:time-02",
           label: "Transactions",
-          to: "/test",
-          kycAllow: false,
+          to: TRANSACTION,
+          kycAllow: isKycCompleted,
         },
         {
           icon: "hugeicons:money-exchange-03",
@@ -92,9 +93,15 @@ function AppProtectedDrawer() {
     {
       links: [
         {
+          icon: "hugeicons:setting-07",
+          label: "Settings",
+          to: SETTINGS,
+          kycAllow: true,
+        },
+        {
           icon: "hugeicons:customer-support",
           label: "Support",
-          onClick: toggleSupport,
+          // onClick: toggleSupport,
           kycAllow: true,
         },
       ],
@@ -105,7 +112,6 @@ function AppProtectedDrawer() {
 
   return (
     <div>
-      {" "}
       <div className="relative">
         <Drawer
           open={sideNavigation.isOpen}
@@ -126,7 +132,7 @@ function AppProtectedDrawer() {
             {islg && (
               <div className="flex items-center justify-between w-full">
                 <div>
-                  <Logo variant="1" />
+                  <Logo variant="2" />
                 </div>
 
                 <IconButton
@@ -135,9 +141,9 @@ function AppProtectedDrawer() {
                     "p-1  bg-white border-neutral-200 border-1",
                     collapseToIcon ? "opacity-0 visible" : ""
                   )}
-                  onClick={sidebarIcon.toggle}
+                  onClick={sidebarIcon.toggle as any}
                 >
-                  <Icon
+                  <Iconify
                     icon="hugeicons:arrow-left-double"
                     width="20"
                     height="20"
@@ -186,7 +192,7 @@ function AppProtectedDrawer() {
             )}
             {!islg && (
               <IconButton onClick={() => sideNavigation.toggle()}>
-                <Icon icon="hugeicons:cancel-02" width="24" height="24" />
+                <Iconify icon="hugeicons:cancel-02" width="24" height="24" />
               </IconButton>
             )}
           </Toolbar>
@@ -225,7 +231,11 @@ function AppProtectedDrawer() {
               sidebarIcon.toggle();
             }}
           >
-            <Icon icon="hugeicons:arrow-right-double" width="18" height="18" />
+            <Iconify
+              icon="hugeicons:arrow-right-double"
+              width="18"
+              height="18"
+            />
           </IconButton>
         ) : null}
       </div>
@@ -242,12 +252,12 @@ function AppProtectedDrawerItem(props: any) {
 
   const [isKycDialog, toggleKycDialog] = useToggle();
 
-  const authUser = useAuthUser();
+  // const authUser = useAuthUser();
 
-  const isKycCompleted =
-    authUser?.kyc_validation?.basic &&
-    authUser?.kyc_validation?.nin &&
-    authUser?.kyc_validation?.bank;
+  const isKycCompleted = false;
+  // authUser?.kyc_validation?.basic &&
+  // authUser?.kyc_validation?.nin &&
+  // authUser?.kyc_validation?.bank;
 
   const isGroup = !!links;
 

@@ -1,6 +1,5 @@
-import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers";
+import { DatePicker as MuiDatePicker, DatePickerProps } from "@mui/x-date-pickers";
 import { forwardRef } from "react";
-import { DatePickerProps } from "@mui/lab";
 import DatePickerTextField from "./DatePickerTextField";
 
 const DatePicker = forwardRef(function DatePicker(

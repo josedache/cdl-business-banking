@@ -34,7 +34,7 @@ export default function DashboardAccountSetupBusinessCacRegVerification(
     return () => {
       setCountdownDate(0);
     };
-  }, []);
+  }, [expiration]);
 
   return (
     <Paper elevation={0} className="mx-auto max-w-[520px]">

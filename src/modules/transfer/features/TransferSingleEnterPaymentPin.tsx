@@ -66,8 +66,6 @@ export default function TransferSingleEnterPaymentPin(
             disabled={!formik.isValid || !formik.dirty}
             size="large"
             loading={formik.isSubmitting}
-            loadingPosition="end"
-            endIcon={<></>}
           >
             Continue
           </LoadingButton>

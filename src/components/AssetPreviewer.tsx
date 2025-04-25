@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import FileTypeZipSvg from "assets/svgs/file-type-zip.svg";
-import AssetType from "enums/AssetType";
-import { getAssetInfo } from "utils/file";
+import AssetType from "enums/asset-type";
+import { getAssetInfo } from "utils/file/get-asset-info";
 import ImagePreviewer, { ImagePreviewerProps } from "./ImagePreviewer";
 import VideoPreviewer, { VideoPreviewerProps } from "./VideoPreviewer";
 import AudioPreviewer, { AudioPreviewerProps } from "./AudioPreviewer";

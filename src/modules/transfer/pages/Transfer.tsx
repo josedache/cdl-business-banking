@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
+import { ButtonBase, Divider, Paper } from "@mui/material";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
 import { TransferSetupFormikValues } from "../types/TransferStepForm";
@@ -7,10 +7,10 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 
 import useStepper from "hooks/use-stepper.ts";
-import { DASHBOARD } from "constants/urls";
+import { DASHBOARD, TRANSFER_BULK } from "constants/urls";
 import TransferBulkTab from "../features/TransferBulkTab";
 import TransferSingle from "../features/TransferSingle";
-import TransferRecentTransactions from "../features/TransferRecentTransactions";
+import TransferRecentTransactions from "../features/TransferRecentTransactions.tsx";
 import TransferSingleConfirmNewTransfer from "../features/TransferSingleConfirmNewTransfer";
 import { TRANSFER_STEPS_ENUM } from "../enums/TransferStepsEnum";
 import TransferSingleEnterPaymentPin from "../features/TransferSingleEnterPaymentPin";
@@ -26,7 +26,32 @@ export default function Transfer() {
 
   const [transferMutation, transferMutationResult] =
     transferApi.useTransferMutation();
-  const [completeTransferMutation] = transferApi.useCompleteTransferMutation();
+  const [completeTransferMutation, completeTransferMutationResult] =
+    transferApi.useCompleteTransferMutation();
+
+  const getValidationSchemas = [
+    {
+      accountName: yup.string().label("Account Name").required(),
+      amount: yup.string().label("Amount").min(1).required(),
+      bankSortCode: yup.string().label("Bank").required().required(),
+      accountNumber: yup
+        .string()
+        .label("Account Number")
+        .min(10)
+        .max(10)
+        .required(),
+      walletId: yup.string().label("Wallet").required(),
+      narration: yup.string().label("Narration"),
+    },
+    {},
+    {},
+    {
+      transactionPin: yup.string().label("Transaction Pin").min(6).required(),
+    },
+    {},
+    {},
+    {},
+  ][stepper.step];
 
   const formik = useFormik<TransferSetupFormikValues>({
     initialValues: {
@@ -45,29 +70,7 @@ export default function Transfer() {
       otp: "",
     },
     validationSchema: yup.object({
-      ...[
-        {
-          accountName: yup.string().label("Account Name"),
-          amount: yup.string().label("Amount").min(1).required(),
-          bankSortCode: yup.string().label("Bank").required().required(),
-          accountNumber: yup
-            .string()
-            .label("Account Number")
-            .min(10)
-            .max(10)
-            .required(),
-          narration: yup.string().label("Narration"),
-        },
-        {},
-        {},
-        {
-          transactionPin: yup
-            .string()
-            .label("Transaction Pin")
-            .min(6)
-            .required(),
-        },
-      ][stepper.step],
+      ...getValidationSchemas,
     }),
     onSubmit: async (values) => {
       try {
@@ -78,7 +81,7 @@ export default function Transfer() {
             break;
           }
           case TRANSFER_STEPS_ENUM.BULK: {
-            stepper.go(TRANSFER_STEPS_ENUM.BULK);
+            navigate(TRANSFER_BULK);
             break;
           }
           case TRANSFER_STEPS_ENUM.SINGLE_CONFIRM_NEW_TRANSFER: {
@@ -96,6 +99,7 @@ export default function Transfer() {
               },
             }).unwrap();
             formik.setFieldValue("reference", resp?.data?.transfer?.reference);
+            formik.setFieldValue("transactionPin", "");
             stepper.go(TRANSFER_STEPS_ENUM.SINGLE_PAYMENT_OTP);
             break;
           }
@@ -114,6 +118,7 @@ export default function Transfer() {
             } else {
               stepper.go(TRANSFER_STEPS_ENUM.SINGLE_FAILED);
             }
+            formik.setFieldValue("otp", "");
             break;
           }
           case TRANSFER_STEPS_ENUM.SINGLE_SUCCESS: {
@@ -121,12 +126,11 @@ export default function Transfer() {
             break;
           }
           case TRANSFER_STEPS_ENUM.SINGLE_FAILED: {
-            navigate(DASHBOARD);
+            stepper.go(TRANSFER_STEPS_ENUM.SINGLE);
             break;
           }
         }
       } catch (error) {
-        console.log("error", error);
         enqueueSnackbar(error?.message || error?.data?.message || "Failed", {
           variant: "error",
         });
@@ -186,7 +190,15 @@ export default function Transfer() {
     {
       title: "Single payment Success",
       tab: TRANSFER_STEPS_ENUM.SINGLE_SUCCESS,
-      content: <TransferSingleSuccess {...contentProps} />,
+      content: (
+        <TransferSingleSuccess
+          {...contentProps}
+          transactionId={
+            String(completeTransferMutationResult?.data?.data?.transactionId) ||
+            ""
+          }
+        />
+      ),
       parentTab: TRANSFER_STEPS_ENUM.SINGLE,
       parent: false,
       external: true,
@@ -209,8 +221,6 @@ export default function Transfer() {
   const parentStepIndex = parentSteps?.findIndex(
     (step) => step?.tab === currentStep?.parentTab
   );
-
-  console.log({ formik });
 
   return (
     <div>
@@ -249,8 +259,14 @@ export default function Transfer() {
       )}
 
       {currentStep.hideTransaction ? null : (
-        <div className="mt-4">
-          <TransferRecentTransactions />
+        <div className="mt-4 max-w-[520px] mx-auto">
+          <TransferRecentTransactions
+            transactionType={
+              stepper.step === TRANSFER_STEPS_ENUM.SINGLE
+                ? "transfer"
+                : "bulk_transfer"
+            }
+          />
         </div>
       )}
     </div>

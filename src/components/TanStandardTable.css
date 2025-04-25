@@ -1,9 +1,20 @@
+@import "tailwindcss";
+
 .TanStandardTable {
   overflow: auto;
   width: 100%;
+
   /* min-height: 300px; */
   max-height: calc(100vh - 250px);
   background: inherit;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.TanStandardTable::-webkit-scrollbar {
+  display: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .TanStandardTable__table {
@@ -27,6 +38,7 @@
 .TanStandardTable__table__footer {
   font-weight: 600;
   @apply text-neutral-700 bg-inherit;
+  border-radius: 8px;
 }
 
 .TanStandardTable__table__header,
@@ -41,7 +53,7 @@
 .TanStandardTable__table__body__row,
 .TanStandardTable__table__footer__row {
   background-color: inherit;
-  @apply border-b border-solid border-neutral-200;
+  border-radius: 8px;
 }
 
 .TanStandardTable__table__header__row--relative,
@@ -62,15 +74,18 @@
 .TanStandardTable__table__header__row__cell {
   font-weight: 600;
   text-transform: capitalize;
+  padding: 8px !important;
 }
 
 .TanStandardTable__table__header__row__cell,
 .TanStandardTable__table__body__row__cell,
 .TanStandardTable__table__footer__row__cell {
   position: relative;
-  padding: 16px;
+  padding: 16px 8px;
   /* height: 48px; */
   text-align: left;
+  /* border-radius: 8px; */
+  @apply first:rounded-s-xl last:rounded-e-xl;
 }
 
 .TanStandardTable__table__header__row__cell--relative,
@@ -108,7 +123,7 @@
   right: 0;
   top: 0;
   height: 100%;
-  width: 5px;
+  width: px;
   background: rgba(0, 0, 0, 0.5);
   cursor: col-resize;
   user-select: none;

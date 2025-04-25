@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import currencyjs from "currency.js";
-import Currency from "enums/Currency";
+import Currency from "enums/currency";
 import { Typography, TypographyProps } from "@mui/material";
 import clsx from "clsx";
 
