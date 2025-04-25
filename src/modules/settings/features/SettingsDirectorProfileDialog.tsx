@@ -28,6 +28,7 @@ const SettingsDirectorProfileDialog = (
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
+    //eslint-disable-next-line
     onSubmit: async (values) => {
       try {
       } catch (error: any) {

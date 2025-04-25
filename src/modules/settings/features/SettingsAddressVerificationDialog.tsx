@@ -22,15 +22,13 @@ const SettingsAddressVerificationDialog = (
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
+    //eslint-disable-next-line
     onSubmit: async (values) => {
       try {
       } catch (error: any) {
-        enqueueSnackbar(
-          error?.data?.message || "Failed to process ",
-          {
-            variant: "error",
-          }
-        );
+        enqueueSnackbar(error?.data?.message || "Failed to process ", {
+          variant: "error",
+        });
       }
     },
   });
@@ -50,14 +48,12 @@ const SettingsAddressVerificationDialog = (
             Street Address
           </Typography>
           <div className=" mt-2">
-              <Typography className="border border-neutral-200  rounded-xl py-2 px-3 font-medium text-lg ml-1">
-                21, Savage Street, Ikoyi, Lagos
-              </Typography>
+            <Typography className="border border-neutral-200  rounded-xl py-2 px-3 font-medium text-lg ml-1">
+              21, Savage Street, Ikoyi, Lagos
+            </Typography>
           </div>
 
-          <div className="mt-6 mb-6">
-            
-          </div>
+          <div className="mt-6 mb-6"></div>
         </div>
         <Divider className="py-3" />
         <div className="sticky bottom-0 p-6 flex ml-auto">

@@ -78,6 +78,7 @@ const SettingsGeneralTab = () => {
 
   async function handleSelfieUpdate(file: File) {
     try {
+      //eslint-disable-next-line
       const assetInfo = getAssetInfo(file);
       // const data = await uploadUserFileMutation({
       //   body: {

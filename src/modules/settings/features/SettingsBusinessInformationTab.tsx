@@ -127,7 +127,7 @@ const SettingsBusinessInformationTab = () => {
       onClick: () => {},
     },
   ];
-
+  //eslint-disable-next-line
   async function handleSelfieUpdate(file: File) {
     try {
       // const assetInfo = getAssetInfo(file);
