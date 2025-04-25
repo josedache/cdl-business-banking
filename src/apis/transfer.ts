@@ -1,6 +1,6 @@
 import { baseApi } from "configs/store-query";
 
-import { BENEFICIARY, TRANSFER } from "constants/tags.ts";
+import { BENEFICIARY, TRANSFER, WALLET } from "constants/tags.ts";
 import {
   BulkTransferOtpVerificationApiRequest,
   BulkTransferOtpVerificationApiResponse,
@@ -33,7 +33,7 @@ export const transferApi = baseApi.injectEndpoints({
         },
         ...config,
       }),
-      invalidatesTags: [{ type: TRANSFER }],
+      invalidatesTags: [{ type: TRANSFER }, { type: WALLET }],
     }),
     bulkTransfer: builder.mutation<
       TransferBulkApiResponse,
@@ -47,7 +47,12 @@ export const transferApi = baseApi.injectEndpoints({
         },
         ...config,
       }),
-      invalidatesTags: [{ type: TRANSFER }],
+      invalidatesTags: [
+        { type: TRANSFER },
+        {
+          type: WALLET,
+        },
+      ],
     }),
     bulkTransferOtpVerification: builder.mutation<
       BulkTransferOtpVerificationApiResponse,

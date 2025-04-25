@@ -83,21 +83,21 @@ function AuthResetPassword() {
     onSubmit: async (values) => {
       try {
         switch (enumStep) {
-          case AuthResetPasswordStep.REQUEST: {        
+          case AuthResetPasswordStep.REQUEST: {
             const data = await sendUserResetPasswordMutation({
-              body: { email: values.email},
-            }).unwrap()
+              body: { email: values.email },
+            }).unwrap();
             setCountdownDate(getCountdownDate());
             enqueueSnackbar(data?.message || "Password reset otp sent", {
               variant: "success",
-            });            
+            });
             break;
           }
           case AuthResetPasswordStep.VERIFY: {
             const data = await verifyUserResetPasswordMutation({
               body: {
                 otp: values.otp,
-                email: values.email
+                email: values.email,
               },
             }).unwrap();
             enqueueSnackbar(data?.message || "OTP verified successfully!", {
@@ -109,8 +109,8 @@ function AuthResetPassword() {
             const data = await resetPasswordMutation({
               body: {
                 password: values.password,
-                confirmPassword : values.confirmPassword,
-                email : values.email
+                confirmPassword: values.confirmPassword,
+                email: values.email,
               },
             }).unwrap();
             enqueueSnackbar(data?.message || "Password reset successful", {
@@ -184,7 +184,7 @@ function AuthResetPassword() {
             }}
             numInputs={6}
             shouldAutoFocus
-            // inputType="password"
+            inputType="password"
             slot={{ input: NumberInput }}
             slotProps={{
               input: {

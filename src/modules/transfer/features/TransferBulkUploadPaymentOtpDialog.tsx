@@ -111,7 +111,7 @@ export default function TransferBulkUploadPaymentOtpDialog(
                   }}
                   numInputs={6}
                   shouldAutoFocus
-                  // inputType="password"
+                  inputType="password"
                   slot={{ input: NumberInput }}
                   slotProps={{
                     input: {

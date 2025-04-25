@@ -39,7 +39,7 @@ export type GetTransactionLimitApiRequest = ApiRequest<
   void,
   void,
   {
-    tier: string;
+    tier?: string;
   }
 >;
 

@@ -7,6 +7,9 @@ import { transactionApi } from "apis/transaction";
 import { transferApi } from "apis/transfer";
 import LoadingContent from "components/LoadingContent";
 import { TRANSACTION } from "constants/urls";
+import { walletApi } from "apis/wallet";
+import { BANK_DEFAULT_ICON } from "constants/global";
+import clsx from "clsx";
 
 export type TransferRecentTransactionsProps = {
   transactionType: "transfer" | "bulk_transfer";
@@ -16,26 +19,23 @@ export default function TransferRecentTransactions(
   props: TransferRecentTransactionsProps
 ) {
   const { transactionType } = props;
-  const transferWalletsQueryResult =
-    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
 
   const navigate = useNavigate();
 
-  const mainWallet = transferWallets?.find(
-    (wallet) => wallet.businessType === "Group"
-  );
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
 
   const getSingleTransaction =
     transactionApi.useGetTransactionSavingsHistoryQuery(
       {
-        path: { savingsAccountId: mainWallet?.walletId },
+        path: { savingsAccountId: mainWallet?.id },
         params: {
           page: 1,
           limit: 5,
         },
       },
-      { skip: !mainWallet?.walletId || transactionType !== "transfer" }
+      { skip: !mainWallet?.id || transactionType !== "transfer" }
     );
 
   const getBulkTransactionsQuery = transferApi.useGetTransferBulkSummariesQuery(
@@ -77,9 +77,16 @@ export default function TransferRecentTransactions(
           {getSingleTransaction?.data?.data?.map((item, index) => (
             <div key={index} className="flex items-center gap-4 pt-[18px]">
               <img
-                src={item.icon}
+                src={item.icon || BANK_DEFAULT_ICON}
                 alt="user"
-                className="w-[40px] h-[40px] rounded-full"
+                className={clsx(
+                  "w-[40px] h-[40px] rounded-full bg-neutral-300",
+                  item.icon && "bg-transparent"
+                )}
+                onError={(e: any) => {
+                  e.target.onerror = null;
+                  e.target.src = BANK_DEFAULT_ICON;
+                }}
               />
               <div className="flex flex-col">
                 <Typography

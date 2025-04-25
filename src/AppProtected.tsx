@@ -10,6 +10,8 @@ import useLogout from "hooks/use-logout";
 import { userApi } from "apis/user.ts";
 import store from "configs/store";
 import { SIGNIN } from "constants/urls";
+import { CircularProgress } from "@mui/material";
+import Logo from "components/Logo";
 
 function AppProtected() {
   const { logout } = useLogout();
@@ -51,6 +53,12 @@ function AppProtected() {
       loading={userQueryResult.isLoading}
       error={userQueryResult.isError}
       onRetry={userQueryResult.refetch}
+      renderLoading={() => (
+        <div className="flex flex-col justify-center items-center h-full">
+          <Logo />
+          <CircularProgress size={25} />
+        </div>
+      )}
     >
       {() => (
         <>

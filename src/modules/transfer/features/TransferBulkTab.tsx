@@ -95,71 +95,80 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                 <div className="px-6 pt-6 pb-8">
                   <div className="flex items-center justify-between">
                     <Typography variant="h5">Choose a List</Typography>
-                    <Button
-                      startIcon={
-                        <Icon icon="ic:baseline-plus" width="24" height="24" />
-                      }
-                      // ref={actionPopover.anchorEl}
-                      onClick={actionPopover.togglePopover}
-                      size="small"
-                      variant="soft"
-                    >
-                      Create new List
-                    </Button>
+                    <div>
+                      <Button
+                        startIcon={
+                          <Icon
+                            icon="ic:baseline-plus"
+                            width="24"
+                            height="24"
+                          />
+                        }
+                        onClick={
+                          actionPopover.isOpen
+                            ? () => {}
+                            : actionPopover.togglePopover
+                        }
+                        size="small"
+                        variant="soft"
+                      >
+                        Create new List
+                      </Button>
 
-                    <Popper
-                      sx={{ zIndex: 1 }}
-                      open={actionPopover.isOpen}
-                      anchorEl={actionPopover.anchorEl}
-                      role={undefined}
-                      transition
-                      disablePortal
-                    >
-                      {({ TransitionProps, placement }) => (
-                        <Grow
-                          {...TransitionProps}
-                          style={{
-                            transformOrigin:
-                              placement === "bottom"
-                                ? "center top"
-                                : "center bottom",
-                          }}
-                        >
-                          <Paper className="rounded-2xl">
-                            <ClickAwayListener
-                              onClickAway={actionPopover.togglePopover}
-                            >
-                              <MenuList id="split-button-menu" autoFocusItem>
-                                {[
-                                  {
-                                    icon: "tabler:upload",
-                                    name: "Upload CSV",
-                                    onClick: () => {
-                                      navigate(TRANSFER_BULK);
+                      <Popper
+                        sx={{ zIndex: 1 }}
+                        open={actionPopover.isOpen}
+                        anchorEl={actionPopover.anchorEl}
+                        transition
+                        disablePortal
+                      >
+                        {({ TransitionProps, placement }) => (
+                          <Grow
+                            {...TransitionProps}
+                            style={{
+                              transformOrigin:
+                                placement === "bottom"
+                                  ? "center top"
+                                  : "center bottom",
+                            }}
+                          >
+                            <Paper className="rounded-2xl mt-2">
+                              <ClickAwayListener
+                                onClickAway={actionPopover.togglePopover}
+                              >
+                                <MenuList autoFocusItem>
+                                  {[
+                                    {
+                                      icon: "tabler:upload",
+                                      name: "Upload CSV",
+                                      onClick: () => {
+                                        navigate(TRANSFER_BULK);
+                                      },
                                     },
-                                  },
-                                  {
-                                    icon: "mage:file-2",
-                                    name: "Add recipients manually",
-                                    onClick: toggleOpenBeneficiaryAddEditDialog,
-                                  },
-                                ].map(({ name, icon, ...rest }) => (
-                                  <MenuItem key={name} {...rest}>
-                                    <Icon
-                                      icon={icon}
-                                      width="20"
-                                      height="20"
-                                      className="mr-2"
-                                    />
-                                    {name}
-                                  </MenuItem>
-                                ))}
-                              </MenuList>
-                            </ClickAwayListener>
-                          </Paper>
-                        </Grow>
-                      )}
-                    </Popper>
+                                    {
+                                      icon: "mage:file-2",
+                                      name: "Add recipients manually",
+                                      onClick:
+                                        toggleOpenBeneficiaryAddEditDialog,
+                                    },
+                                  ].map(({ name, icon, ...rest }) => (
+                                    <MenuItem key={name} {...rest}>
+                                      <Icon
+                                        icon={icon}
+                                        width="20"
+                                        height="20"
+                                        className="mr-2"
+                                      />
+                                      {name}
+                                    </MenuItem>
+                                  ))}
+                                </MenuList>
+                              </ClickAwayListener>
+                            </Paper>
+                          </Grow>
+                        )}
+                      </Popper>
+                    </div>
                   </div>
 
                   <div className="mt-8">

@@ -29,9 +29,12 @@ import useToggle from "hooks/use-toggle";
 import TransferAddEditBeneficiaryDialog from "./TransferAddEditBeneficiaryDialog";
 import { useSnackbar } from "notistack";
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
+import { TRANSFER } from "constants/urls";
 
 type TransferBulkUploadReviewDetailsProps = {
   batchNumber: string;
+  isEdit?: boolean;
 } & TransferBulkContentProps;
 
 const emptyArray = [];
@@ -44,8 +47,10 @@ const TABS = {
 export default function TransferBulkUploadReviewDetails(
   props: TransferBulkUploadReviewDetailsProps
 ) {
-  const { formik, batchNumber, stepper } = props;
+  const { formik, batchNumber, isEdit, stepper } = props;
   const { enqueueSnackbar } = useSnackbar();
+
+  const navigate = useNavigate();
 
   const [selectedTab, setSelectedTab] = useState("");
   const [isOpenIndex, setIsOpenIndex] = useState<number | undefined>();
@@ -270,9 +275,8 @@ export default function TransferBulkUploadReviewDetails(
       <div className="p-6">
         <ButtonBase
           disableRipple
-          disabled
           className="flex items-center gap-2"
-          onClick={() => stepper.previous()}
+          onClick={() => (isEdit ? navigate(TRANSFER) : stepper.previous())}
         >
           <Icon icon="weui:back-filled" fontSize={20} />
           <Typography>Go back</Typography>

@@ -1,5 +1,4 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { transferApi } from "apis/transfer.ts";
 import { transactionApi } from "apis/transaction.ts";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadingContent from "components/LoadingContent.tsx";
@@ -7,7 +6,7 @@ import { Transaction } from "types/transaction.ts";
 import { PAGE_LIMIT } from "constants/pagination.ts";
 import useIntersectionObserver from "hooks/use-intersection-observer.tsx";
 import { TransactionSection } from "modules/transaction/types/transaction.ts";
-import { Button, Icon, Typography } from "@mui/material";
+import { Button, Icon, Skeleton, Typography } from "@mui/material";
 import TransactionListSection from "modules/transaction/features/TransactionListSection.tsx";
 import { Icon as Iconify } from "@iconify/react";
 import SearchTextField from "components/SearchTextField.tsx";
@@ -18,6 +17,7 @@ import TransactionFilter, {
   TransactionFilterState,
 } from "modules/transaction/features/TransactionFilter.tsx";
 import DateFormat from "enums/date-format.ts";
+import { walletApi } from "apis/wallet";
 
 function TransactionList(props: TransactionListProps) {
   const { hideFilter, noPagination } = props;
@@ -36,28 +36,20 @@ function TransactionList(props: TransactionListProps) {
     [x: string]: Transaction[];
   }>({});
 
-  // const [pageState, setPageState] = useState(() => ({
-  //   pageIndex: 0,
-  //   limit: PAGE_LIMIT,
-  // }));
-
   const [debouncedSearchQ, setSearchQ, searchQ] = useDebouncedState("", {
     wait: 500,
   });
 
-  const transferWalletsQueryResult =
-    transferApi.useGetTransferWalletsQuery(undefined);
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
 
-  const mainWallet = transferWallets?.find(
-    (wallet) => wallet.businessType === "Group"
-  );
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
 
   const transactionSavingsHistoryQueryResult =
     transactionApi.useGetTransactionSavingsHistoryQuery(
       useMemo(
         () => ({
-          path: { savingsAccountId: mainWallet?.walletId },
+          path: { savingsAccountId: mainWallet?.id },
           params: {
             page: filter?.pageIndex + 1,
             limit: filter?.limit,
@@ -73,14 +65,14 @@ function TransactionList(props: TransactionListProps) {
           },
         }),
         [
-          mainWallet?.walletId,
+          mainWallet?.id,
           // filter.limit,
           // filter.pageIndex,
           debouncedSearchQ,
           filter,
         ]
       ),
-      { skip: !mainWallet?.walletId }
+      { skip: !mainWallet?.id }
     );
 
   const transactionSections = (() => {
@@ -224,6 +216,7 @@ function TransactionList(props: TransactionListProps) {
             loading={isLoading}
             error={isError}
             onRetry={handleRefetch}
+            renderLoading={() => <TransferRecentTransactionSkeleton />}
           >
             {() => (
               <>
@@ -303,3 +296,26 @@ export type TransactionListProps = {
   hideFilter?: boolean;
   noPagination?: boolean;
 };
+
+function TransferRecentTransactionSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-4 pt-[18px] w-full">
+      {Array(5)
+        .fill(5)
+        .map(() => (
+          <div className="flex items-center gap-1">
+            <Skeleton variant="circular" width={40} height={40} />
+            <div className="flex flex-col flex-1 w-full gap-1">
+              <Skeleton variant="text" width={100} height={20} />
+              <Skeleton
+                variant="text"
+                className="w-full max-w-[200px]"
+                height={20}
+              />
+            </div>
+            <Skeleton variant="text" width={100} height={20} />
+          </div>
+        ))}
+    </div>
+  );
+}
