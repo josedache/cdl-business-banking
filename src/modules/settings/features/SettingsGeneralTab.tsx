@@ -72,8 +72,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Referral Link",
-      value:
-        "https://www.4HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR9",
+      value: `${window.location.origin}?referral_code=${authUser?.info?.referralCode}`,
     },
   ];
 
