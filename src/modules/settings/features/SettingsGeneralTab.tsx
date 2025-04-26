@@ -6,12 +6,14 @@ import Dropzone from "react-dropzone";
 import { useSnackbar } from "notistack";
 import useAuthUser from "hooks/use-auth-user";
 import { getAssetInfo } from "utils/file/get-asset-info";
+import useClipboard from "hooks/use-clipboard";
 
 const SettingsGeneralTab = () => {
   const authUser = useAuthUser();
   const { enqueueSnackbar } = useSnackbar();
   const [openEditEmailDialog, toggleEditEmailDialog, setOpenEditEmailDialog] =
     useToggle();
+  const clipboard = useClipboard();
 
   // console.log("12", authUser);
 
@@ -25,7 +27,7 @@ const SettingsGeneralTab = () => {
     {
       title: "Email Address",
       value: `${authUser?.info?.email ?? "N/A"} `,
-      canEdit: true,
+      canEdit: authUser?.info?.isEmailVerified,
       onClick: () => {
         setOpenEditEmailDialog(true);
       },
@@ -38,7 +40,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Address",
-      value: "Lagos",
+      value: " N/A",
       canEdit: false,
       onClick: () => {},
     },
@@ -256,11 +258,14 @@ const SettingsGeneralTab = () => {
                       >
                         {opt.value}
                       </Typography>
-                      <ButtonBase>
+
+                      <ButtonBase
+                        onClick={() => clipboard.writeText(String(opt.value))}
+                      >
                         <Iconify
                           fontSize={18}
                           icon="solar:copy-bold"
-                          className="cursor-pointer text-neutral-300"
+                          className="cursor-pointer text-neutral-300 hover:text-primary-main"
                         />
                       </ButtonBase>
                     </div>

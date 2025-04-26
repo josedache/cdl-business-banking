@@ -47,3 +47,16 @@ export type SubSectorsLookupApiResponse = ApiResponse<
     business_sector_id: number;
   }>
 >;
+
+export type StateAddressLookupApiResponse = ApiResponse<
+  Array<{
+    id: number;
+    name: string;
+    description: string;
+    cba_id: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  }>
+>;
+export type StateAddressLookupApiRequest = ApiRequest<unknown>;
