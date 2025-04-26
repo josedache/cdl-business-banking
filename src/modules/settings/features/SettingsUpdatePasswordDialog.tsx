@@ -78,7 +78,7 @@ const SettingsUpdatePasswordDialog = (
                 confirmNewPassword: values.confirmNewPassword,
               },
             }).unwrap();
-            enqueueSnackbar(data?.message || "Password reset otp sent", {
+            enqueueSnackbar(data?.message || "Password reset successful", {
               variant: "success",
             });
             break;

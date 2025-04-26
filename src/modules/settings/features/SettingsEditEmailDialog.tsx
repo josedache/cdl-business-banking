@@ -195,10 +195,6 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
                         Didn’t get the code?{" "}
                         <ButtonBase
                           disableRipple
-                          // disabled={
-                          //   sendUserResetPasswordMutationResult?.isLoading
-                          // }
-                          // component={MuiLink}
                           onClick={handleResendOtpReset as any}
                           className="font-bold text-primary-main"
                         >

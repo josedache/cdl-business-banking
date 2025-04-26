@@ -43,9 +43,14 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
     validationSchema: yup.object().shape({
       ...{
         [SettingsUpdatePinStep.CHANGE]: {
-          oldPin: yup.string().label("OTP").length(6).trim().required(),
-          newPin: yup.string().label("OTP").length(6).trim().required(),
-          confirmNewPin: yup.string().label("OTP").length(6).trim().required(),
+          oldPin: yup.string().label("Old Pin").length(6).trim().required(),
+          newPin: yup.string().label("New Pin").length(6).trim().required(),
+          confirmNewPin: yup
+            .string()
+            .label("Confirm Pin")
+            .length(6)
+            .trim()
+            .required(),
         },
         [SettingsUpdatePinStep.SUCCESS]: {},
       }[enumStep],
@@ -61,7 +66,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
                 confirmNewPin: values.confirmNewPin,
               },
             }).unwrap();
-            enqueueSnackbar(data?.message || "Pin reset otp sent", {
+            enqueueSnackbar(data?.message || "Pin reset successful", {
               variant: "success",
             });
             break;

@@ -14,8 +14,6 @@ const SettingsGeneralTab = () => {
     useToggle();
   const clipboard = useClipboard();
 
-  // console.log("12", authUser);
-
   const personalInfo = [
     {
       title: "Full Name",
