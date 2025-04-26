@@ -23,6 +23,8 @@ import Logo from "components/Logo";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import useAuthUser from "hooks/use-auth-user";
 import useLogout from "hooks/use-logout";
+import { Link } from "react-router-dom";
+import { SETTINGS } from "constants/urls.ts";
 
 function AppProtectedHeader(props: AppBarProps) {
   const { ...restProps } = props;
@@ -134,7 +136,11 @@ function AppProtectedHeader(props: AppBarProps) {
               <Divider />
 
               <div className="space-y-2 mt-1">
-                <ListItemButton className="rounded-lg">
+                <ListItemButton
+                  className="rounded-lg"
+                  component={Link}
+                  to={SETTINGS}
+                >
                   <Iconify
                     icon="hugeicons:settings-01"
                     width="20"

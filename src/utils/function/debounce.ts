@@ -4,7 +4,8 @@
  * @param {number} wait
  * @returns {C & {flush: Function, cancel: Function}}
  */
-export function debounce<C extends () => any>(callback: C, wait = 0) {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export function debounce<C extends Function>(callback: C, wait = 0) {
   let debounceTimer: any;
   let triggerArgs: any;
   let triggerThis: any;

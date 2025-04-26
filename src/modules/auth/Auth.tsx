@@ -4,7 +4,7 @@ import Logo from "components/Logo";
 
 function Auth() {
   return (
-    <div className="h-full flex justify-center mt-10">
+    <div className="h-full flex justify-center pt-10">
       <div className="w-full max-w-lg">
         <div className="flex justify-center items-center mb-10">
           <Logo />

@@ -295,7 +295,7 @@ function AuthResetPassword() {
   return (
     <form
       onSubmit={formik.handleSubmit as any}
-      className="h-full w-full flex flex-col justify-center items-center bg-white mt-12 text-center"
+      className="w-full flex flex-col justify-center items-center bg-white mt-12 text-center"
     >
       <Paper
         elevation={0}

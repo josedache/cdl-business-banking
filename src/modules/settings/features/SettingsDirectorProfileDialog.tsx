@@ -36,8 +36,7 @@ const SettingsDirectorProfileDialog = (
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
-    //eslint-disable-next-line
-    onSubmit: async (values) => {
+    onSubmit: async () => {
       try {
       } catch (error: any) {
         enqueueSnackbar(error?.data?.message || "Failed to process", {

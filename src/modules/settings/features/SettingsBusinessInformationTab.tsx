@@ -98,10 +98,10 @@ const SettingsBusinessInformationTab = () => {
           multiple={false}
           maxSize={1024 * 1024 * 2}
           accept={{ "image/*": [] }}
-          onDropAccepted={(files) => {
-            const file = files[0];
-            handleSelfieUpdate(file);
-          }}
+          // onDropAccepted={(files) => {
+          //   const file = files[0];
+          //   handleSelfieUpdate(file);
+          // }}
           onDropRejected={(fileRejection) => {
             enqueueSnackbar(
               fileRejection[0].errors?.[0].message || "File Rejected",
@@ -149,33 +149,32 @@ const SettingsBusinessInformationTab = () => {
       isValueAvailable: false,
     },
   ];
-  //eslint-disable-next-line
-  async function handleSelfieUpdate(file: File) {
-    try {
-      // const assetInfo = getAssetInfo(file);
-      // const data = await uploadUserFileMutation({
-      //   body: {
-      //     file: file,
-      //     tier_level: authUser.kycLevel,
-      //     title: file.name,
-      //     type: "selfie",
-      //     fileExtension: assetInfo.type,
-      //     mimeType: assetInfo.mimeType,
-      //   },
-      // }).unwrap();
-      // enqueueSnackbar(data?.message || "Selfied updated successfully!", {
-      //   variant: "success",
-      // });
-    } catch (error) {
-      const message = Array.isArray(error?.data?.message)
-        ? error?.data?.message?.[0]
-        : error?.data?.message;
+  // async function handleSelfieUpdate(file: File) {
+  //   try {
+  //     // const assetInfo = getAssetInfo(file);
+  //     // const data = await uploadUserFileMutation({
+  //     //   body: {
+  //     //     file: file,
+  //     //     tier_level: authUser.kycLevel,
+  //     //     title: file.name,
+  //     //     type: "selfie",
+  //     //     fileExtension: assetInfo.type,
+  //     //     mimeType: assetInfo.mimeType,
+  //     //   },
+  //     // }).unwrap();
+  //     // enqueueSnackbar(data?.message || "Selfied updated successfully!", {
+  //     //   variant: "success",
+  //     // });
+  //   } catch (error) {
+  //     const message = Array.isArray(error?.data?.message)
+  //       ? error?.data?.message?.[0]
+  //       : error?.data?.message;
 
-      enqueueSnackbar(message || "Failed to update selfie", {
-        variant: "error",
-      });
-    }
-  }
+  //     enqueueSnackbar(message || "Failed to update selfie", {
+  //       variant: "error",
+  //     });
+  //   }
+  // }
 
   return (
     <div className="grid xl:grid-cols-5 gap-6">

@@ -32,7 +32,7 @@ function TransactionFilter(props: TransactionFilterProps) {
 
   const formik = useFormik<TransactionFilterState>({
     initialValues: {
-      pageIndex: filter.pageIndex ?? 0,
+      // pageIndex: filter.pageIndex ?? 0,
       limit: filter?.limit ?? PAGE_LIMIT,
       period: filter?.period ?? "",
       startDate: filter?.startDate ?? null,
@@ -225,7 +225,7 @@ export type TransactionFilterProps = {
 } & Omit<DialogProps, "children" | "open" | "id">;
 
 export type TransactionFilterState = {
-  pageIndex: number;
+  // pageIndex: number;
   limit: number;
   period: string;
   startDate: Date;
