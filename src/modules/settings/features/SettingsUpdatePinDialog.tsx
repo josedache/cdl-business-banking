@@ -180,7 +180,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
             {tabs[stepper.step]?.title}
           </Typography>
         </DialogTitleXCloseButton>
-        <Divider />
+        <Divider className="pt-1" />
 
         <div className="px-6">
           <Typography className="font-medium mt-6 ">

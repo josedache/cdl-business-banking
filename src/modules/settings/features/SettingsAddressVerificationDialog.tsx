@@ -86,7 +86,7 @@ const SettingsAddressVerificationDialog = (
 
   const allStatesList = allStatesQuery?.data?.data;
   const allLGAForStateList = lgasQuery?.data?.data;
-  // console.log({ getState });
+
   return (
     <Dialog fullWidth maxWidth="sm" {...rest}>
       <form onSubmit={formik.handleSubmit as any} className=" ">

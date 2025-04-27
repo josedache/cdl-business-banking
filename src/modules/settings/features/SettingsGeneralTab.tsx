@@ -199,7 +199,7 @@ const SettingsGeneralTab = () => {
                     </div>
                     {!opt.canEdit ? (
                       <Typography
-                        className="text-primary-main font-semibold"
+                        className="text-primary-main/25 font-semibold"
                         onClick={opt.onClick}
                       >
                         Edit
@@ -226,7 +226,7 @@ const SettingsGeneralTab = () => {
         <Paper className="py-6 mt-6 " elevation={0}>
           <div className="mb-6 px-10">
             <Typography className="font-semibold text-gray-800 text-lg">
-              Refer a Friend Both Earn X amount
+              Refer a Friend
             </Typography>
             <Typography className=" text-gray-500 text-sm mt-4">
               Refer others to deposit over N200, and both receive N1000.
