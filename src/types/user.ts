@@ -29,6 +29,7 @@ export type User = {
     id: string;
     is_validated: boolean;
     name: string;
+    rcNumber: string;
   }>;
   transactionPin: Array<{
     id: string;

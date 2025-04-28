@@ -5,6 +5,8 @@ import {
   BankLookupApiRequest,
   BankLookupApiResponse,
   sectorsLookupApiResponse,
+  StateAddressLookupApiRequest,
+  StateAddressLookupApiResponse,
   SubSectorsLookupApiRequest,
   SubSectorsLookupApiResponse,
 } from "types/lookup";
@@ -34,6 +36,17 @@ export const lookupApi = baseApi.injectEndpoints({
     >({
       query: ({ path, ...config }) => ({
         url: BASE_URL + "/sectors/" + path?.sectorId,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: LOOKUP }],
+    }),
+    stateAddressLookup: builder.query<
+      StateAddressLookupApiResponse,
+      StateAddressLookupApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/states/" + `${path?.stateId ?? ""}`,
         method: "GET",
         ...config,
       }),

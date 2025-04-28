@@ -4,6 +4,7 @@ import {
   Card,
   Divider,
   Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
@@ -17,11 +18,29 @@ import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 import CircularProgressWithLabel from "components/CircularProgress";
 import SetUpBgImg from "assets/imgs/setup-bg.png";
 import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
+import { merchantApi } from "apis/merchant";
+import DashboardAccountSetupDialog from "modules/dashboard/features/DashboardAccountSetupDialog";
 
 const SettingsBusinessInformationTab = () => {
   const user = useAuthUser();
   const isKycCompleted = isKycCheckCompleted(user?.info);
+  const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
+  const getBusinessProfile = merchantApi.useGetMerchantBusinessProfileQuery({
+    params: {
+      rcNumber: user?.info?.businesses[0]?.rcNumber,
+    },
+  });
+
+  const getBusinessDirectors = merchantApi.useGetMerchantBusinessDirectorsQuery(
+    {
+      path: {
+        rcNumber: user?.info?.businesses[0]?.rcNumber,
+      },
+    }
+  );
+  const businessDetails = getBusinessProfile?.data?.data?.business;
+  const businessDirectors = getBusinessDirectors?.data;
 
   const [
     openDirectorsProfileDialog,
@@ -38,26 +57,26 @@ const SettingsBusinessInformationTab = () => {
   const businessInfo = [
     {
       title: "Business Name",
-      value: "Segun Akinnibosun",
-      canEdit: true,
+      value: `${businessDetails?.name ?? "N/A"}`,
+      canEdit: false,
       onClick: () => {},
     },
     {
       title: "Business Type",
-      value: "Product based Business",
-      canEdit: true,
+      value: `${businessDetails?.businessType ?? "N/A"}`,
+      canEdit: false,
       onClick: () => {},
     },
     {
       title: "Business Registration",
-      value: "Private Limited Liability Company",
-      canEdit: true,
+      value: " N/A",
+      canEdit: false,
       onClick: () => {},
     },
     {
       title: "Business Email",
-      value: "SegunAkinnibosun@gmail.com",
-      canEdit: true,
+      value: " N/A",
+      canEdit: false,
       onClick: () => {},
     },
     {
@@ -73,7 +92,7 @@ const SettingsBusinessInformationTab = () => {
           </ButtonBase>
         </>
       ),
-      canEdit: true,
+      canEdit: false,
       onClick: (
         <Dropzone
           multiple={false}
@@ -106,28 +125,30 @@ const SettingsBusinessInformationTab = () => {
   const complianceInfo = [
     {
       title: "Directors",
-      value: "2 Directors Listed",
+      value: `${businessDirectors?.data?.length ?? "0"} Directors Listed`,
       canEdit: true,
       onClick: () => {
         setOpenDirectorsProfileDialog(true);
       },
+      isValueAvailable: (businessDirectors?.data?.length ?? 0) > 0,
     },
     {
       title: "Address Verification",
-      value: "Product based Business",
+      value: " ",
       canEdit: true,
       onClick: () => {
         setOpenAddressVerificationDialog(true);
       },
+      isValueAvailable: false,
     },
     {
       title: "MEMAT (Memorandum of articicles of association)",
       value: " “”ID Card Type Here”” ",
-      canEdit: true,
+      canEdit: false,
       onClick: () => {},
+      isValueAvailable: false,
     },
   ];
-
   // async function handleSelfieUpdate(file: File) {
   //   try {
   //     // const assetInfo = getAssetInfo(file);
@@ -148,7 +169,7 @@ const SettingsBusinessInformationTab = () => {
   //     const message = Array.isArray(error?.data?.message)
   //       ? error?.data?.message?.[0]
   //       : error?.data?.message;
-  //
+
   //     enqueueSnackbar(message || "Failed to update selfie", {
   //       variant: "error",
   //     });
@@ -170,8 +191,9 @@ const SettingsBusinessInformationTab = () => {
                     <Typography className="font-medium text-neutral-900">
                       {opt.title}
                     </Typography>
-
-                    {opt.value === typeof String ? (
+                    {getBusinessProfile.isLoading ? (
+                      <Skeleton variant="text" className="w-22 h-8" />
+                    ) : opt.value === typeof String ? (
                       <Typography className=" text-neutral-500">
                         {opt.value}
                       </Typography>
@@ -207,14 +229,35 @@ const SettingsBusinessInformationTab = () => {
           <div className="space-y-3 mt-4">
             {complianceInfo?.map((opt, index) => {
               return (
-                <div className="flex justify-between items-center">
-                  <div key={index} className="py-1">
+                <div key={index} className="flex justify-between items-center">
+                  <div className="py-1">
                     <Typography className="font-medium text-neutral-900">
                       {opt.title}
                     </Typography>
-                    <Typography className=" text-neutral-500">
-                      {opt.value}
-                    </Typography>
+                    {getBusinessDirectors?.isLoading ? (
+                      <Skeleton variant="text" className="w-22 h-8" />
+                    ) : (
+                      <>
+                        {opt?.isValueAvailable ? (
+                          <Typography className=" text-neutral-500">
+                            {opt.value}
+                          </Typography>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <ButtonBase>
+                              <Iconify
+                                fontSize={16}
+                                icon="solar:danger-triangle-outline"
+                                className=" text-neutral-500 "
+                              />
+                            </ButtonBase>
+                            <span className="text-neutral-500 font-medium">
+                              Not Set
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                   <Typography
                     className={`font-semibold ${opt.canEdit ? "cursor-pointer text-primary-main " : " text-primary-main/25"}`}
@@ -261,6 +304,7 @@ const SettingsBusinessInformationTab = () => {
 
             <div className="w-full">
               <Button
+                onClick={toggleAccountSetup}
                 fullWidth
                 size="large"
                 variant="gradient"
@@ -274,6 +318,7 @@ const SettingsBusinessInformationTab = () => {
       </div>
       {openDirectorsProfileDialog && (
         <SettingsDirectorProfileDialog
+          directorsList={businessDirectors?.data}
           open={openDirectorsProfileDialog}
           onClose={toggleDirectorsProfileDialog}
         />
@@ -282,6 +327,12 @@ const SettingsBusinessInformationTab = () => {
         <SettingsAddressVerificationDialog
           open={openAddressVerificationDialog}
           onClose={toggleAddressVerificationDialog}
+        />
+      )}
+      {isAccountSetup && (
+        <DashboardAccountSetupDialog
+          open={isAccountSetup}
+          onClose={toggleAccountSetup}
         />
       )}
     </div>

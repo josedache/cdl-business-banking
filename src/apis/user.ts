@@ -19,6 +19,12 @@ import {
   UserPinApiRequest,
   UserSendOtpApiResponse,
   UserSendOtpApiRequest,
+  UserUpdateUsersDetailsRequest,
+  UserUpdateUsersDetailsResponse,
+  UserUpdatePasswordRequest,
+  UserUpdatePasswordResponse,
+  UserUpdatePinRequest,
+  UserUpdatePinResponse,
 } from "types/user-api.ts";
 
 export const BASE_URL = "/user";
@@ -140,7 +146,37 @@ export const userApi = baseApi.injectEndpoints({
     >({
       query: ({ ...config }) => ({
         url: BASE_URL + "/reset-password",
-        method: "patch",
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+    updateUsersDetails: builder.mutation<
+      UserUpdateUsersDetailsResponse,
+      UserUpdateUsersDetailsRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+    updatePassword: builder.mutation<
+      UserUpdatePasswordResponse,
+      UserUpdatePasswordRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/update-password",
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+    updatePin: builder.mutation<UserUpdatePinResponse, UserUpdatePinRequest>({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/pin",
+        method: "PATCH",
         ...config,
       }),
       invalidatesTags: [{ type: USER }],

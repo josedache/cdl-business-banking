@@ -1,3 +1,3 @@
-export interface SettingsDirectorProfileValues{
-    name:string
+export interface SettingsDirectorProfileValues {
+  name: string;
 }

@@ -324,7 +324,10 @@ function AuthResetPassword() {
             {isSecondStep ? (
               <Typography className="text-text-secondary w-4/5 pt-4 pb-2 text-sm font-medium">
                 A 6-digit OTP has been sent to{" "}
-                <span className="text-black"> *******un50@gmail.com.</span>{" "}
+                <span className="text-black">
+                  {formik?.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                    "*******@***"}
+                </span>{" "}
                 Input the code here to continue
               </Typography>
             ) : null}

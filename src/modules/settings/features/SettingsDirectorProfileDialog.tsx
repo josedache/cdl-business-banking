@@ -14,12 +14,20 @@ import { SettingsDirectorProfileValues } from "../types/settings-director-profil
 
 type SettingsDirectorProfileDialogProps = {
   onClose: () => void;
+  directorsList: [
+    {
+      firstName: string;
+      lastName: string;
+      phone?: string;
+      avatar?: string;
+    },
+  ];
 } & DialogProps;
 
 const SettingsDirectorProfileDialog = (
   props: SettingsDirectorProfileDialogProps
 ) => {
-  const { onClose, ...rest } = props;
+  const { onClose, directorsList, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
 
   const formik = useFormik<SettingsDirectorProfileValues>({
@@ -38,15 +46,6 @@ const SettingsDirectorProfileDialog = (
     },
   });
 
-  const directorsList = [
-    {
-      firstName: "Mark",
-      lastName: "Martin",
-      phoneNumber: "+23412345678",
-      avatar: null,
-    },
-  ];
-
   return (
     <Dialog fullWidth maxWidth="sm" {...rest}>
       <form onSubmit={formik.handleSubmit as any} className=" ">
@@ -57,28 +56,28 @@ const SettingsDirectorProfileDialog = (
         </DialogTitleXCloseButton>
         <Divider />
 
-        <div className="px-6 mt-4">
+        <div className="px-6 mt-4 space-y-4">
           {directorsList?.map((opt, index) => {
             return (
               <div
                 key={index}
                 className="flex justify-between items-center border border-neutral-200 rounded-xl p-4 "
               >
-                <div className="flex">
+                <div className="flex gap-4 items-center">
                   <Avatar
                     src={opt.avatar}
-                    className="w-14 h-14 font-medium bg-warning-100 text-warning-700"
+                    className="w-14 h-14 font-medium bg-warning-100/80 text-warning-700 uppercase"
                   >
                     {opt?.firstName?.[0]}
                     {opt?.lastName?.[0]}
                   </Avatar>
 
-                  <div className="ml-4">
-                    <Typography className="font-medium text-lg">
+                  <div className=" ">
+                    <Typography variant="h6" className="font-medium capitalize">
                       {opt?.firstName} {opt?.lastName}
                     </Typography>
-                    <Typography className="text-neutral-500 text-lg">
-                      {opt?.phoneNumber}{" "}
+                    <Typography className="text-neutral-500">
+                      {opt?.phone ?? ""}
                     </Typography>
                   </div>
                 </div>
@@ -91,7 +90,7 @@ const SettingsDirectorProfileDialog = (
           })}
 
           <div className="mt-6 mb-6">
-            <Typography className="font-semibold text-lg text-primary-main ml-4">
+            <Typography className="font-semibold text-primary-main ml-4">
               + Add Another Director
             </Typography>
           </div>

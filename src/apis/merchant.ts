@@ -4,6 +4,12 @@ import { MERCHANT, USER } from "constants/tags.ts";
 import {
   GetMerchantBusinessDataApiRequest,
   GetMerchantBusinessDataApiResponse,
+  MerchantAddressStatesApiRequest,
+  MerchantAddressStatesApiResponse,
+  MerchantBusinessDirectorsApiRequest,
+  MerchantBusinessDirectorsApiResponse,
+  MerchantBusinessProfileApiRequest,
+  MerchantBusinessProfileApiResponse,
   MerchantRegistrationCacApiRequest,
   MerchantRegistrationCacApiResponse,
   MerchantRegistrationNonCacApiRequest,
@@ -47,6 +53,41 @@ export const merchantApi = baseApi.injectEndpoints({
         ...config,
       }),
       providesTags: [{ type: USER }],
+    }),
+
+    getMerchantBusinessProfile: builder.query<
+      MerchantBusinessProfileApiResponse,
+      MerchantBusinessProfileApiRequest
+    >({
+      query: (config) => ({
+        url: BASE_URL,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: USER }],
+    }),
+    getMerchantBusinessDirectors: builder.query<
+      MerchantBusinessDirectorsApiResponse,
+      MerchantBusinessDirectorsApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/directors/" + path.rcNumber,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: USER }],
+    }),
+
+    merchantAddressDetails: builder.mutation<
+      MerchantAddressStatesApiResponse,
+      MerchantAddressStatesApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/address/" + path.rcNumber,
+        method: "POST",
+        ...config,
+      }),
+      invalidatesTags: [{ type: MERCHANT }],
     }),
   }),
 });

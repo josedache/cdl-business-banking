@@ -5,12 +5,14 @@ import useToggle from "hooks/use-toggle";
 import Dropzone from "react-dropzone";
 import { useSnackbar } from "notistack";
 import useAuthUser from "hooks/use-auth-user";
+import useClipboard from "hooks/use-clipboard";
 
 const SettingsGeneralTab = () => {
   const authUser = useAuthUser();
   const { enqueueSnackbar } = useSnackbar();
   const [openEditEmailDialog, toggleEditEmailDialog, setOpenEditEmailDialog] =
     useToggle();
+  const clipboard = useClipboard();
 
   const personalInfo = [
     {
@@ -22,7 +24,7 @@ const SettingsGeneralTab = () => {
     {
       title: "Email Address",
       value: `${authUser?.info?.email ?? "N/A"} `,
-      canEdit: true,
+      canEdit: authUser?.info?.isEmailVerified,
       onClick: () => {
         setOpenEditEmailDialog(true);
       },
@@ -35,7 +37,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Address",
-      value: "Lagos",
+      value: " N/A",
       canEdit: false,
       onClick: () => {},
     },
@@ -45,13 +47,13 @@ const SettingsGeneralTab = () => {
     {
       title: "NIN",
       onClick: () => {},
-      canEdit: false,
+      canEdit: authUser?.info?.isNinVerified,
     },
     {
       title: "BVN",
       value: "",
       onClick: () => {},
-      canEdit: false,
+      canEdit: authUser?.info?.isBvnVerified,
     },
     {
       title: "ID Card",
@@ -62,11 +64,13 @@ const SettingsGeneralTab = () => {
   ];
 
   const referralDetails = [
-    { title: "Referral Code", value: "CPA_00WJBK4HR9" },
+    {
+      title: "Referral Code",
+      value: ` ${authUser?.info?.referralCode ?? "N/A"}`,
+    },
     {
       title: "Referral Link",
-      value:
-        "https://www.4HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR94HR9",
+      value: `${window.location.origin}?referral_code=${authUser?.info?.referralCode}`,
     },
   ];
 
@@ -113,12 +117,12 @@ const SettingsGeneralTab = () => {
             <div className="ml-6 ">
               <Typography
                 variant="h6"
-                className="font-semibold text-neutral-800"
+                className="font-semibold text-neutral-800 capitalize"
               >
-                Segun Akinnibosun
+                {`${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`}
               </Typography>
               <Typography className="font-medium text-neutral-500 ">
-                Segun.smute@gmail.com
+                {`${authUser?.info?.email ?? "N/A"} `}
               </Typography>
             </div>
             <Dropzone
@@ -193,9 +197,9 @@ const SettingsGeneralTab = () => {
                         {opt.value}
                       </Typography>
                     </div>
-                    {opt.canEdit ? (
+                    {!opt.canEdit ? (
                       <Typography
-                        className="text-primary-main font-semibold"
+                        className="text-primary-main/25 font-semibold"
                         onClick={opt.onClick}
                       >
                         Edit
@@ -222,7 +226,7 @@ const SettingsGeneralTab = () => {
         <Paper className="py-6 mt-6 " elevation={0}>
           <div className="mb-6 px-10">
             <Typography className="font-semibold text-gray-800 text-lg">
-              Refer a Friend Both Earn X amount
+              Refer a Friend
             </Typography>
             <Typography className=" text-gray-500 text-sm mt-4">
               Refer others to deposit over N200, and both receive N1000.
@@ -250,11 +254,14 @@ const SettingsGeneralTab = () => {
                       >
                         {opt.value}
                       </Typography>
-                      <ButtonBase>
+
+                      <ButtonBase
+                        onClick={() => clipboard.writeText(String(opt.value))}
+                      >
                         <Iconify
                           fontSize={18}
                           icon="solar:copy-bold"
-                          className="cursor-pointer text-neutral-300"
+                          className="cursor-pointer text-neutral-300 hover:text-primary-main"
                         />
                       </ButtonBase>
                     </div>

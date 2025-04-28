@@ -47,3 +47,42 @@ export type GetMerchantBusinessDataApiRequest = ApiRequest<
       | "Business_Registration_Type";
   }
 >;
+
+export type MerchantBusinessProfileApiResponse = ApiResponse<{
+  business: {
+    name: string;
+    rcNumber: string;
+    active: boolean;
+    kybTier: string;
+    businessType: string;
+    officeName: string;
+    id: number;
+  };
+}>;
+
+export type MerchantBusinessProfileApiRequest = ApiRequest<void>;
+
+export type MerchantBusinessDirectorsApiResponse = ApiResponse<
+  [
+    {
+      firstName: string;
+      lastName: string;
+      phone?: string;
+      avatar?: string;
+    },
+  ]
+>;
+
+export type MerchantBusinessDirectorsApiRequest = ApiRequest<void>;
+
+export type MerchantAddressStatesApiResponse = ApiResponse<unknown>;
+
+export type MerchantAddressStatesApiRequest = ApiRequest<{
+  address: string;
+  street: string;
+  nearestLandmark: string;
+  city: string;
+  state: string;
+  lga: string;
+  postalCode: string;
+}>;

@@ -16,6 +16,7 @@ import { SettingsUpdatePinStep } from "../enums/settings-updatepin-step";
 import OtpInput from "components/OtpInput";
 import NumberInput from "components/NumberInput";
 import { SettingsUpdatePinValues } from "../types/settings-update-pin";
+import { userApi } from "apis/user";
 
 type SettingsUpdatePinDialogProps = {
   onClose: () => void;
@@ -30,6 +31,8 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const enumStep = stepper.step;
 
+  const [updatePinMutation] = userApi.useUpdatePinMutation();
+
   const formik = useFormik<SettingsUpdatePinValues>({
     initialValues: {
       oldPin: "",
@@ -40,24 +43,32 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
     validationSchema: yup.object().shape({
       ...{
         [SettingsUpdatePinStep.CHANGE]: {
-          oldPin: yup.string().label("OTP").length(6).trim().required(),
-          newPin: yup.string().label("OTP").length(6).trim().required(),
-          confirmNewPin: yup.string().label("OTP").length(6).trim().required(),
+          oldPin: yup.string().label("Old Pin").length(6).trim().required(),
+          newPin: yup.string().label("New Pin").length(6).trim().required(),
+          confirmNewPin: yup
+            .string()
+            .label("Confirm Pin")
+            .length(6)
+            .trim()
+            .required(),
         },
         [SettingsUpdatePinStep.SUCCESS]: {},
       }[enumStep],
     }),
-    onSubmit: async () => {
+    onSubmit: async (values) => {
       try {
         switch (enumStep) {
           case SettingsUpdatePinStep.CHANGE: {
-            // const data = await sendUserResetPasswordMutation({
-            //   body: { email: values.email},
-            // }).unwrap()
-            // setCountdownDate(getCountdownDate());
-            // enqueueSnackbar(data?.message || "Password reset otp sent", {
-            //   variant: "success",
-            // });
+            const data = await updatePinMutation({
+              body: {
+                oldPin: values.oldPin,
+                newPin: values.newPin,
+                confirmNewPin: values.confirmNewPin,
+              },
+            }).unwrap();
+            enqueueSnackbar(data?.message || "Pin reset successful", {
+              variant: "success",
+            });
             break;
           }
           case SettingsUpdatePinStep.SUCCESS: {
@@ -153,7 +164,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
             />
           </ButtonBase>
           <Typography variant="h5" className="font-semibold mt-6">
-            Password changed successfully
+            Pin changed successfully
           </Typography>
         </div>
       ),
@@ -169,7 +180,7 @@ const SettingsUpdatePinDialog = (props: SettingsUpdatePinDialogProps) => {
             {tabs[stepper.step]?.title}
           </Typography>
         </DialogTitleXCloseButton>
-        <Divider />
+        <Divider className="pt-1" />
 
         <div className="px-6">
           <Typography className="font-medium mt-6 ">

@@ -82,7 +82,7 @@ const SettingsSecurityTab = () => {
         </Typography>
 
         <Typography className=" text-neutral-500 mt-2">
-          Let us know if anythung isn't working as you expect
+          Let us know if anything isn't working as you expect
         </Typography>
 
         <Typography
