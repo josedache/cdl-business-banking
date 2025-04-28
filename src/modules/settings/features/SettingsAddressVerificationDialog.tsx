@@ -1,5 +1,7 @@
 import {
   Dialog,
+  DialogActions,
+  DialogContent,
   DialogProps,
   Divider,
   MenuItem,
@@ -88,16 +90,31 @@ const SettingsAddressVerificationDialog = (
   const allLGAForStateList = lgasQuery?.data?.data;
 
   return (
-    <Dialog fullWidth maxWidth="sm" {...rest}>
-      <form onSubmit={formik.handleSubmit as any} className=" ">
-        <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
-          <Typography variant="h5" className="font-semibold text-start">
-            Address verification
-          </Typography>
-        </DialogTitleXCloseButton>
-        <Divider />
-
-        <div className="px-6 mt-4">
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "520px", // Set your width here
+          },
+        },
+      }}
+      component="form"
+      onSubmit={() => {
+        formik.handleSubmit();
+      }}
+      {...rest}
+    >
+      <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
+        <Typography variant="h5" className="font-semibold text-start">
+          Address verification
+        </Typography>
+      </DialogTitleXCloseButton>
+      <Divider />
+      <DialogContent className="px-6">
+        <div className="grid grid-cols-2 gap-3">
           {/* <Typography className="font-medium text-lg text-neutral-700">
             Street Address
           </Typography> */}
@@ -106,9 +123,7 @@ const SettingsAddressVerificationDialog = (
               21, Savage Street, Ikoyi, Lagos
             </Typography>
           </div> */}
-
           <TextField
-            className=" "
             fullWidth
             select
             label="States"
@@ -123,7 +138,6 @@ const SettingsAddressVerificationDialog = (
           </TextField>
 
           <TextField
-            className="mt-4 "
             fullWidth
             select
             label="Local government"
@@ -136,24 +150,32 @@ const SettingsAddressVerificationDialog = (
               </MenuItem>
             ))}
           </TextField>
+
           <TextField
             fullWidth
-            margin="normal"
-            label="Street"
-            placeholder="Enter the name of your street"
-            {...getTextFieldProps(formik, "street")}
+            label="Address"
+            className="col-span-2"
+            placeholder="Enter your address"
+            {...getTextFieldProps(formik, "address")}
           />
           <TextField
             fullWidth
-            margin="normal"
-            label="Address"
-            placeholder="Enter your address"
-            {...getTextFieldProps(formik, "address")}
+            label="Street"
+            placeholder="Enter the name of your street"
+            className="col-span-2"
+            {...getTextFieldProps(formik, "street")}
           />
 
           <TextField
             fullWidth
-            margin="normal"
+            label="Nearest Landmark"
+            className="col-span-2"
+            placeholder="Enter the nearest landmark"
+            {...getTextFieldProps(formik, "nearestLandmark")}
+          />
+
+          <TextField
+            fullWidth
             label="City"
             placeholder="Enter the name of your city"
             {...getTextFieldProps(formik, "city")}
@@ -161,35 +183,26 @@ const SettingsAddressVerificationDialog = (
 
           <TextField
             fullWidth
-            margin="normal"
-            label="Nearest Landmark"
-            placeholder="Enter the nearest landmark"
-            {...getTextFieldProps(formik, "nearestLandmark")}
-          />
-
-          <TextField
-            fullWidth
-            margin="normal"
             label="Postal Code"
             placeholder="Enter your postal code"
             {...getTextFieldProps(formik, "postalCode")}
           />
         </div>
+      </DialogContent>
 
-        <Divider className="py-3" />
-        <div className="sticky bottom-0 p-6 flex ml-auto">
-          <LoadingButton
-            variant="gradient"
-            type="submit"
-            size="large"
-            loading={formik.isSubmitting}
-            loadingPosition="end"
-            className="flex ml-auto px-10 "
-          >
-            Save Changes
-          </LoadingButton>
-        </div>
-      </form>
+      <Divider />
+      <DialogActions className="px-6 py-5">
+        <LoadingButton
+          variant="gradient"
+          type="submit"
+          size="large"
+          loading={formik.isSubmitting}
+          loadingPosition="end"
+          className="flex ml-auto"
+        >
+          Save Changes
+        </LoadingButton>
+      </DialogActions>
     </Dialog>
   );
 };
