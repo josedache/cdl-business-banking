@@ -102,7 +102,8 @@ const SettingsAddressVerificationDialog = (
         },
       }}
       component="form"
-      onSubmit={() => {
+      onSubmit={(e) => {
+        e.preventDefault();
         formik.handleSubmit();
       }}
       {...rest}
