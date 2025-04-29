@@ -214,7 +214,6 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
               <LoadingButton
                 variant="outlined"
                 fullWidth
-                size="small"
                 startIcon={
                   <Iconify
                     icon="hugeicons:call-ringing-02"
@@ -230,7 +229,6 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
               <LoadingButton
                 variant="outlined"
                 fullWidth
-                size="small"
                 startIcon={
                   <Iconify icon="hugeicons:pin-code" width="20" height="20" />
                 }

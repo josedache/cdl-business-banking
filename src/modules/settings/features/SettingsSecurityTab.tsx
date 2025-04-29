@@ -34,7 +34,7 @@ const SettingsSecurityTab = () => {
         setOpenUpdatePinDialog(true);
       },
       summaryTitle: "PIN",
-      summaryIcon: "hugeicons:pin-code",
+      summaryIcon: "ri:delete-back-fill",
     },
   ];
   return (

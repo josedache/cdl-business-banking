@@ -184,8 +184,8 @@ const SettingsBusinessInformationTab = () => {
 
   return (
     <div className="grid xl:grid-cols-5 gap-6">
-      <Paper className="xl:col-span-3" elevation={0}>
-        <div className="py-6 px-10 mt-6">
+      <Paper className="xl:col-span-3 mt-6" elevation={0}>
+        <div className="py-6 px-10 ">
           <Typography variant="h6" className="font-semibold">
             Business Information
           </Typography>

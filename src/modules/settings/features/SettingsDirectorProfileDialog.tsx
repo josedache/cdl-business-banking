@@ -89,7 +89,7 @@ const SettingsDirectorProfileDialog = (
                     </div>
                   </div>
 
-                  <Typography className="text-primary-main font-semibold cursor-pointer">
+                  <Typography className="text-primary-main/25 font-semibold cursor-pointer">
                     Edit
                   </Typography>
                 </div>
