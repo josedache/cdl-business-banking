@@ -26,18 +26,24 @@ const SettingsBusinessInformationTab = () => {
   const isKycCompleted = isKycCheckCompleted(user?.info);
   const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
-  const getBusinessProfile = merchantApi.useGetMerchantBusinessProfileQuery({
-    params: {
-      rcNumber: user?.info?.businesses[0]?.rcNumber,
+  const businessRcNumber = user?.info?.businesses[0]?.rcNumber;
+
+  const getBusinessProfile = merchantApi.useGetMerchantBusinessProfileQuery(
+    {
+      params: {
+        rcNumber: businessRcNumber,
+      },
     },
-  });
+    { skip: !businessRcNumber }
+  );
 
   const getBusinessDirectors = merchantApi.useGetMerchantBusinessDirectorsQuery(
     {
       path: {
-        rcNumber: user?.info?.businesses[0]?.rcNumber,
+        rcNumber: businessRcNumber,
       },
-    }
+    },
+    { skip: !businessRcNumber }
   );
   const businessDetails = getBusinessProfile?.data?.data?.business;
   const businessDirectors = getBusinessDirectors?.data;

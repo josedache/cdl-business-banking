@@ -121,7 +121,7 @@ const SettingsUpdatePasswordDialog = (
             fullWidth
             margin="normal"
             label="New Password"
-            placeholder="Re-enter your password"
+            placeholder="Enter your new password"
             {...getTextFieldProps(formik, "newPassword")}
           />
 

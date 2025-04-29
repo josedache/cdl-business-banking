@@ -1,0 +1,5 @@
+export enum SettingsDirectorssProfileStep {
+  ALL_DIRECTORS_PROFILES = 0,
+  DIRECTORS_DETAILS = 1,
+  DIRECTORS_IDENTITY_VERIFICATION = 2,
+}

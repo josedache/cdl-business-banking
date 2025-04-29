@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogProps,
   Divider,
+  TextField,
   Typography,
 } from "@mui/material";
 import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
@@ -11,6 +12,9 @@ import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
 import { SettingsDirectorProfileValues } from "../types/settings-director-profile";
+import { SettingsDirectorssProfileStep } from "../enums/settings-directos-profile-step";
+import useStepper from "hooks/use-stepper";
+import { getTextFieldProps } from "utils/formik/get-text-field-props";
 
 type SettingsDirectorProfileDialogProps = {
   onClose: () => void;
@@ -29,10 +33,16 @@ const SettingsDirectorProfileDialog = (
 ) => {
   const { onClose, directorsList, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const stepper = useStepper({
+    initialStep: SettingsDirectorssProfileStep.ALL_DIRECTORS_PROFILES,
+  });
 
   const formik = useFormik<SettingsDirectorProfileValues>({
     initialValues: {
-      name: "",
+      bvn: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({}),
@@ -46,6 +56,90 @@ const SettingsDirectorProfileDialog = (
     },
   });
 
+  const tabs = [
+    {
+      content: (
+        <>
+          <div className="mt-4 space-y-4">
+            {directorsList?.map((opt, index) => {
+              return (
+                <div
+                  key={index}
+                  className="flex justify-between items-center border border-neutral-200 rounded-xl p-4 "
+                >
+                  <div className="flex gap-4 items-center">
+                    <Avatar
+                      src={opt.avatar}
+                      className="w-14 h-14 font-medium bg-warning-100/80 text-warning-700 uppercase"
+                    >
+                      {opt?.firstName?.[0]}
+                      {opt?.lastName?.[0]}
+                    </Avatar>
+
+                    <div className=" ">
+                      <Typography
+                        variant="h6"
+                        className="font-medium capitalize"
+                      >
+                        {opt?.firstName} {opt?.lastName}
+                      </Typography>
+                      <Typography className="text-neutral-500">
+                        {opt?.phone ?? ""}
+                      </Typography>
+                    </div>
+                  </div>
+
+                  <Typography className="text-primary-main font-semibold cursor-pointer">
+                    Edit
+                  </Typography>
+                </div>
+              );
+            })}
+
+            {/* <div className="mt-6 mb-6">
+              <Typography
+                onClick={() => {
+                  stepper.next();
+                }}
+                className="font-semibold text-primary-main ml-4"
+              >
+                + Add Another Director
+              </Typography>
+            </div> */}
+          </div>
+        </>
+      ),
+    },
+    {
+      content: (
+        <>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="BVN"
+            placeholder="Enter your BVN"
+            {...getTextFieldProps(formik, "bvn")}
+          />
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="First Name"
+            placeholder="Enter your First Name"
+            {...getTextFieldProps(formik, "firstName")}
+          />
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Last Name"
+            placeholder="Enter your Last Name"
+            {...getTextFieldProps(formik, "lastName")}
+          />
+        </>
+      ),
+    },
+  ];
   return (
     <Dialog fullWidth maxWidth="sm" {...rest}>
       <form onSubmit={formik.handleSubmit as any} className=" ">
@@ -55,46 +149,7 @@ const SettingsDirectorProfileDialog = (
           </Typography>
         </DialogTitleXCloseButton>
         <Divider />
-
-        <div className="px-6 mt-4 space-y-4">
-          {directorsList?.map((opt, index) => {
-            return (
-              <div
-                key={index}
-                className="flex justify-between items-center border border-neutral-200 rounded-xl p-4 "
-              >
-                <div className="flex gap-4 items-center">
-                  <Avatar
-                    src={opt.avatar}
-                    className="w-14 h-14 font-medium bg-warning-100/80 text-warning-700 uppercase"
-                  >
-                    {opt?.firstName?.[0]}
-                    {opt?.lastName?.[0]}
-                  </Avatar>
-
-                  <div className=" ">
-                    <Typography variant="h6" className="font-medium capitalize">
-                      {opt?.firstName} {opt?.lastName}
-                    </Typography>
-                    <Typography className="text-neutral-500">
-                      {opt?.phone ?? ""}
-                    </Typography>
-                  </div>
-                </div>
-
-                <Typography className="text-primary-main font-semibold cursor-pointer">
-                  Edit
-                </Typography>
-              </div>
-            );
-          })}
-
-          <div className="mt-6 mb-6">
-            <Typography className="font-semibold text-primary-main ml-4">
-              + Add Another Director
-            </Typography>
-          </div>
-        </div>
+        <div className="px-6">{tabs[stepper.step]?.content}</div>
         <Divider className="py-3" />
         <div className="sticky bottom-0 p-6 flex ml-auto">
           <LoadingButton
