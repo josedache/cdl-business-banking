@@ -1,6 +1,8 @@
 import {
   Avatar,
   Dialog,
+  DialogActions,
+  DialogContent,
   DialogProps,
   Divider,
   TextField,
@@ -60,8 +62,9 @@ const SettingsDirectorProfileDialog = (
     {
       content: (
         <>
-          <div className="mt-4 space-y-4">
+          <div className="space-y-4">
             {directorsList?.map((opt, index) => {
+              const isEven = index % 2 === 0;
               return (
                 <div
                   key={index}
@@ -70,17 +73,14 @@ const SettingsDirectorProfileDialog = (
                   <div className="flex gap-4 items-center">
                     <Avatar
                       src={opt.avatar}
-                      className="w-14 h-14 font-medium bg-warning-100/80 text-warning-700 uppercase"
+                      className={`w-12 h-12 text-base font-medium uppercase ${isEven ? "bg-[#FEEEDA] text-warning-700" : "bg-sky-100 text-[#1D74B5]"}`}
                     >
                       {opt?.firstName?.[0]}
                       {opt?.lastName?.[0]}
                     </Avatar>
 
                     <div className=" ">
-                      <Typography
-                        variant="h6"
-                        className="font-medium capitalize"
-                      >
+                      <Typography className="font-medium text-base capitalize">
                         {opt?.firstName} {opt?.lastName}
                       </Typography>
                       <Typography className="text-neutral-500">
@@ -140,31 +140,49 @@ const SettingsDirectorProfileDialog = (
       ),
     },
   ];
+
   return (
-    <Dialog fullWidth maxWidth="sm" {...rest}>
-      <form onSubmit={formik.handleSubmit as any} className=" ">
-        <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
-          <Typography variant="h5" className="font-semibold text-start">
-            Director Profiles
-          </Typography>
-        </DialogTitleXCloseButton>
-        <Divider />
-        <div className="px-6">{tabs[stepper.step]?.content}</div>
-        <Divider className="py-3" />
-        <div className="sticky bottom-0 p-6 flex ml-auto">
-          <LoadingButton
-            variant="gradient"
-            type="submit"
-            size="large"
-            // disabled={!formik.isValid || !formik.dirty}
-            loading={formik.isSubmitting}
-            loadingPosition="end"
-            className="flex ml-auto px-10 "
-          >
-            Save
-          </LoadingButton>
-        </div>
-      </form>
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      {...rest}
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "520px", // Set your width here
+          },
+        },
+      }}
+      component="form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        formik.handleSubmit();
+      }}
+    >
+      <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
+        <Typography variant="h5" className="font-semibold text-start">
+          Director Profiles
+        </Typography>
+      </DialogTitleXCloseButton>
+      <Divider />
+      <DialogContent className="px-6 h-full max-h-80">
+        {tabs[stepper.step]?.content}
+      </DialogContent>
+      {/* <Divider /> */}
+      <DialogActions className=" px-6 py-5 flex ml-auto">
+        <LoadingButton
+          variant="gradient"
+          type="submit"
+          size="large"
+          disabled
+          loading={formik.isSubmitting}
+          loadingPosition="end"
+          className="flex ml-auto px-10 "
+        >
+          Save
+        </LoadingButton>
+      </DialogActions>
     </Dialog>
   );
 };

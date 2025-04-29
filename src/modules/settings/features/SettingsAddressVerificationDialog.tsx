@@ -51,7 +51,11 @@ const SettingsAddressVerificationDialog = (
       city: yup.string().label("City").required(),
       state: yup.string().label("State").required(),
       lga: yup.string().label("Local government").required(),
-      postalCode: yup.string().label("Postal Code").required(),
+      postalCode: yup
+        .string()
+        .label("Postal Code")
+        .matches(/^[0-9\b]+$/, "Enter a valid postal code")
+        .required(),
     }),
     onSubmit: async (values) => {
       try {
@@ -127,7 +131,7 @@ const SettingsAddressVerificationDialog = (
           <TextField
             fullWidth
             select
-            label="States"
+            label="State"
             placeholder="Select state"
             {...getTextFieldProps(formik, "state")}
           >

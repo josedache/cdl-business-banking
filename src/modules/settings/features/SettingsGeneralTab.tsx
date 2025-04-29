@@ -1,5 +1,12 @@
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
-import { ButtonBase, Divider, Paper, Typography } from "@mui/material";
+import {
+  Avatar,
+  ButtonBase,
+  Chip,
+  Divider,
+  Paper,
+  Typography,
+} from "@mui/material";
 import SettingsEditEmailDialog from "./SettingsEditEmailDialog";
 import useToggle from "hooks/use-toggle";
 import Dropzone from "react-dropzone";
@@ -17,7 +24,10 @@ const SettingsGeneralTab = () => {
   const personalInfo = [
     {
       title: "Full Name",
-      value: `${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`,
+      value:
+        [authUser?.info?.firstName || "", authUser?.info?.lastName ?? ""]
+          .filter(Boolean)
+          .join(" ") || "N/A",
       canEdit: false,
       onClick: () => {},
     },
@@ -106,24 +116,19 @@ const SettingsGeneralTab = () => {
       <div className="xl:col-span-3">
         <Paper className="py-5 mt-6 " elevation={0}>
           <div className="flex items-center mb-6 px-10 ">
-            <ButtonBase className="rounded-full p-5 bg-gray-500">
-              <Iconify
-                icon="mingcute:user-3-fill"
-                fontSize={48}
-                className=" text-white"
-              />
-            </ButtonBase>
-
-            <div className="ml-6 ">
-              <Typography
-                variant="h6"
-                className="font-semibold text-neutral-800 capitalize"
-              >
-                {`${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`}
-              </Typography>
-              <Typography className="font-medium text-neutral-500 ">
-                {`${authUser?.info?.email ?? "N/A"} `}
-              </Typography>
+            <div className="flex items-center gap-6 boderr ">
+              <Avatar className="bg-gray-500 w-15 h-15 md:w-[88px] md:h-[88px] " />
+              <div>
+                <Typography
+                  variant="h6"
+                  className="font-semibold text-neutral-800 capitalize"
+                >
+                  {`${authUser?.info?.firstName ?? "N/A"} ${authUser?.info?.lastName ?? ""}`}
+                </Typography>
+                <Typography className="font-medium text-neutral-500 ">
+                  {`${authUser?.info?.email ?? "N/A"} `}
+                </Typography>
+              </div>
             </div>
             <Dropzone
               multiple={false}
@@ -140,10 +145,10 @@ const SettingsGeneralTab = () => {
                 );
               }}
             >
-              {({ getRootProps, getInputProps }) => (
+              {({ getRootProps }) => (
                 <div {...getRootProps()} className="ml-auto cursor-pointer">
-                  <input {...getInputProps()} />
-                  <Typography className="text-primary-main font-semibold cursor-pointer">
+                  {/* <input {...getInputProps()} /> */}
+                  <Typography className="text-primary-main/25 font-semibold cursor-pointer">
                     Edit Photo
                   </Typography>
                 </div>
@@ -198,21 +203,39 @@ const SettingsGeneralTab = () => {
                       </Typography>
                     </div>
                     {!opt.canEdit ? (
-                      <Typography
-                        className="text-primary-main/25 font-semibold"
-                        onClick={opt.onClick}
-                      >
-                        Edit
-                      </Typography>
-                    ) : (
-                      <Typography className="flex items-center gap-1 text-success-800 bg-success-100 text-sm py-2 px-3 font-medium">
-                        Verified
-                        <Iconify
-                          icon="material-symbols:check-circle-outline-rounded"
-                          fontSize={16}
-                          className="text-success-900"
+                      <>
+                        <Chip
+                          label={
+                            <Typography className="flex items-center gap-1 ">
+                              Not Verified
+                              <Iconify
+                                icon="material-symbols:cancel-outline-rounded"
+                                fontSize={16}
+                                className="text-red-500"
+                              />
+                            </Typography>
+                          }
+                          color="error"
+                          className="text-red-500 font-medium rounded-lg "
                         />
-                      </Typography>
+                      </>
+                    ) : (
+                      <>
+                        <Chip
+                          label={
+                            <Typography className="flex items-center gap-1 ">
+                              Verified
+                              <Iconify
+                                icon="material-symbols:check-circle-outline-rounded"
+                                fontSize={16}
+                                className="text-success-800"
+                              />
+                            </Typography>
+                          }
+                          color="success"
+                          className="bg-success-100 text-success-800 font-medium rounded-lg "
+                        />
+                      </>
                     )}
                   </div>
                 );
@@ -229,7 +252,7 @@ const SettingsGeneralTab = () => {
               Refer a Friend
             </Typography>
             <Typography className=" text-gray-500 text-sm mt-4">
-              Refer others to deposit over N200, and both receive N1000.
+              Refer a friend.
             </Typography>
           </div>
 

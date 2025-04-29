@@ -24,7 +24,7 @@ import DashboardAccountSetupDialog from "modules/dashboard/features/DashboardAcc
 const SettingsBusinessInformationTab = () => {
   const user = useAuthUser();
   const isKycCompleted = isKycCheckCompleted(user?.info);
-  const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
+  const [isAccountSetup, toggleAccountSetup] = useToggle();
   const verificationPercentage = getKycVerificationPercentage(user?.info);
   const businessRcNumber = user?.info?.businesses[0]?.rcNumber;
 
@@ -75,7 +75,7 @@ const SettingsBusinessInformationTab = () => {
     },
     {
       title: "Business Registration",
-      value: " N/A",
+      value: `${businessDetails?.registrationType ?? "N/A"}`,
       canEdit: false,
       onClick: () => {},
     },
@@ -115,10 +115,10 @@ const SettingsBusinessInformationTab = () => {
             );
           }}
         >
-          {({ getRootProps, getInputProps }) => (
+          {({ getRootProps }) => (
             <div {...getRootProps()} className="ml-auto cursor-pointer">
-              <input {...getInputProps()} />
-              <Typography className="text-primary-main font-semibold cursor-pointer">
+              {/* <input {...getInputProps()} /> */}
+              <Typography className="text-primary-main/25 font-semibold cursor-pointer">
                 Edit
               </Typography>
             </div>
@@ -131,8 +131,8 @@ const SettingsBusinessInformationTab = () => {
   const complianceInfo = [
     {
       title: "Directors",
-      value: `${businessDirectors?.data?.length ?? "0"} Directors Listed`,
-      canEdit: true,
+      value: `${businessDirectors?.data?.length ?? "0"} ${(businessDirectors?.data?.length ?? 0) > 1 ? "Directors" : "Director"} Listed`,
+      canEdit: (businessDirectors?.data?.length ?? 0) > 0,
       onClick: () => {
         setOpenDirectorsProfileDialog(true);
       },
@@ -148,7 +148,7 @@ const SettingsBusinessInformationTab = () => {
       isValueAvailable: false,
     },
     {
-      title: "MEMAT (Memorandum of articicles of association)",
+      title: "MEMAT (Memorandum of articles of association)",
       value: " “”ID Card Type Here”” ",
       canEdit: false,
       onClick: () => {},
@@ -184,8 +184,8 @@ const SettingsBusinessInformationTab = () => {
 
   return (
     <div className="grid xl:grid-cols-5 gap-6">
-      <div className="xl:col-span-3">
-        <Paper className="py-6 px-10 mt-6" elevation={0}>
+      <Paper className="xl:col-span-3" elevation={0}>
+        <div className="py-6 px-10 mt-6">
           <Typography variant="h6" className="font-semibold">
             Business Information
           </Typography>
@@ -226,11 +226,11 @@ const SettingsBusinessInformationTab = () => {
               );
             })}
           </div>
-        </Paper>
+        </div>
 
         <Divider />
 
-        <Paper className="py-6 px-10" elevation={0}>
+        <div className="py-6 px-10">
           <Typography className="font-semibold">Compliance</Typography>
           <div className="space-y-3 mt-4">
             {complianceInfo?.map((opt, index) => {
@@ -267,7 +267,7 @@ const SettingsBusinessInformationTab = () => {
                   </div>
                   <Typography
                     className={`font-semibold ${opt.canEdit ? "cursor-pointer text-primary-main " : " text-primary-main/25"}`}
-                    onClick={opt.onClick}
+                    onClick={opt.canEdit && opt.onClick}
                   >
                     Edit
                   </Typography>
@@ -275,8 +275,8 @@ const SettingsBusinessInformationTab = () => {
               );
             })}
           </div>
-        </Paper>
-      </div>
+        </div>
+      </Paper>
       <div className="xl:col-span-2">
         {!isKycCompleted ? (
           <Card

@@ -57,6 +57,7 @@ export type MerchantBusinessProfileApiResponse = ApiResponse<{
     businessType: string;
     officeName: string;
     id: number;
+    registrationType: string;
   };
 }>;
 
