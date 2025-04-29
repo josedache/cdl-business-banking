@@ -19,7 +19,10 @@ function DialogTitleXCloseButton(props: any) {
           aria-label="close"
           onClick={onClose}
         >
-          <Iconify className="text-[24px]" icon="material-symbols:close" />
+          <Iconify
+            className="text-[24px] text-neutral-900"
+            icon="material-symbols:close"
+          />
         </IconButton>
       ) : null}
     </DialogTitle>

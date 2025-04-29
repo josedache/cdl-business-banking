@@ -47,11 +47,14 @@ const SettingsAddressVerificationDialog = (
     validationSchema: yup.object().shape({
       address: yup.string().label("Address").required(),
       street: yup.string().label("Street").required(),
-      nearestLandmark: yup.string().label("Nearest Landmark").required(),
-      city: yup.string().label("City").required(),
+      nearestLandmark: yup.string().label("Nearest Landmark"),
+      city: yup.string().label("City"),
       state: yup.string().label("State").required(),
       lga: yup.string().label("Local government").required(),
-      postalCode: yup.string().label("Postal Code").required(),
+      postalCode: yup
+        .string()
+        .label("Postal Code")
+        .matches(/^[0-9\b]+$/, "Enter a valid postal code"),
     }),
     onSubmit: async (values) => {
       try {
@@ -127,7 +130,7 @@ const SettingsAddressVerificationDialog = (
           <TextField
             fullWidth
             select
-            label="States"
+            label="State"
             placeholder="Select state"
             {...getTextFieldProps(formik, "state")}
           >

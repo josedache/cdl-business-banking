@@ -121,7 +121,7 @@ const SettingsUpdatePasswordDialog = (
             fullWidth
             margin="normal"
             label="New Password"
-            placeholder="Re-enter your password"
+            placeholder="Enter your new password"
             {...getTextFieldProps(formik, "newPassword")}
           />
 
@@ -158,7 +158,19 @@ const SettingsUpdatePasswordDialog = (
 
   const isFirstStep = enumStep === SettingsUpdatePasswordStep.CHANGE;
   return (
-    <Dialog fullWidth maxWidth="sm" {...rest}>
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      {...rest}
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "520px",
+          },
+        },
+      }}
+    >
       <form onSubmit={formik.handleSubmit as any} className=" ">
         <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
           <Typography

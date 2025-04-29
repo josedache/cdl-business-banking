@@ -147,8 +147,8 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
       title: " ",
       buttonTitle: "Verify Email Address",
       content: (
-        <div className="flex flex-col items-center px-5 mt-6">
-          <div className="px-5 md:px-12">
+        <div className="flex flex-col items-center mt-6">
+          <div className="px-6 ">
             <OtpInput
               value={formik.values.otp}
               onChange={(otp) => {
@@ -196,7 +196,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
                         <ButtonBase
                           disableRipple
                           onClick={handleResendOtpReset as any}
-                          className="font-bold text-primary-main"
+                          className="font-semibold text-primary-main"
                         >
                           Resend Code.
                         </ButtonBase>
@@ -208,9 +208,9 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
             }}
           </Countdown>
 
-          <div className="text-center  w-full">
+          <div className="text-center w-full">
             <Typography className="font-semibold py-5"> Or </Typography>
-            <div className="flex gap-5 w-full">
+            <div className="flex gap-4 w-full">
               <LoadingButton
                 variant="outlined"
                 fullWidth
@@ -266,9 +266,24 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
   const isFirstStep = enumStep === SettingsEditEmailStep.CHANGE;
   const isSecondStep = enumStep === SettingsEditEmailStep.VERIFY;
   return (
-    <Dialog fullWidth maxWidth="sm" {...rest}>
+    <Dialog
+      fullWidth
+      maxWidth="sm"
+      {...rest}
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "520px",
+          },
+        },
+      }}
+    >
       <form onSubmit={formik.handleSubmit as any} className=" ">
-        <DialogTitleXCloseButton onClose={onClose} className="text-center mt-3">
+        <DialogTitleXCloseButton
+          onClose={onClose}
+          className="text-center mt-3 "
+        >
           <Typography
             variant="h5"
             className={`font-semibold ${isFirstStep ? "text-start" : "text-center py-2"}`}
@@ -287,14 +302,15 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
               <span className="text-black">
                 {formik?.values?.newEmail?.replace(/\w(?=\w{0,2}@)/g, "*") ||
                   "*******@***"}
-              </span>
-              . Input the code here to continue
+                .
+              </span>{" "}
+              Input the code here to continue
             </Typography>
           </>
         ) : null}
         <div className="px-6">{tabs[stepper.step]?.content}</div>
         <Divider className="py-3" />
-        <div className="sticky bottom-0 p-6 flex ml-auto">
+        <div className="sticky bottom-0 px-6 py-5 flex ml-auto">
           <LoadingButton
             variant="gradient"
             type="submit"

@@ -28,7 +28,7 @@ import Logo from "components/Logo";
 import useToggle from "hooks/use-toggle";
 import useAuthUser from "hooks/use-auth-user";
 import usePopover from "hooks/use-popover";
-import { DASHBOARD, TRANSACTION, TRANSFER, SETTINGS } from "constants/urls";
+import { DASHBOARD, TRANSACTION, TRANSFER } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
 import SupportContact from "modules/support/features/SupportContact.tsx";
@@ -93,12 +93,6 @@ function AppProtectedDrawer() {
     },
     {
       links: [
-        {
-          icon: "hugeicons:setting-07",
-          label: "Settings",
-          to: SETTINGS,
-          kycAllow: true,
-        },
         {
           icon: "hugeicons:customer-support",
           label: "Support",
