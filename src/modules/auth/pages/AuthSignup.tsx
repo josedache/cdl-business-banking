@@ -17,7 +17,7 @@ import { AuthSignupFormikValues } from "modules/auth/types/auth-signup.ts";
 import { userApi } from "apis/user";
 import * as yup from "yup";
 import useStepper from "hooks/use-stepper.ts";
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { LoadingButton } from "@mui/lab";
 import {
   Link,
@@ -32,6 +32,7 @@ import { extractSearchParams } from "utils/url/extract-search-params.ts";
 import { cn } from "utils/cn.ts";
 import usePopover from "hooks/use-popover.ts";
 import { removeEmptyProperties } from "utils/object/remove-empty-properties.ts";
+import Countdown from "components/Countdown.tsx";
 
 function AuthSignup() {
   const { enqueueSnackbar } = useSnackbar();
@@ -53,6 +54,8 @@ function AuthSignup() {
   const [signupUserMutation] = userApi.useSignupUserMutation();
 
   const passwordPopover = usePopover();
+
+  const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
   const formik = useFormik<AuthSignupFormikValues>({
     initialValues: {
@@ -108,6 +111,8 @@ function AuthSignup() {
             enqueueSnackbar(data?.message || "Signed up Successfully!", {
               variant: "success",
             });
+
+            setCountdownDate(getCountdownDate());
             stepper.next();
             break;
           }
@@ -136,6 +141,8 @@ function AuthSignup() {
 
   const referralCodeUser = referralCodeUserQueryResult.data?.data;
 
+  function sendOtp() {}
+
   const step1 = (
     <Fragment key={0}>
       <form onSubmit={formik.handleSubmit}>
@@ -163,7 +170,7 @@ function AuthSignup() {
           <Popper
             open={passwordPopover.isOpen}
             anchorEl={passwordPopover.anchorEl}
-            className='z-10'
+            className="z-10"
           >
             <Paper className="p-4 space-y-4">
               <Typography variant="h6">Your Password must contain</Typography>
@@ -278,7 +285,7 @@ function AuthSignup() {
                 href="https://www.creditdirect.ng/loan-agreement-terms-conditions/"
                 target="_blank"
               >
-                terms of acceptable use
+                Terms of acceptable use
               </a>{" "}
               and{" "}
               <a
@@ -286,7 +293,7 @@ function AuthSignup() {
                 href="https://www.creditdirect.ng/privacy-policy/"
                 target="_blank"
               >
-                Privacy policy
+                Privacy Policy
               </a>
             </Typography>
           }
@@ -357,16 +364,54 @@ function AuthSignup() {
           </Typography>
         </div>
 
-        <Typography className="text-center font-medium text-text-secondary">
-          Already have an account?{" "}
-          <Typography
-            component="span"
-            color="primary"
-            className="font-medium cursor-pointer"
-          >
-            Resend Code
-          </Typography>
-        </Typography>
+        <Countdown date={countdownDate}>
+          {(countdown) => {
+            const isCodeSent =
+              countdown.days ||
+              countdown.minutes ||
+              countdown.seconds ||
+              countdown.seconds;
+
+            return (
+              <>
+                <div className="flex items-center justify-center">
+                  <Typography className="text-center font-medium text-text-secondary">
+                    Already have an account?{" "}
+                    {isCodeSent ? (
+                      <Typography
+                        component="span"
+                        variant="inherit"
+                        color="primary"
+                        className="text-center"
+                      >
+                        Resend OTP in{" "}
+                        <Typography
+                          component="span"
+                          color="primary"
+                          className=""
+                        >
+                          {countdown.minutes}:
+                          {countdown.seconds < 10
+                            ? `0${countdown.seconds}`
+                            : countdown.seconds}
+                        </Typography>
+                      </Typography>
+                    ) : (
+                      <Typography
+                        component="span"
+                        color="primary"
+                        className="font-medium cursor-pointer"
+                        onClick={sendOtp}
+                      >
+                        Resend Link
+                      </Typography>
+                    )}
+                  </Typography>
+                </div>
+              </>
+            );
+          }}
+        </Countdown>
       </form>
     </Fragment>
   );
@@ -383,3 +428,9 @@ function AuthSignup() {
 export default AuthSignup;
 
 export const Component = AuthSignup;
+
+function getCountdownDate() {
+  const date = new Date();
+  date.setTime(date.getTime() + 1000 * 60 * 10);
+  return date;
+}

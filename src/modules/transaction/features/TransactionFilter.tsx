@@ -34,12 +34,12 @@ function TransactionFilter(props: TransactionFilterProps) {
     initialValues: {
       // pageIndex: filter.pageIndex ?? 0,
       limit: filter?.limit ?? PAGE_LIMIT,
-      period: filter?.period ?? "",
+      period: filter?.period ?? "-1",
       startDate: filter?.startDate ?? null,
       endDate: filter?.endDate ?? null,
-      minimumAmount: filter?.minimumAmount ?? 0,
-      maximumAmount: filter?.maximumAmount ?? 0,
-      transactionType: filter?.transactionType ?? "",
+      minimumAmount: filter?.minimumAmount ?? "",
+      maximumAmount: filter?.maximumAmount ?? "",
+      transactionType: filter?.transactionType ?? "-1",
     },
     enableReinitialize: true,
     validationSchema: yup.object({
@@ -80,7 +80,12 @@ function TransactionFilter(props: TransactionFilterProps) {
         },
       }[values.period];
 
-      onFilterApply({ ...values, ...dateRange });
+      onFilterApply({
+        ...values,
+        ...dateRange,
+        transactionType:
+          values.transactionType === "-1" ? "" : values.transactionType,
+      });
       handleClose();
     },
   });
@@ -107,6 +112,11 @@ function TransactionFilter(props: TransactionFilterProps) {
           >
             {[
               {
+                label: "Select time Period",
+                value: -1,
+                disabled: true,
+              },
+              {
                 label: "Last 7 days",
                 value: TransactionFilterPeriod.Last7Days,
               },
@@ -118,8 +128,8 @@ function TransactionFilter(props: TransactionFilterProps) {
                 label: "Custom",
                 value: TransactionFilterPeriod.Custom,
               },
-            ].map(({ label, value }) => (
-              <MenuItem key={label} value={value}>
+            ].map(({ label, value, disabled }) => (
+              <MenuItem key={label} value={value} disabled={disabled}>
                 {label}
               </MenuItem>
             ))}
@@ -129,6 +139,7 @@ function TransactionFilter(props: TransactionFilterProps) {
               <div className="col-span-2 flex items-center gap-2">
                 <DatePicker
                   className="flex-1"
+                  disableFuture
                   value={formik.values.startDate}
                   onChange={(value) => {
                     if (!dfns.isValid(value)) {
@@ -138,6 +149,7 @@ function TransactionFilter(props: TransactionFilterProps) {
                   }}
                   slotProps={{
                     textField: {
+                      placeholder: "Start Date",
                       ...getTextFieldHelperTextAndError(formik, "startDate"),
                     },
                   }}
@@ -145,6 +157,7 @@ function TransactionFilter(props: TransactionFilterProps) {
                 <Typography variant="body2">to</Typography>
                 <DatePicker
                   className="flex-1"
+                  disableFuture
                   value={formik.values.endDate}
                   onChange={(value) => {
                     if (!dfns.isValid(value)) {
@@ -154,6 +167,7 @@ function TransactionFilter(props: TransactionFilterProps) {
                   }}
                   slotProps={{
                     textField: {
+                      placeholder: "End Date",
                       ...getTextFieldHelperTextAndError(formik, "endDate"),
                     },
                   }}
@@ -169,6 +183,9 @@ function TransactionFilter(props: TransactionFilterProps) {
             placeholder="Select transaction type"
             {...getTextFieldProps(formik, "transactionType")}
           >
+            <MenuItem key={-1} value={"-1"} disabled>
+              Select transaction type
+            </MenuItem>
             {Object.keys(TransactionType)
               .filter((key) => isNaN(Number(key)))
               .map((key) => (
@@ -182,11 +199,13 @@ function TransactionFilter(props: TransactionFilterProps) {
             <div className="flex items-center gap-2 mt-1">
               <CurrencyTextField
                 className="flex-1"
+                placeholder="Min"
                 {...getTextFieldProps(formik, "minimumAmount")}
               />
               <Typography variant="body2">to</Typography>
               <CurrencyTextField
                 className="flex-1"
+                placeholder="Max"
                 {...getTextFieldProps(formik, "maximumAmount")}
               />
             </div>
@@ -231,6 +250,6 @@ export type TransactionFilterState = {
   startDate: Date;
   endDate: Date;
   transactionType: string;
-  minimumAmount: number;
-  maximumAmount: number;
+  minimumAmount: string;
+  maximumAmount: string;
 };

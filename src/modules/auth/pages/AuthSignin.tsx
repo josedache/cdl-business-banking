@@ -27,7 +27,7 @@ function AuthSignin() {
 
   const navigate = useNavigate();
 
-  const stepper = useStepper();
+  const stepper = useStepper({initialStep: 1});
 
   const [loginUserMutation] = userApi.useLoginUserMutation();
   const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
@@ -40,6 +40,7 @@ function AuthSignin() {
       password: "",
       otp: "",
     },
+    validateOnMount: true,
     validationSchema: yup.object({
       ...[
         {
@@ -166,7 +167,7 @@ function AuthSignin() {
           onClick={() => stepper.previous()}
         >
           <Iconify icon="weui:back-filled" fontSize={20} />
-          <Typography>Back</Typography>
+          <Typography>Go back</Typography>
         </ButtonBase>
         <div className="space-y-4">
           <Typography variant="h5" className="text-center">

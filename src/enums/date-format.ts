@@ -8,6 +8,7 @@ export enum DateFormat {
   HYPHEN_yyyy_MM_dd = "yyyy-MM-dd",
   HYPHEN_dd_MM_yyyy = "dd-MM-yyyy",
   HYPHEN_MM_ddd_yyyy = "MM-ddd-yyyy",
+  SLASH_dd_MM_yyyy = "dd/MM/yyyy",
   FORMAT = "yyyy MM dd",
 }
 
