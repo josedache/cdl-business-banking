@@ -1,0 +1,18 @@
+name: Trigger Repository Dispatch
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "develop"
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          event-type: trigger-develop-workflow
+          token: ${{ secrets.PAT }}
