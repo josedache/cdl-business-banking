@@ -99,7 +99,7 @@ function DashboardWalletDetailsDialog(
               )}
             </Typography>
             <div>
-              <div className="grid grid-cols-1 gap-3 mt-4">
+              <div className="grid grid-cols-1 gap-3 mt-6">
                 {[
                   {
                     title: "Account Name",
