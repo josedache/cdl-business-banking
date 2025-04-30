@@ -2,6 +2,7 @@ import {
   Button,
   ButtonBase,
   Card,
+  Chip,
   Divider,
   Paper,
   Skeleton,
@@ -20,6 +21,7 @@ import SetUpBgImg from "assets/imgs/setup-bg.png";
 import getKycVerificationPercentage from "utils/function/get-kyc-verification-percentage";
 import { merchantApi } from "apis/merchant";
 import DashboardAccountSetupDialog from "modules/dashboard/features/DashboardAccountSetupDialog";
+import SettingsEditAndUploadMemorandum from "./SettingsEditAndUploadMemorandum";
 
 const SettingsBusinessInformationTab = () => {
   const user = useAuthUser();
@@ -37,6 +39,15 @@ const SettingsBusinessInformationTab = () => {
     { skip: !businessRcNumber }
   );
 
+  const getBusinessAddress = merchantApi.useGetMerchantAddressDetailsQuery(
+    {
+      path: {
+        rcNumber: businessRcNumber,
+      },
+    },
+    { skip: !businessRcNumber }
+  );
+
   const getBusinessDirectors = merchantApi.useGetMerchantBusinessDirectorsQuery(
     {
       path: {
@@ -45,6 +56,17 @@ const SettingsBusinessInformationTab = () => {
     },
     { skip: !businessRcNumber }
   );
+
+  const getMemorandumDocument =
+    merchantApi.useGetMerchantMemorandumDocumentQuery(
+      {
+        path: {
+          rcNumber: businessRcNumber,
+        },
+      },
+      { skip: !businessRcNumber }
+    );
+
   const businessDetails = getBusinessProfile?.data?.data?.business;
   const businessDirectors = getBusinessDirectors?.data;
 
@@ -58,6 +80,12 @@ const SettingsBusinessInformationTab = () => {
     openAddressVerificationDialog,
     toggleAddressVerificationDialog,
     setOpenAddressVerificationDialog,
+  ] = useToggle();
+
+  const [
+    openEditAndAddUploadMemorandumDialog,
+    toggleEditAndAddUploadMemorandumDialog,
+    setOpenEditAndAddUploadMemorandumDialog,
   ] = useToggle();
 
   const businessInfo = [
@@ -131,7 +159,16 @@ const SettingsBusinessInformationTab = () => {
   const complianceInfo = [
     {
       title: "Directors",
-      value: `${businessDirectors?.data?.length ?? "0"} ${(businessDirectors?.data?.length ?? 0) > 1 ? "Directors" : "Director"} Listed`,
+      value: (
+        <Typography className="mt-1 text-neutral-500 font-medium">
+          {businessDirectors?.data?.length ?? "0"}{" "}
+          {(businessDirectors?.data?.length ?? 0) > 1
+            ? "Directors"
+            : "Director"}{" "}
+          Listed
+        </Typography>
+      ),
+      isLoading: getBusinessDirectors?.isLoading,
       canEdit: (businessDirectors?.data?.length ?? 0) > 0,
       onClick: () => {
         setOpenDirectorsProfileDialog(true);
@@ -140,19 +177,59 @@ const SettingsBusinessInformationTab = () => {
     },
     {
       title: "Address Verification",
-      value: " ",
-      canEdit: true,
+      isLoading: getBusinessAddress?.isLoading,
+      value: (
+        <Chip
+          label={
+            <Typography className="flex items-center gap-1 ">
+              Verified
+              <Iconify
+                icon="material-symbols:check-circle-outline-rounded"
+                fontSize={16}
+                className="text-success-800"
+              />
+            </Typography>
+          }
+          color="success"
+          className="bg-success-100 text-success-800 font-medium rounded-lg mt-2"
+        />
+      ),
+      canEdit: Boolean(businessRcNumber),
       onClick: () => {
         setOpenAddressVerificationDialog(true);
       },
-      isValueAvailable: false,
+      isValueAvailable: getBusinessAddress?.data?.data,
     },
     {
       title: "MEMAT (Memorandum of articles of association)",
-      value: " “”ID Card Type Here”” ",
-      canEdit: false,
-      onClick: () => {},
-      isValueAvailable: false,
+      isLoading: getMemorandumDocument?.isLoading,
+      value: (
+        <>
+          {getMemorandumDocument?.isLoading ? (
+            <Skeleton variant="text" className="w-22 h-8" />
+          ) : (
+            <Chip
+              label={
+                <Typography className="flex items-center gap-1 ">
+                  Submitted
+                  <Iconify
+                    icon="material-symbols:check-circle-outline-rounded"
+                    fontSize={16}
+                    className="text-success-800"
+                  />
+                </Typography>
+              }
+              color="success"
+              className="bg-success-100 text-success-800 font-medium rounded-lg mt-2"
+            />
+          )}
+        </>
+      ),
+      canEdit: Boolean(businessRcNumber),
+      onClick: () => {
+        setOpenEditAndAddUploadMemorandumDialog(true);
+      },
+      isValueAvailable: getMemorandumDocument?.data?.data,
     },
   ];
   // async function handleSelfieUpdate(file: File) {
@@ -200,7 +277,7 @@ const SettingsBusinessInformationTab = () => {
                     {getBusinessProfile.isLoading ? (
                       <Skeleton variant="text" className="w-22 h-8" />
                     ) : opt.value === typeof String ? (
-                      <Typography className=" text-neutral-500">
+                      <Typography className="text-neutral-500 capitalize">
                         {opt.value}
                       </Typography>
                     ) : (
@@ -240,14 +317,12 @@ const SettingsBusinessInformationTab = () => {
                     <Typography className="font-medium text-neutral-900">
                       {opt.title}
                     </Typography>
-                    {getBusinessDirectors?.isLoading ? (
+                    {opt?.isLoading ? (
                       <Skeleton variant="text" className="w-22 h-8" />
                     ) : (
                       <>
                         {opt?.isValueAvailable ? (
-                          <Typography className=" text-neutral-500">
-                            {opt.value}
-                          </Typography>
+                          opt.value
                         ) : (
                           <div className="flex items-center gap-1">
                             <ButtonBase>
@@ -333,6 +408,16 @@ const SettingsBusinessInformationTab = () => {
         <SettingsAddressVerificationDialog
           open={openAddressVerificationDialog}
           onClose={toggleAddressVerificationDialog}
+          addressDetails={getBusinessAddress?.data?.data}
+          reFetchAddressDetails={getBusinessAddress.refetch}
+        />
+      )}
+
+      {openEditAndAddUploadMemorandumDialog && (
+        <SettingsEditAndUploadMemorandum
+          open={openEditAndAddUploadMemorandumDialog}
+          onClose={toggleEditAndAddUploadMemorandumDialog}
+          memorandumDocuments={getMemorandumDocument?.data?.data}
         />
       )}
       {isAccountSetup && (

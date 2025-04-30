@@ -11,3 +11,13 @@ export type FileUploadApiResponse = ApiResponse<{
     batchNumber: string;
   };
 }>;
+
+export type MemorandumUploadApiRequest = ApiRequest<{
+  file: string | File | Blob;
+  uploadFileType: string;
+  description: string;
+  rcNumber: string;
+}>;
+export type MemorandumUploadApiResponse = ApiResponse<{
+  isSuccessful: boolean;
+}>;

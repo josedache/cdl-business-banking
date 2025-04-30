@@ -2,8 +2,12 @@ import { baseApi } from "configs/store-query";
 
 import { MERCHANT, USER } from "constants/tags.ts";
 import {
+  GetMerchantAddressApiRequest,
+  GetMerchantAddressApiResponse,
   GetMerchantBusinessDataApiRequest,
   GetMerchantBusinessDataApiResponse,
+  GetMerchantMemorandumApiRequest,
+  GetMerchantMemorandumApiResponse,
   MerchantAddressStatesApiRequest,
   MerchantAddressStatesApiResponse,
   MerchantBusinessDirectorsApiRequest,
@@ -78,7 +82,7 @@ export const merchantApi = baseApi.injectEndpoints({
       providesTags: [{ type: USER }],
     }),
 
-    merchantAddressDetails: builder.mutation<
+    addMerchantAddressDetails: builder.mutation<
       MerchantAddressStatesApiResponse,
       MerchantAddressStatesApiRequest
     >({
@@ -88,6 +92,39 @@ export const merchantApi = baseApi.injectEndpoints({
         ...config,
       }),
       invalidatesTags: [{ type: MERCHANT }],
+    }),
+
+    getMerchantAddressDetails: builder.query<
+      GetMerchantAddressApiResponse,
+      GetMerchantAddressApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/address/" + path.rcNumber,
+        method: "GET",
+        ...config,
+      }),
+      providesTags: [{ type: MERCHANT }],
+    }),
+    upDateMerchantAddressDetails: builder.mutation<
+      MerchantAddressStatesApiResponse,
+      MerchantAddressStatesApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/address/" + path.rcNumber,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: MERCHANT }],
+    }),
+    getMerchantMemorandumDocument: builder.query<
+      GetMerchantMemorandumApiResponse,
+      GetMerchantMemorandumApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/documents/" + path.rcNumber,
+        method: "GET",
+        ...config,
+      }),
     }),
   }),
 });
