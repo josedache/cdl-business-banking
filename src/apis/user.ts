@@ -25,6 +25,8 @@ import {
   UserUpdatePasswordResponse,
   UserUpdatePinRequest,
   UserUpdatePinResponse,
+  UserResendSignupLinkApiResponse,
+  UserResendSignupLinkApiRequest,
 } from "types/user-api.ts";
 
 export const BASE_URL = "/user";
@@ -176,6 +178,18 @@ export const userApi = baseApi.injectEndpoints({
       query: ({ ...config }) => ({
         url: BASE_URL + "/pin",
         method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: USER }],
+    }),
+
+    resendSignupLink: builder.mutation<
+      UserResendSignupLinkApiResponse,
+      UserResendSignupLinkApiRequest
+    >({
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/resend-signup-link",
+        method: "post",
         ...config,
       }),
       invalidatesTags: [{ type: USER }],

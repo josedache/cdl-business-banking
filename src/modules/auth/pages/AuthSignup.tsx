@@ -17,7 +17,7 @@ import { AuthSignupFormikValues } from "modules/auth/types/auth-signup.ts";
 import { userApi } from "apis/user";
 import * as yup from "yup";
 import useStepper from "hooks/use-stepper.ts";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo } from "react";
 import { LoadingButton } from "@mui/lab";
 import {
   Link,
@@ -32,7 +32,7 @@ import { extractSearchParams } from "utils/url/extract-search-params.ts";
 import { cn } from "utils/cn.ts";
 import usePopover from "hooks/use-popover.ts";
 import { removeEmptyProperties } from "utils/object/remove-empty-properties.ts";
-import Countdown from "components/Countdown.tsx";
+import clsx from "clsx";
 
 function AuthSignup() {
   const { enqueueSnackbar } = useSnackbar();
@@ -53,9 +53,10 @@ function AuthSignup() {
 
   const [signupUserMutation] = userApi.useSignupUserMutation();
 
-  const passwordPopover = usePopover();
+  const [resendSignupLinkMutation, resendSignupLinkMutationResult] =
+    userApi.useResendSignupLinkMutation();
 
-  const [countdownDate, setCountdownDate] = useState(getCountdownDate);
+  const passwordPopover = usePopover();
 
   const formik = useFormik<AuthSignupFormikValues>({
     initialValues: {
@@ -112,7 +113,6 @@ function AuthSignup() {
               variant: "success",
             });
 
-            setCountdownDate(getCountdownDate());
             stepper.next();
             break;
           }
@@ -141,7 +141,18 @@ function AuthSignup() {
 
   const referralCodeUser = referralCodeUserQueryResult.data?.data;
 
-  function sendOtp() {}
+  async function sendOtp() {
+    try {
+      await resendSignupLinkMutation({
+        body: { email: formik.values.email },
+      }).unwrap();
+      enqueueSnackbar("Signup link sent to your email", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar(error?.message || "Failed to send OTP", {
+        variant: "error",
+      });
+    }
+  }
 
   const step1 = (
     <Fragment key={0}>
@@ -363,55 +374,25 @@ function AuthSignup() {
             see it, be sure to check your Spam or Junk folders.
           </Typography>
         </div>
-
-        <Countdown date={countdownDate}>
-          {(countdown) => {
-            const isCodeSent =
-              countdown.days ||
-              countdown.minutes ||
-              countdown.seconds ||
-              countdown.seconds;
-
-            return (
-              <>
-                <div className="flex items-center justify-center">
-                  <Typography className="text-center font-medium text-text-secondary">
-                    Already have an account?{" "}
-                    {isCodeSent ? (
-                      <Typography
-                        component="span"
-                        variant="inherit"
-                        color="primary"
-                        className="text-center"
-                      >
-                        Resend OTP in{" "}
-                        <Typography
-                          component="span"
-                          color="primary"
-                          className=""
-                        >
-                          {countdown.minutes}:
-                          {countdown.seconds < 10
-                            ? `0${countdown.seconds}`
-                            : countdown.seconds}
-                        </Typography>
-                      </Typography>
-                    ) : (
-                      <Typography
-                        component="span"
-                        color="primary"
-                        className="font-medium cursor-pointer"
-                        onClick={sendOtp}
-                      >
-                        Resend Link
-                      </Typography>
-                    )}
-                  </Typography>
-                </div>
-              </>
-            );
-          }}
-        </Countdown>
+        <div className="flex items-center justify-center">
+          <Typography className="text-center font-medium text-text-secondary">
+            Already have an account?{" "}
+            <ButtonBase
+              component="span"
+              color="primary"
+              className={clsx(
+                "font-medium cursor-pointer py-0 text-primary-main",
+                resendSignupLinkMutationResult.isLoading && "opacity-50"
+              )}
+              onClick={sendOtp}
+              disabled={
+                resendSignupLinkMutationResult.isLoading || !formik.values.email
+              }
+            >
+              Resend Link
+            </ButtonBase>
+          </Typography>
+        </div>
       </form>
     </Fragment>
   );
@@ -428,9 +409,3 @@ function AuthSignup() {
 export default AuthSignup;
 
 export const Component = AuthSignup;
-
-function getCountdownDate() {
-  const date = new Date();
-  date.setTime(date.getTime() + 1000 * 60 * 10);
-  return date;
-}

@@ -177,3 +177,8 @@ export type UserUpdatePinRequest = ApiRequest<{
   newPin: string;
 }>;
 export type UserUpdatePinResponse = ApiResponse<unknown>;
+
+export type UserResendSignupLinkApiRequest = ApiRequest<{
+  email: string;
+}>;
+export type UserResendSignupLinkApiResponse = ApiResponse<unknown>;

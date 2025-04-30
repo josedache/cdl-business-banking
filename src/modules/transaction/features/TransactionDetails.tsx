@@ -24,6 +24,7 @@ import { TransactionType } from "modules/transaction/enums/transaction-type.ts";
 import { Icon as Iconify } from "@iconify/react";
 import useClipboard from "hooks/use-clipboard.ts";
 import useStepper from "hooks/use-stepper.ts";
+import { useSnackbar } from "notistack";
 
 function TransactionDetails(props: TransactionDetailsProps) {
   const {
@@ -35,7 +36,7 @@ function TransactionDetails(props: TransactionDetailsProps) {
   } = props;
 
   const clipboard = useClipboard();
-
+  const { enqueueSnackbar } = useSnackbar();
   const [isOpen, toggleOpen, setOpen] = useToggle();
 
   const stepper = useStepper();
@@ -57,6 +58,28 @@ function TransactionDetails(props: TransactionDetailsProps) {
     onClose?.(e, reason);
     setOpen(false);
   }
+
+  const [generateReceiptMutation, generateReceiptMutationResult] =
+    transactionApi.useGenerateTransactionReceiptMutation();
+
+  const handleDownloadReceipt = async () => {
+    try {
+      await generateReceiptMutation({
+        path: {
+          id: String(id),
+        },
+      }).unwrap();
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.error ||
+          error?.data?.message ||
+          "Error downloading receipt",
+        {
+          variant: "error",
+        }
+      );
+    }
+  };
 
   return (
     <>
@@ -271,7 +294,13 @@ function TransactionDetails(props: TransactionDetailsProps) {
           ][stepper.step]
         }
         <DialogActions className="grid grid-cols-2 p-6">
-          <Button variant="gradient">Share Receipt</Button>
+          <Button
+            onClick={handleDownloadReceipt}
+            disabled={generateReceiptMutationResult?.isLoading}
+            variant="gradient"
+          >
+            Share Receipt
+          </Button>
           <Button variant="outlined">Send Again</Button>
         </DialogActions>
       </Dialog>
