@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ButtonBase, Divider, Paper } from "@mui/material";
 import clsx from "clsx";
 import { useSnackbar } from "notistack";
@@ -23,6 +23,13 @@ export default function Transfer() {
   const { enqueueSnackbar } = useSnackbar();
   const stepper = useStepper();
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const locationState = state as {
+    accountNumber?: string;
+    accountName?: string;
+    bankSortCode?: string;
+    nameEnquiryReference?: string;
+  };
 
   const [transferMutation, transferMutationResult] =
     transferApi.useTransferMutation();
@@ -55,13 +62,13 @@ export default function Transfer() {
 
   const formik = useFormik<TransferSetupFormikValues>({
     initialValues: {
-      accountName: "",
-      accountNumber: "",
-      bankSortCode: "",
+      accountName: locationState?.accountName || "",
+      accountNumber: locationState?.accountNumber || "",
+      bankSortCode: locationState?.bankSortCode || "",
       amount: "",
 
       walletId: "",
-      nameEnquiryReference: "",
+      nameEnquiryReference: locationState?.nameEnquiryReference || "",
       narration: "",
       transactionPin: "",
       reference: "",
