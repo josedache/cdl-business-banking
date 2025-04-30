@@ -90,7 +90,7 @@ function DashboardWalletDetailsDialog(
                   {mainWallet?.accountNumber || ""}
                   <IconButton
                     onClick={() => {
-                      writeText(mainWallet?.accountNumber);
+                      writeText(mainWallet?.accountNumber || "");
                     }}
                   >
                     <Icon icon="hugeicons:copy-01" />
@@ -126,7 +126,7 @@ function DashboardWalletDetailsDialog(
                         {item?.copy ? (
                           <IconButton
                             onClick={() => {
-                              writeText(item.value);
+                              writeText(item.value || "");
                             }}
                           >
                             <Icon
