@@ -1,6 +1,5 @@
 export interface SettingsEditEmailValues {
-    oldEmail: string;
-    newEmail: string;
-    otp: string;
-  }
-  
+  oldEmail: string;
+  newEmail: string;
+  otp: string;
+}

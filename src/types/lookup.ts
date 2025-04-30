@@ -57,6 +57,7 @@ export type StateAddressLookupApiResponse = ApiResponse<
     is_active: boolean;
     created_at: string;
     updated_at: string;
+    state_cba_id: string;
   }>
 >;
 export type StateAddressLookupApiRequest = ApiRequest<unknown>;
