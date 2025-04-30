@@ -82,31 +82,6 @@ const SettingsEditAndUploadMemorandum = (
     },
   });
 
-  //   async function handleMemorandumUpdate(file: File) {
-  //     try {
-  //       const assetInfo = getAssetInfo(file);
-  //       const data = await handleMemorandumUpdate({
-  //         body: {
-  //           title: file.name,
-  //           type: "selfie",
-  //           fileExtension: assetInfo.type,
-  //           mimeType: assetInfo.mimeType,
-  //         },
-  //       }).unwrap();
-  //       enqueueSnackbar(data?.message || "Selfied updated successfully!", {
-  //         variant: "success",
-  //       });
-  //     } catch (error) {
-  //       const message = Array.isArray(error?.data?.message)
-  //         ? error?.data?.message?.[0]
-  //         : error?.data?.message;
-
-  //       enqueueSnackbar(message || "Failed to update selfie", {
-  //         variant: "error",
-  //       });
-  //     }
-  //   }
-
   const dropzone = useDropzone({
     multiple: false,
     accept: { "application/pdf": [], "image/*": [] },
@@ -162,33 +137,6 @@ const SettingsEditAndUploadMemorandum = (
           <Typography className="font-semibold text-base text-neutral-600">
             Memorandum & Article of association
           </Typography>{" "}
-          {/* <Dropzone
-            multiple={false}
-            maxSize={1024 * 1024 * 2}
-            accept={{ "image/*": [] }}
-            onDropAccepted={(files) => {
-              const file = files[0];
-              handleMemorandumUpdate(file);
-            }}
-            onDropRejected={(fileRejection) => {
-              enqueueSnackbar(
-                fileRejection[0].errors?.[0].message || "File Rejected",
-                { variant: "error" }
-              );
-            }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div
-                {...getRootProps()}
-                className=" bg-neutral-50 px-6 py-5 mt-4 border border-dashed border-neutral-200 rounded-xl "
-              >
-                <input {...getInputProps()} />
-                <Typography className="text-gray-700 font-medium cursor-pointer py-1">
-                  Click To Upload
-                </Typography>
-              </div>
-            )}
-          </Dropzone> */}
           {formik.values.file ? (
             <div className="mt-4">
               <div className="flex items-center gap-2 bg-neutral-50 px-6 py-9 border border-dashed border-neutral-200 rounded-xl">
@@ -226,15 +174,6 @@ const SettingsEditAndUploadMemorandum = (
               </div>
             </div>
           )}
-          {/* <div
-            {...getRootProps()}
-            className=" bg-neutral-50 px-6 py-5 mt-4 border border-dashed border-neutral-200 rounded-xl "
-          >
-            <input {...getInputProps()} />
-            <Typography className="text-gray-700 font-medium cursor-pointer py-1">
-              Click To Upload
-            </Typography>
-          </div> */}
         </div>
       </DialogContent>
 
