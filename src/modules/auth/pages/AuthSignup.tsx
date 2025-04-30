@@ -253,8 +253,6 @@ function AuthSignup() {
                   </Typography>
                 </div>
               ) : referralCodeUserQueryResult.isError ? (
-                // ||(!referralCodeUserQueryResult.isUninitialized &&
-                // !referralCodeUserQueryResult.data)
                 <Typography variant="body2" color="error" gutterBottom>
                   {(referralCodeUserQueryResult.error as any)?.message ||
                     "Invalid Referral Code"}

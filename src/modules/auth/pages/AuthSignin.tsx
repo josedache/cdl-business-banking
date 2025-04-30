@@ -27,7 +27,7 @@ function AuthSignin() {
 
   const navigate = useNavigate();
 
-  const stepper = useStepper();
+  const stepper = useStepper({ initialStep: 1 });
 
   const [loginUserMutation] = userApi.useLoginUserMutation();
   const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
@@ -215,7 +215,7 @@ function AuthSignin() {
                 <>
                   <div className="flex items-center justify-center">
                     <Typography className="text-center">
-                      Didn’t receive OTP?{" "}
+                      Didn’t receive code?{" "}
                       {isCodeSent ? (
                         <Typography
                           variant="body2"
@@ -286,6 +286,6 @@ export const Component = AuthSignin;
 
 function getCountdownDate() {
   const date = new Date();
-  date.setTime(date.getTime() + 1000 * 60 * 5);
+  date.setTime(date.getTime() + 1000 * 60 * 10);
   return date;
 }
