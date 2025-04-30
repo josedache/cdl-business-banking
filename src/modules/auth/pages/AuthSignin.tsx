@@ -216,7 +216,7 @@ function AuthSignin() {
                 <>
                   <div className="flex items-center justify-center">
                     <Typography className="text-center">
-                      Didn’t receive code?{" "}
+                      Didn’t receive OTP?{" "}
                       {isCodeSent ? (
                         <Typography
                           variant="body2"
@@ -287,6 +287,6 @@ export const Component = AuthSignin;
 
 function getCountdownDate() {
   const date = new Date();
-  date.setTime(date.getTime() + 1000 * 60 * 10);
+  date.setTime(date.getTime() + 1000 * 60 * 5);
   return date;
 }
