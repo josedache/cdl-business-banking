@@ -27,7 +27,7 @@ function AuthSignin() {
 
   const navigate = useNavigate();
 
-  const stepper = useStepper({initialStep: 1});
+  const stepper = useStepper();
 
   const [loginUserMutation] = userApi.useLoginUserMutation();
   const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
