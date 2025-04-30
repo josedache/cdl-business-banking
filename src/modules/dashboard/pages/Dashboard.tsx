@@ -25,6 +25,7 @@ import DashboardTransactionList from "modules/dashboard/features/DashboardTransa
 import { walletApi } from "apis/wallet";
 import { merchantApi } from "apis/merchant";
 import useClipboard from "hooks/use-clipboard";
+import DashboardWalletDetailsDialog from "../features/DashboardWalletDetailsDialog";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle(true);
@@ -39,7 +40,7 @@ function Dashboard() {
 
   const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
     params: {
-      rc: user?.info?.businesses?.[0]?.rcNumber,
+      rcNumber: user?.info?.businesses?.[0]?.rcNumber,
     },
   });
 
@@ -219,17 +220,23 @@ function Dashboard() {
             </div>
 
             <div className="inline-flex flex-col justify-center gap-3 items-center ">
-              <IconButton
-                disabled={!isKycCompleted}
-                variant="outlined"
-                className="rounded-lg w-fit "
-              >
-                <Icon
-                  icon="hugeicons:more-horizontal-circle-01"
-                  width="24"
-                  height="24"
-                />
-              </IconButton>
+              <DashboardWalletDetailsDialog>
+                {({ toggleOpen }) => (
+                  <IconButton
+                    disabled={!isKycCompleted}
+                    variant="outlined"
+                    onClick={toggleOpen}
+                    className="rounded-lg w-fit "
+                  >
+                    <Icon
+                      icon="hugeicons:more-horizontal-circle-01"
+                      width="24"
+                      height="24"
+                    />
+                  </IconButton>
+                )}
+              </DashboardWalletDetailsDialog>
+
               <Typography>Wallet Details</Typography>
             </div>
           </div>

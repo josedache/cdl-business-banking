@@ -59,7 +59,7 @@ export default function TransferSingle(props: TransferSingleProps) {
   );
   const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
     params: {
-      rc: authUser?.info?.businesses?.[0]?.rcNumber,
+      rcNumber: authUser?.info?.businesses?.[0]?.rcNumber,
     },
   });
   const businessInfo = getBusinessInfoQuery?.data?.data;
