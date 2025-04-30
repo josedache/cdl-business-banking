@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogProps,
   Divider,
+  IconButton,
   Typography,
 } from "@mui/material";
 import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
@@ -17,6 +18,7 @@ import { uploadApi } from "apis/upload";
 import useAuthUser from "hooks/use-auth-user";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import clsx from "clsx";
+import { downloadAsPDF } from "utils/file/base64Download";
 
 type SettingsEditAndUploadMemorandumDialogProps = {
   onClose: () => void;
@@ -107,6 +109,16 @@ const SettingsEditAndUploadMemorandum = (
       });
     },
   });
+  const handleClearFile = () => {
+    formik.setFieldValue("file", "");
+    formik.setFieldValue("fileName", "");
+  };
+  const downloadMemorandumFile = () => {
+    downloadAsPDF(
+      String(memorandumDocuments?.[0]?.location),
+      "Memorandum of Association"
+    );
+  };
   return (
     <Dialog
       fullWidth
@@ -145,9 +157,27 @@ const SettingsEditAndUploadMemorandum = (
                   noWrap
                   className="text-gray-700  font-medium cursor-pointer "
                 >
-                  {(formik.values.file as unknown as File)?.name}
                   {formik.values.fileName}
                 </Typography>
+                <div className="flex ml-auto items-center gap-5">
+                  <IconButton onClick={downloadMemorandumFile} className="p-0">
+                    <Icon
+                      icon="ci:download"
+                      width="18"
+                      height="18"
+                      className="text-gray-600"
+                    />
+                  </IconButton>
+
+                  <IconButton onClick={handleClearFile} className="p-0">
+                    <Icon
+                      icon="stash:trash-can"
+                      width="20"
+                      height="20"
+                      className="text-gray-600 p-0"
+                    />
+                  </IconButton>
+                </div>
               </div>
             </div>
           ) : (
