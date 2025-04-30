@@ -30,7 +30,7 @@ import {
   UpdateBeneficiaryBatchApiRequest,
   UpdateBeneficiaryBatchApiResponse,
 } from "types/beneficiary";
-import downloadUrl from "utils/file/downloadUrl";
+import { downloadUrl } from "utils/file/downloadUrl";
 
 export const BASE_URL = "/beneficiary";
 
