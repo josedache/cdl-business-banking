@@ -21,27 +21,42 @@ import useAuthUser from "hooks/use-auth-user";
 
 type SettingsAddressVerificationDialogProps = {
   onClose: () => void;
+  addressDetails: {
+    street: string;
+    nearestLandMark: string;
+    address: string;
+    state_id: string;
+    city: string;
+    lga_id: string;
+    lga_name: string;
+    state_name: string;
+    country_id: number;
+    country_name: string;
+    postalCode: string;
+  };
+  reFetchAddressDetails: () => void;
 } & DialogProps;
 
 const SettingsAddressVerificationDialog = (
   props: SettingsAddressVerificationDialogProps
 ) => {
-  const { onClose, ...rest } = props;
+  const { onClose, addressDetails, reFetchAddressDetails, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
   const user = useAuthUser();
 
+  const [addBusinessAddress] =
+    merchantApi.useAddMerchantAddressDetailsMutation();
   const [updateBusinessAddress] =
-    merchantApi.useMerchantAddressDetailsMutation();
-
+    merchantApi.useUpDateMerchantAddressDetailsMutation();
   const formik = useFormik<SettingsAddressValues>({
     initialValues: {
-      address: "",
-      street: "",
-      nearestLandmark: "",
-      city: "",
-      state: "",
-      lga: "",
-      postalCode: "",
+      address: addressDetails?.address || "",
+      street: addressDetails?.street || "",
+      nearestLandmark: addressDetails?.nearestLandMark || "",
+      city: addressDetails?.city || "",
+      state: addressDetails?.state_id || "",
+      lga: addressDetails?.lga_id || "",
+      postalCode: addressDetails?.postalCode || "",
     },
     validateOnBlur: true,
     validationSchema: yup.object().shape({
@@ -58,14 +73,18 @@ const SettingsAddressVerificationDialog = (
     }),
     onSubmit: async (values) => {
       try {
-        const data = await updateBusinessAddress({
+        const payload = {
           body: { ...values },
           path: {
             rcNumber: user?.info?.businesses[0]?.rcNumber,
           },
-        }).unwrap();
+        };
+        const response = addressDetails?.street
+          ? await updateBusinessAddress(payload).unwrap()
+          : await addBusinessAddress(payload).unwrap();
+        reFetchAddressDetails();
         onClose();
-        enqueueSnackbar(data?.message || "Address updated successfully", {
+        enqueueSnackbar(response?.message || "Address updated successfully", {
           variant: "success",
         });
       } catch (error: any) {
@@ -75,17 +94,13 @@ const SettingsAddressVerificationDialog = (
       }
     },
   });
-  const allStatesQuery = lookupApi.useStateAddressLookupQuery(
-    {},
-    { skip: !!formik.values.state } // skip if a state is selected
-  );
-
+  const allStatesQuery = lookupApi.useStateAddressLookupQuery({});
   const lgasQuery = lookupApi.useStateAddressLookupQuery(
     {
       path: { stateId: formik?.values?.state },
     },
     {
-      skip: !formik.values.state, // skip until stateId is selected
+      skip: !formik.values.state,
     }
   );
 
@@ -119,14 +134,6 @@ const SettingsAddressVerificationDialog = (
       <Divider />
       <DialogContent className="px-6">
         <div className="grid grid-cols-2 gap-3">
-          {/* <Typography className="font-medium text-lg text-neutral-700">
-            Street Address
-          </Typography> */}
-          {/* <div className=" mt-2">
-            <Typography className="border border-neutral-200 text-neutral-900 rounded-xl py-2 px-3 font-medium ml-1">
-              21, Savage Street, Ikoyi, Lagos
-            </Typography>
-          </div> */}
           <TextField
             fullWidth
             select
@@ -135,7 +142,7 @@ const SettingsAddressVerificationDialog = (
             {...getTextFieldProps(formik, "state")}
           >
             {allStatesList?.map((opt, key) => (
-              <MenuItem key={key} value={opt?.id}>
+              <MenuItem key={key} value={opt?.cba_id}>
                 {opt?.name}
               </MenuItem>
             ))}
@@ -149,7 +156,7 @@ const SettingsAddressVerificationDialog = (
             {...getTextFieldProps(formik, "lga")}
           >
             {allLGAForStateList?.map((opt, key) => (
-              <MenuItem key={key} value={opt?.id}>
+              <MenuItem key={key} value={opt?.cba_id}>
                 {opt?.name}
               </MenuItem>
             ))}

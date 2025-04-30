@@ -3,8 +3,10 @@ import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import useToggle from "hooks/use-toggle";
 import SettingsUpdatePasswordDialog from "./SettingsUpdatePasswordDialog";
 import SettingsUpdatePinDialog from "./SettingsUpdatePinDialog";
+import useAuthUser from "hooks/use-auth-user";
 
 const SettingsSecurityTab = () => {
+  const authUser = useAuthUser();
   const [
     openUpdatePasswordDialog,
     toggleUpdatePasswordDialog,
@@ -29,7 +31,7 @@ const SettingsSecurityTab = () => {
       title: "Transaction Pin",
       description:
         "Make sure your Pin does not have repetitive numbers for stronger security",
-      canEdit: true,
+      canEdit: authUser?.info?.transactionPin[0]?.is_active,
       onClick: () => {
         setOpenUpdatePinDialog(true);
       },
@@ -64,8 +66,8 @@ const SettingsSecurityTab = () => {
                     <span className="ml-1">{opt.summaryTitle}</span>
                   </Typography>
                   <Typography
-                    className={`font-semibold cursor-pointer ${opt.canEdit ? "text-primary-main " : " text-primary-main/25"}`}
-                    onClick={opt.onClick}
+                    className={`font-semibold  ${opt.canEdit ? "text-primary-main cursor-pointer" : " text-primary-main/25"}`}
+                    onClick={opt.canEdit && opt.onClick}
                   >
                     Update
                   </Typography>

@@ -65,12 +65,12 @@ const SettingsGeneralTab = () => {
       onClick: () => {},
       canEdit: authUser?.info?.isBvnVerified,
     },
-    {
-      title: "ID Card",
-      value: " “”ID Card Type Here”” ",
-      onClick: () => {},
-      canEdit: false,
-    },
+    // {
+    //   title: "ID Card",
+    //   value: " “”ID Card Type Here”” ",
+    //   onClick: () => {},
+    //   canEdit: false,
+    // },
   ];
 
   const referralDetails = [
@@ -80,7 +80,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Referral Link",
-      value: `${window.location.origin}?referral_code=${authUser?.info?.referralCode}`,
+      value: `${window.location.origin}/signup?referral_code=${authUser?.info?.referralCode}`,
     },
   ];
 
@@ -252,7 +252,7 @@ const SettingsGeneralTab = () => {
               Refer a Friend
             </Typography>
             <Typography className=" text-gray-500 text-sm mt-4">
-              Refer a friend.
+              Refer other businesses to enjoy our banking service.
             </Typography>
           </div>
 

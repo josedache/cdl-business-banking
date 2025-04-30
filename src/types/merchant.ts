@@ -87,3 +87,36 @@ export type MerchantAddressStatesApiRequest = ApiRequest<{
   lga: string;
   postalCode: string;
 }>;
+
+export type GetMerchantAddressApiRequest = ApiRequest<{ rcNumber: string }>;
+
+export type GetMerchantAddressApiResponse = ApiResponse<{
+  street: string;
+  nearestLandMark: string;
+  address: string;
+  state_id: string;
+  city: string;
+  lga_id: string;
+  lga_name: string;
+  state_name: string;
+  country_id: number;
+  country_name: string;
+  postalCode: string;
+}>;
+
+export type GetMerchantMemorandumApiRequest = ApiRequest<unknown>;
+export type GetMerchantMemorandumApiResponse = ApiResponse<
+  [
+    {
+      id: number;
+      parentEntityType: string;
+      parentEntityId: number;
+      name: string;
+      fileName: string;
+      size: number;
+      type: string;
+      location: string;
+      description: string;
+    },
+  ]
+>;

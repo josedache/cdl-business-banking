@@ -244,7 +244,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                   <Typography variant="h5">How Bulk Payouts works</Typography>
 
                   {[
-                    "Upload a Excel with Beneficiaries you wish to payout to or Choose from Existing Beneficiaries.",
+                    "Upload an Excel file with the beneficiaries you wish to pay out to or choose from existing beneficiaries.",
                     "Review the Recipients.",
                     "Complete the payout transaction.",
                   ].map((item, index) => (

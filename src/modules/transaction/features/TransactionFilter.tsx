@@ -186,7 +186,10 @@ function TransactionFilter(props: TransactionFilterProps) {
             <MenuItem key={-1} value={"-1"} disabled>
               Select transaction type
             </MenuItem>
-            {Object.keys(TransactionType)
+            {Object.keys({
+              withdrawal: TransactionType.withdrawal,
+              deposit: TransactionType.deposit,
+            })
               .filter((key) => isNaN(Number(key)))
               .map((key) => (
                 <MenuItem key={key} value={TransactionType[key]}>

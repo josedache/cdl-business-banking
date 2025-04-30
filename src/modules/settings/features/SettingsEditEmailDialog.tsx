@@ -176,7 +176,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
                     <Typography
                       variant="body2"
                       color="textSecondary"
-                      className="text-center"
+                      className="text-center "
                     >
                       Resend OTP in{" "}
                       <Typography
@@ -197,7 +197,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
                         <ButtonBase
                           disableRipple
                           onClick={handleResendOtpReset as any}
-                          className="font-semibold text-primary-main"
+                          className="font-semibold text-primary-main cursor-pointer"
                         >
                           Resend Code.
                         </ButtonBase>

@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Dialog, DialogContent, DialogProps, Typography } from "@mui/material";
 import useToggle from "hooks/use-toggle.ts";
-import { Icon } from "@iconify/react/dist/iconify.js";
 
 function UssdPreviewDialog(props: UssdPreviewDialogProps) {
   const { children, onClose, ...restProps } = props;
@@ -35,12 +34,6 @@ function UssdPreviewDialog(props: UssdPreviewDialogProps) {
           </Typography>
 
           <Typography className="flex items-center flex-wrap text-center justify-center gap-2 font-medium text-neutral-400 mt-4">
-            <Icon
-              icon="hugeicons:pin-code"
-              width="20"
-              height="20"
-              className="text-neutral-700"
-            />
             Dial{" "}
             <span className="text-primary-main font-semibold">*5120*11#</span>on
             your number to get your OTP
