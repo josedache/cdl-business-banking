@@ -29,7 +29,7 @@ export type GetTransactionApiRequest = ApiRequest<
     id: string | number;
   },
   {
-    tier: string;
+    tier?: string;
   }
 >;
 

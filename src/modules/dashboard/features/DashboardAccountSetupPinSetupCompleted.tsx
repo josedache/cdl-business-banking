@@ -1,8 +1,18 @@
-import { Button, Card, Paper, Skeleton, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  Divider,
+  IconButton,
+  Paper,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import { transactionApi } from "apis/transaction";
 import CurrencyTypography from "components/CurrencyTypography";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { walletApi } from "apis/wallet";
+import useClipboard from "hooks/use-clipboard";
 
 type DashboardAccountSetupPinSetupCompletedProps =
   {} & DashboardAccountSetupContentProps;
@@ -11,6 +21,7 @@ export default function DashboardAccountSetupPinSetupCompleted(
   props: DashboardAccountSetupPinSetupCompletedProps
 ) {
   const { formik } = props;
+  const { writeText } = useClipboard();
 
   const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery({
     params: {
@@ -18,9 +29,14 @@ export default function DashboardAccountSetupPinSetupCompleted(
     },
   });
 
+  const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
+  const transferWallets = transferWalletsQueryResult.data?.data;
+
+  const mainWallet = transferWallets?.find((wallet) => !!wallet?.groupId);
+
   return (
-    <Paper elevation={0} className="mx-auto max-w-[600px] p-6">
-      <div>
+    <Paper elevation={0} className="mx-auto max-w-[520px] ">
+      <div className="p-6">
         <div className="flex justify-center mt-5">
           <div className="bg-[#12B76A] border-6 border-[#DBF4E9] w-20 h-20 rounded-full flex items-center justify-center">
             <Icon
@@ -33,17 +49,40 @@ export default function DashboardAccountSetupPinSetupCompleted(
           </div>
         </div>
 
-        <Typography variant="h5" className="text-center font-semibold mt-8">
+        <Typography
+          variant="h5"
+          className="text-center font-semibold mt-8 text-neutral-500s"
+        >
           Your account is ready{" "}
         </Typography>
-        <Typography className="text-center mt-1">
+        <Typography className="text-center mt-1 text-[#686A71">
           You can start to transact with your account{" "}
         </Typography>
 
-        <div className="flex justify-center">
-          <Button variant="soft" disabled className="mt-8 font-semibold">
-            Fund Your Account
-          </Button>
+        <div className="mt-8">
+          <Typography className="text-center mt-1">
+            Fund your Credit Direct account
+          </Typography>
+          <Paper
+            className="flex items-center gap-2 p-[8px] rounded-lg bg-[#F8F9FB] border border-[#EDEFF2] w-fit mx-auto mt-1"
+            elevation={0}
+          >
+            <IconButton
+              disabled={
+                transferWalletsQueryResult?.isLoading ||
+                !mainWallet?.accountNumber
+              }
+              onClick={() => writeText(mainWallet?.accountNumber || "")}
+              className="p-0"
+            >
+              <Icon icon="hugeicons:copy-01" width="18" height="18" />
+            </IconButton>
+            {transferWalletsQueryResult?.isLoading ? (
+              <Skeleton variant="text" width="100px" height="24px" />
+            ) : (
+              <Typography>{mainWallet?.accountNumber}</Typography>
+            )}
+          </Paper>
         </div>
 
         <Card
@@ -79,14 +118,17 @@ export default function DashboardAccountSetupPinSetupCompleted(
             </div>
           ))}
         </Card>
+      </div>
 
+      <Divider className="mt-6" />
+
+      <div className="py-5 px-5">
         <Button
           onClick={() => {
             formik.handleSubmit();
           }}
           size="large"
           fullWidth
-          className="mt-15"
         >
           Done
         </Button>

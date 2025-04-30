@@ -178,13 +178,13 @@ export const theme = responsiveFontSizes(
       },
       MuiDesktopDatePicker: {
         defaultProps: {
-          format: DateFormat.FORMAT,
+          format: DateFormat.SLASH_dd_MM_yyyy,
           slots: { textField: DatePickerTextField },
         },
       },
       MuiMobileDatePicker: {
         defaultProps: {
-          format: DateFormat.FORMAT,
+          format: DateFormat.SLASH_dd_MM_yyyy,
           slots: { textField: DatePickerTextField },
         },
       },

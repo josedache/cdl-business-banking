@@ -4,15 +4,13 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  ButtonBase,
   CardActionArea,
-  Chip,
   CircularProgress,
   ClickAwayListener,
   Divider,
   FormControlLabel,
   Grow,
-  IconButton,
-  MenuItem,
   MenuList,
   Paper,
   Popper,
@@ -42,6 +40,8 @@ import { transactionApi } from "apis/transaction";
 import { walletApi } from "apis/wallet";
 import { BANK_DEFAULT_ICON } from "constants/global";
 import usePopover from "hooks/use-popover";
+import { merchantApi } from "apis/merchant";
+import { KYB_TIER } from "../enums/KybTierEnum";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -54,11 +54,21 @@ export default function TransferSingle(props: TransferSingleProps) {
 
   const actionPopover = usePopover();
 
-  const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery({
+  const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery(
+    {}
+  );
+  const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
     params: {
-      tier: String(1),
-    }, // TODO: get the tier automatically
+      rcNumber: authUser?.info?.businesses?.[0]?.rcNumber,
+    },
   });
+  const businessInfo = getBusinessInfoQuery?.data?.data;
+  const kybTier = businessInfo?.business.kybTier;
+  const registrationType = businessInfo?.business?.registrationType;
+
+  const needsDirectors =
+    kybTier === KYB_TIER.TIER_1 &&
+    registrationType?.toLocaleLowerCase() !== "business name";
 
   const maximumAmount = Number(
     getTransactionLimitQuery?.data?.data?.single_transaction_limit || 0
@@ -168,7 +178,7 @@ export default function TransferSingle(props: TransferSingleProps) {
             </Typography>
 
             <HtmlTooltip
-              open={exceedsMaximumAmount}
+              open={exceedsMaximumAmount && needsDirectors}
               arrow
               placement="left"
               title={
@@ -256,7 +266,10 @@ export default function TransferSingle(props: TransferSingleProps) {
               <CardActionArea
                 disabled={getAllWalletsQuery?.isLoading}
                 className={clsx(
-                  getAllWalletsQuery?.isLoading ? "opacity-[0.4]" : "",
+                  getAllWalletsQuery?.isLoading ||
+                    getBusinessInfoQuery?.isLoading
+                    ? "opacity-[0.4]"
+                    : "",
                   "bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit"
                 )}
                 onClick={
@@ -296,67 +309,88 @@ export default function TransferSingle(props: TransferSingleProps) {
                 {getAllWalletsQuery?.isLoading ? (
                   <CircularProgress size={10} />
                 ) : null}
+
+                <Popper
+                  sx={{ zIndex: 1 }}
+                  open={actionPopover.isOpen}
+                  anchorEl={actionPopover.anchorEl}
+                  role={undefined}
+                  transition
+                  disablePortal
+                  className="w-full"
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin:
+                          placement === "bottom"
+                            ? "center top"
+                            : "center bottom",
+                      }}
+                    >
+                      <Paper className="rounded-lg mt-2 w-full">
+                        <ClickAwayListener
+                          onClickAway={actionPopover.togglePopover}
+                        >
+                          <MenuList autoFocusItem>
+                            {getAllWalletsQuery?.data?.data?.map((option) => {
+                              const selected =
+                                String(option.id) === formik.values.walletId;
+
+                              return (
+                                <ButtonBase
+                                  key={option.id}
+                                  className={clsx(
+                                    selected
+                                      ? "text-primary-main"
+                                      : "text-neutral-600",
+                                    "py-2 px-4 w-full flex justify-between items-center"
+                                  )}
+                                  onClick={() => {
+                                    formik.setFieldValue(
+                                      "walletId",
+                                      String(option.id)
+                                    );
+                                    actionPopover.togglePopover();
+                                  }}
+                                >
+                                  <Typography
+                                    className={
+                                      selected
+                                        ? "text-primary-main"
+                                        : "text-neutral-600"
+                                    }
+                                    variant="body2"
+                                  >
+                                    {option?.groupId
+                                      ? "Main wallet"
+                                      : option.name}
+                                  </Typography>{" "}
+                                  <Typography
+                                    className={
+                                      selected
+                                        ? "text-primary-main"
+                                        : "text-neutral-600"
+                                    }
+                                  >
+                                    {currencyjs(
+                                      option.accountBalance || ""
+                                    ).format({
+                                      symbol: "₦",
+                                    })}
+                                  </Typography>
+                                </ButtonBase>
+                              );
+                            })}
+                          </MenuList>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
               </CardActionArea>
             </div>
-
-            <Popper
-              sx={{ zIndex: 1 }}
-              open={actionPopover.isOpen}
-              anchorEl={actionPopover.anchorEl}
-              role={undefined}
-              transition
-              disablePortal
-            >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin:
-                      placement === "bottom" ? "center top" : "center bottom",
-                  }}
-                >
-                  <Paper className="rounded-2xl mt-2">
-                    <ClickAwayListener
-                      onClickAway={actionPopover.togglePopover}
-                    >
-                      <MenuList id="split-button-menu" autoFocusItem>
-                        {getAllWalletsQuery?.data?.data?.map((option) => (
-                          <MenuItem
-                            key={option.id}
-                            selected={
-                              String(option.id) === formik.values.walletId
-                            }
-                            onClick={() => {
-                              formik.setFieldValue(
-                                "walletId",
-                                String(option.id)
-                              );
-                            }}
-                          >
-                            <Typography
-                              className="text-neutral-600"
-                              variant="body2"
-                            >
-                              {option?.groupId
-                                ? "Main wallet Balance"
-                                : option.name}
-                            </Typography>{" "}
-                            <Chip
-                              label={currencyjs(
-                                option.accountBalance || ""
-                              ).format({
-                                symbol: "₦",
-                              })}
-                              className="ml-2"
-                            />
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
           </div>
 
           {hasBeneficiaries ? (
@@ -370,14 +404,14 @@ export default function TransferSingle(props: TransferSingleProps) {
                 </Typography>
 
                 <div>
-                  <IconButton className="p-0">
+                  {/* <IconButton className="p-0">
                     <Icon
                       icon="hugeicons:search-01"
                       width="18"
                       height="18"
                       className="text-neutral-900"
                     />
-                  </IconButton>
+                  </IconButton> */}
                 </div>
               </div>
 
@@ -587,7 +621,7 @@ export default function TransferSingle(props: TransferSingleProps) {
           <LoadingButton
             variant="gradient"
             loading={formik.isSubmitting}
-            disabled={!formik.isValid || !formik.dirty}
+            disabled={!formik.isValid || !formik.dirty || exceedsMaximumAmount}
             type="submit"
             size="large"
             fullWidth

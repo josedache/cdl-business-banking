@@ -72,6 +72,8 @@ export default function Transfer() {
     validationSchema: yup.object({
       ...getValidationSchemas,
     }),
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async (values) => {
       try {
         switch (stepper.step) {

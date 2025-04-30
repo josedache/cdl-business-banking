@@ -34,11 +34,11 @@ export default function TransferBulkUploadNameUpdate(
       <form onSubmit={formik.handleSubmit}>
         <div className="px-6 pt-4 pb-8">
           <Typography variant="h5" className="">
-            Give your List a name(Optional)
+            Name your List (Optional)
           </Typography>
           <Typography className=" text-neutral-500">
-            So you can easily identify it another time, you can name your list
-            whatever you want Eg, Employees, Cargo, Family etc
+            To help you identify this list in the future, you may assign it a
+            custom name - for example, Employees, Vendors, Family, or Logistics.
           </Typography>
           <div className="mt-8 min-h-[280px]">
             <TextField

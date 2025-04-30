@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { TransferContentProps } from "../types/TransferStepForm";
 import { transactionApi } from "apis/transaction";
 import { useSnackbar } from "notistack";
+import TransactionDetails from "modules/transaction/features/TransactionDetails";
 
 type TransferSingleSuccessProps = {
   transactionId: string;
@@ -62,34 +63,39 @@ export default function TransferSingleSuccess(
           </Typography>
 
           <div className="flex justify-center mt-8">
-            {[
-              {
-                icon: "tdesign:share-filled",
-                text: "Share receipt",
-                onClick: handleDownloadReceipt,
-                disabled: generateReceiptMutationResult?.isLoading,
-              },
-              {
-                icon: "tabler:notes",
-                text: "View details",
-                disabled: true,
-              },
-            ].map(({ icon, text, ...rest }) => (
-              <div
-                key={text}
-                className="flex flex-col items-center gap-2 px-4 py-2 text-sm"
+            <div className="flex flex-col items-center gap-2 px-4 py-2 text-sm">
+              <IconButton
+                variant="contained"
+                size="large"
+                className="bg-[#F6F8FB] border border-[#E8E8E8] rounded-lg"
+                onClick={handleDownloadReceipt}
+                disabled={generateReceiptMutationResult?.isLoading}
               >
-                <IconButton
-                  variant="contained"
-                  size="large"
-                  className="bg-[#F6F8FB] border border-[#E8E8E8] rounded-lg"
-                  {...rest}
-                >
-                  <Icon icon={icon} width="20" height="20" />
-                </IconButton>
-                <Typography className="text-neutral-800">{text}</Typography>
-              </div>
-            ))}
+                <Icon icon="tdesign:share-filled" width="20" height="20" />
+              </IconButton>
+              <Typography className="text-neutral-800">
+                Share receipt
+              </Typography>
+            </div>
+
+            <div className="flex flex-col items-center gap-2 px-4 py-2 text-sm">
+              <TransactionDetails id={Number(transactionId)}>
+                {({ toggleOpen }) => (
+                  <>
+                    <IconButton
+                      variant="contained"
+                      size="large"
+                      className="bg-[#F6F8FB] border border-[#E8E8E8] rounded-lg"
+                      onClick={toggleOpen}
+                    >
+                      <Icon icon="tabler:notes" width="20" height="20" />
+                    </IconButton>
+                  </>
+                )}
+              </TransactionDetails>
+
+              <Typography className="text-neutral-800">View details</Typography>
+            </div>
           </div>
         </div>
 

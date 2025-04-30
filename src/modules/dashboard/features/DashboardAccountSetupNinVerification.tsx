@@ -18,6 +18,7 @@ import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import getCountdownDate from "utils/date/get-countdown-date";
 import { userApi } from "apis/user";
 import { useSnackbar } from "notistack";
+import UssdPreviewDialog from "components/UssdPreviewDialog";
 
 type DashboardAccountSetupNinVerificationProps = {
   phone: string;
@@ -199,16 +200,21 @@ export default function DashboardAccountSetupNinVerification(
             Call me
           </Button>
 
-          <Button
-            startIcon={
-              <Icon icon="hugeicons:pin-code" width="20" height="20" />
-            }
-            variant="outlined"
-            color="neutral"
-            fullWidth
-          >
-            USSD Code
-          </Button>
+          <UssdPreviewDialog>
+            {({ toggleOpen }) => (
+              <Button
+                startIcon={
+                  <Icon icon="hugeicons:pin-code" width="20" height="20" />
+                }
+                onClick={toggleOpen}
+                variant="outlined"
+                color="neutral"
+                fullWidth
+              >
+                USSD Code
+              </Button>
+            )}
+          </UssdPreviewDialog>
         </div>
         <Divider className="mt-12 mb-5" />
         <div className="px-6 pb-6">

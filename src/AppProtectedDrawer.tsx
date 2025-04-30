@@ -31,6 +31,7 @@ import usePopover from "hooks/use-popover";
 import { DASHBOARD, TRANSACTION, TRANSFER } from "constants/urls";
 import useSidebarIcon from "hooks/use-sidebar-icon";
 import isKycCheckCompleted from "utils/function/is-kyc-check-completed";
+import SupportContact from "modules/support/features/SupportContact.tsx";
 
 function AppProtectedDrawer() {
   const islg = useMediaQuery(MediaBreakpoint.LG);
@@ -45,7 +46,7 @@ function AppProtectedDrawer() {
   const sideNavigation = useSideNavigation();
   const sidebarIcon = useSidebarIcon();
 
-  // const [isSupport, toggleSupport] = useToggle();
+  const [isSupport, toggleSupport] = useToggle();
 
   const NAV_LINKS = [
     {
@@ -95,7 +96,7 @@ function AppProtectedDrawer() {
         {
           icon: "hugeicons:customer-support",
           label: "Support",
-          // onClick: toggleSupport,
+          onClick: toggleSupport,
           kycAllow: true,
         },
       ],
@@ -105,7 +106,7 @@ function AppProtectedDrawer() {
   const collapseToIcon = islg && !sidebarIcon.isOpen;
 
   return (
-    <div>
+    <>
       <div className="relative">
         <Drawer
           open={sideNavigation.isOpen}
@@ -233,7 +234,9 @@ function AppProtectedDrawer() {
           </IconButton>
         ) : null}
       </div>
-    </div>
+
+      <SupportContact open={isSupport} onClose={toggleSupport} />
+    </>
   );
 }
 
