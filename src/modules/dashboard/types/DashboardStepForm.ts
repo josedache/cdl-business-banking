@@ -12,6 +12,7 @@ export type DashboardAccountSetupFormikValues = {
   businessSectorParent: string;
   transactionPin: string;
   confirmTransactionPin: string;
+  registrationType: string;
 };
 export type DashboardAccountSetupContentProps = {
   formik: FormikProps<DashboardAccountSetupFormikValues>;

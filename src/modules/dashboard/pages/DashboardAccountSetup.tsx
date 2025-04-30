@@ -58,6 +58,7 @@ function DashboardAccountSetup() {
       annualTurnOver: "",
       businessSector: "",
       businessSectorParent: "",
+      registrationType: "",
 
       transactionPin: "",
       confirmTransactionPin: "",
@@ -67,7 +68,7 @@ function DashboardAccountSetup() {
         switch (stepper.step) {
           case ONBOARDING_STEPS.NIN:
             return {
-              nin: yup.string().label("NIN").max(11),
+              nin: yup.string().label("NIN").max(11).trim(),
             };
           case ONBOARDING_STEPS.NIN_VERIFICATION:
             return {
@@ -75,7 +76,7 @@ function DashboardAccountSetup() {
             };
           case ONBOARDING_STEPS.BVN:
             return {
-              bvn: yup.string().label("BVN").max(11),
+              bvn: yup.string().label("BVN").max(11).trim(),
             };
           case ONBOARDING_STEPS.BVN_VERIFICATION:
             return {
@@ -85,7 +86,7 @@ function DashboardAccountSetup() {
             return {};
           case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION:
             return {
-              rcNumber: yup.string().label("RC Number"),
+              rcNumber: yup.string().label("RC Number").trim(),
             };
           case ONBOARDING_STEPS.BUSINESS_CAC_REGISTRATION_VERIFICATION:
             return {
@@ -95,6 +96,10 @@ function DashboardAccountSetup() {
             return {
               businessTypeId: yup.string().label("Business Type").required(),
               annualTurnOver: yup.string().label("Annual Turn Over"),
+              registrationType: yup
+                .string()
+                .label("Registration Type")
+                .required(),
               businessSector: yup
                 .string()
                 .label("Business Sector Subcategory")
@@ -220,6 +225,9 @@ function DashboardAccountSetup() {
                 businessSubSector: Number(values.businessSector),
                 ...(values.annualTurnOver && {
                   annualTurnOver: Number(values.annualTurnOver),
+                }),
+                ...(values.registrationType && {
+                  registrationType: Number(values.registrationType),
                 }),
               },
             }).unwrap();

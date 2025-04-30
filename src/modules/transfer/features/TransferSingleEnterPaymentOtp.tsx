@@ -10,6 +10,7 @@ import { userApi } from "apis/user";
 import { useSnackbar } from "notistack";
 import Countdown from "components/Countdown";
 import getCountdownDate from "utils/date/get-countdown-date";
+import UssdPreviewDialog from "components/UssdPreviewDialog";
 
 type TransferSingleEnterPaymentOtpProps = {
   phone: string;
@@ -191,16 +192,24 @@ export default function TransferSingleEnterPaymentOtp(
             Call me
           </Button>
 
-          <Button
-            startIcon={
-              <Icon icon="hugeicons:pin-code" width="20" height="20" />
-            }
-            variant="outlined"
-            color="neutral"
-            fullWidth
-          >
-            USSD Code
-          </Button>
+          <UssdPreviewDialog>
+            {({ toggleOpen }) => (
+              <LoadingButton
+                startIcon={
+                  <Icon icon="hugeicons:pin-code" width="20" height="20" />
+                }
+                disabled={
+                  requestCallOtpMutationResult?.isLoading || formik.isSubmitting
+                }
+                onClick={toggleOpen}
+                variant="outlined"
+                color="neutral"
+                fullWidth
+              >
+                USSD Code
+              </LoadingButton>
+            )}
+          </UssdPreviewDialog>
         </div>
         <Divider className="mt-12" />
         <div className="px-4 py-4 flex justify-end">

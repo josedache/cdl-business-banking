@@ -23,18 +23,27 @@ import { useNavigate } from "react-router-dom";
 import { TRANSFER } from "constants/urls";
 import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
 import { walletApi } from "apis/wallet";
+import { merchantApi } from "apis/merchant";
+import useClipboard from "hooks/use-clipboard";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle(true);
   const user = useAuthUser();
   const navigate = useNavigate();
+  const { writeText } = useClipboard();
 
   const isKycCompleted = isKycCheckCompleted(user?.info);
   const verificationPercentage = getKycVerificationPercentage(user?.info);
 
   const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
 
-  const businessName = user?.info?.businesses?.[0]?.name;
+  const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
+    params: {
+      rc: user?.info?.businesses?.[0]?.rcNumber,
+    },
+  });
+
+  const businessName = getBusinessInfoQuery?.data?.data?.business?.name || "";
 
   const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
@@ -137,27 +146,53 @@ function Dashboard() {
 
         <Paper elevation={0} className="bg-[#F8F9FB] mt-6">
           <div className="px-4 pt-4">
-            <Typography className="font-semibold text-[#686A71]">
-              Main wallet balance
-            </Typography>
-            {transferWalletsQueryResult?.isLoading ? (
-              <Skeleton
-                variant="text"
-                className="mt-4 w-full max-w-[200px]"
-                sx={{ fontSize: "4rem" }}
-              />
-            ) : (
-              <CurrencyTypography
-                variant="h2"
-                className="font-semibold mt-4 overflow-auto scrollbar-hidden"
-                blur={isBlurWalletBalance}
-              >
-                {mainWallet?.accountBalance}
-              </CurrencyTypography>
-            )}
+            <div className="flex justify-between gap-2 flex-wrap items-center">
+              <Typography className="font-medium text-[#686A71]">
+                Main wallet balance
+              </Typography>
 
-            <Typography className="font-semibold mt-1">4.0% PA</Typography>
+              <Paper
+                className="flex items-center gap-2 p-[8px] rounded-lg bg-[#F8F9FB] border border-[#EDEFF2]"
+                elevation={0}
+              >
+                <IconButton
+                  disabled={
+                    transferWalletsQueryResult?.isLoading ||
+                    !mainWallet?.accountNumber
+                  }
+                  onClick={() => writeText(mainWallet?.accountNumber || "")}
+                  className="p-0"
+                >
+                  <Icon icon="hugeicons:copy-01" width="18" height="18" />
+                </IconButton>
+                {transferWalletsQueryResult?.isLoading ? (
+                  <Skeleton variant="text" width="100px" height="24px" />
+                ) : (
+                  <Typography>{mainWallet?.accountNumber}</Typography>
+                )}
+              </Paper>
+            </div>
+
+            <div className="mt-4">
+              {transferWalletsQueryResult?.isLoading ? (
+                <Skeleton
+                  className="w-full md:h-[60px] h-[40px] max-w-[200px]"
+                  sx={{ fontSize: "4rem" }}
+                />
+              ) : (
+                <CurrencyTypography
+                  variant="h2"
+                  className="font-semibold overflow-auto scrollbar-hidden"
+                  blur={isBlurWalletBalance}
+                >
+                  {mainWallet?.accountBalance}
+                </CurrencyTypography>
+              )}
+
+              <Typography className="font-semibold mt-1">4.0% PA</Typography>
+            </div>
           </div>
+
           <Divider className="mt-4" />
 
           <div className="p-4 flex gap-4 flex-wrap">

@@ -4,6 +4,7 @@ import { LOOKUP } from "constants/tags";
 import {
   BankLookupApiRequest,
   BankLookupApiResponse,
+  BusinessRegistrationTypeLookupApiResponse,
   sectorsLookupApiResponse,
   StateAddressLookupApiRequest,
   StateAddressLookupApiResponse,
@@ -49,6 +50,16 @@ export const lookupApi = baseApi.injectEndpoints({
         url: BASE_URL + "/states/" + `${path?.stateId ?? ""}`,
         method: "GET",
         ...config,
+      }),
+      providesTags: [{ type: LOOKUP }],
+    }),
+    businessRegistrationTypeLookup: builder.query<
+      BusinessRegistrationTypeLookupApiResponse,
+      void
+    >({
+      query: () => ({
+        url: BASE_URL + "/registration-type",
+        method: "GET",
       }),
       providesTags: [{ type: LOOKUP }],
     }),
