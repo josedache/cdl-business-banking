@@ -19,9 +19,10 @@ import OtpInput from "components/OtpInput";
 import NumberInput from "components/NumberInput";
 import Countdown from "components/Countdown";
 import { LoadingButton } from "@mui/lab";
-import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
+import { Icon, Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import { userApi } from "apis/user";
 import useAuthUser from "hooks/use-auth-user";
+import UssdPreviewDialog from "components/UssdPreviewDialog";
 
 type SettingsEditEmailDialogProps = {
   onClose: () => void;
@@ -226,16 +227,21 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
                 Call me
               </LoadingButton>
 
-              <LoadingButton
-                variant="outlined"
-                fullWidth
-                startIcon={
-                  <Iconify icon="hugeicons:pin-code" width="20" height="20" />
-                }
-                className="border-gray-300 text-black font-semibold"
-              >
-                USSD Code
-              </LoadingButton>
+              <UssdPreviewDialog>
+                {({ toggleOpen }) => (
+                  <LoadingButton
+                    startIcon={
+                      <Icon icon="hugeicons:pin-code" width="20" height="20" />
+                    }
+                    onClick={toggleOpen}
+                    variant="outlined"
+                    color="neutral"
+                    fullWidth
+                  >
+                    USSD Code
+                  </LoadingButton>
+                )}
+              </UssdPreviewDialog>
             </div>
           </div>
         </div>

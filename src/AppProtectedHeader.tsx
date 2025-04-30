@@ -6,11 +6,9 @@ import {
   Divider,
   Icon,
   IconButton,
-  InputAdornment,
   ListItemButton,
   Paper,
   Popover,
-  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -45,7 +43,7 @@ function AppProtectedHeader(props: AppBarProps) {
         sidebarIcon.isOpen
           ? "lg:w-[calc(100%-270px)] lg:ml-[270px]"
           : "lg:w-[calc(100%-80px)]  lg:ml-[80px]",
-        "w-full border-y-0 border-x-0 border-b-1 border-b-[#E0E5EB] bg-background-default rounded-none py-4"
+        "w-full border-y-0 border-x-0 border-b-1 border-b-[#E0E5EB] bg-background-default rounded-none py-2"
       )}
       {...restProps}
     >
@@ -60,30 +58,7 @@ function AppProtectedHeader(props: AppBarProps) {
               <Iconify icon="material-symbols:menu" />
             </Icon>
           </IconButton>
-          <Typography>
-            <TextField
-              fullWidth
-              size="small"
-              slotProps={{
-                input: {
-                  autoComplete: "off",
-                  style: {
-                    borderRadius: 100,
-                  },
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Iconify
-                        icon="hugeicons:search-01"
-                        width="24"
-                        height="24"
-                      />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-              className="rounded-full max-w-[800px]"
-            />
-          </Typography>
+
           <div className="flex-1" />
 
           <div className=" border-1 rounded-full w-10 h-10 border-[#EDEFF2] bg-[#FAFAFA]">

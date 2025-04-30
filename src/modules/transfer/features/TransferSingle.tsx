@@ -41,6 +41,8 @@ import { transactionApi } from "apis/transaction";
 import { walletApi } from "apis/wallet";
 import { BANK_DEFAULT_ICON } from "constants/global";
 import usePopover from "hooks/use-popover";
+import { merchantApi } from "apis/merchant";
+import { KYB_TIER } from "../enums/KybTierEnum";
 
 type TransferSingleProps = {} & TransferContentProps;
 
@@ -56,6 +58,18 @@ export default function TransferSingle(props: TransferSingleProps) {
   const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery(
     {}
   );
+  const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
+    params: {
+      rc: authUser?.info?.businesses?.[0]?.rcNumber,
+    },
+  });
+  const businessInfo = getBusinessInfoQuery?.data?.data;
+  const kybTier = businessInfo?.business.kybTier;
+  const registrationType = businessInfo?.business?.registrationType;
+
+  const needsDirectors =
+    kybTier === KYB_TIER.TIER_1 &&
+    registrationType?.toLocaleLowerCase() !== "business name";
 
   const maximumAmount = Number(
     getTransactionLimitQuery?.data?.data?.single_transaction_limit || 0
@@ -165,7 +179,7 @@ export default function TransferSingle(props: TransferSingleProps) {
             </Typography>
 
             <HtmlTooltip
-              open={exceedsMaximumAmount}
+              open={exceedsMaximumAmount && needsDirectors}
               arrow
               placement="left"
               title={
@@ -253,7 +267,10 @@ export default function TransferSingle(props: TransferSingleProps) {
               <CardActionArea
                 disabled={getAllWalletsQuery?.isLoading}
                 className={clsx(
-                  getAllWalletsQuery?.isLoading ? "opacity-[0.4]" : "",
+                  getAllWalletsQuery?.isLoading ||
+                    getBusinessInfoQuery?.isLoading
+                    ? "opacity-[0.4]"
+                    : "",
                   "bg-neutral-100 py-2 px-3 flex gap-1 items-center rounded-full w-fit"
                 )}
                 onClick={
@@ -584,7 +601,7 @@ export default function TransferSingle(props: TransferSingleProps) {
           <LoadingButton
             variant="gradient"
             loading={formik.isSubmitting}
-            disabled={!formik.isValid || !formik.dirty}
+            disabled={!formik.isValid || !formik.dirty || exceedsMaximumAmount}
             type="submit"
             size="large"
             fullWidth
