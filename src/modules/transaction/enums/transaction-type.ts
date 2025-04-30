@@ -1,6 +1,6 @@
 export enum TransactionType {
-  withdrawal = 1,
-  deposit = 2,
+  withdrawal = 2,
+  deposit = 1,
   card = 3,
   airtime = 4,
   data = 5,
