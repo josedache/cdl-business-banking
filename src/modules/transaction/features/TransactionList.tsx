@@ -252,7 +252,7 @@ function TransactionList(props: TransactionListProps) {
               <>
                 {transactionSections?.length ? (
                   <div
-                    className="overflow-y-auto h-[calc(100vh-400px)]"
+                    className="overflow-y-auto h-[calc(100vh-400px)] scrollbar-hidden"
                     style={{ contain: "strict" }}
                     ref={transactionsParentRef}
                   >

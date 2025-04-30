@@ -30,7 +30,8 @@ export default function DashboardAccountSetupBusinessNonCacReg(
   });
 
   const getBusinessSectorQuery = lookupApi.useSectorsLookupQuery();
-
+  const getRegistrationTypeQuery =
+    lookupApi.useBusinessRegistrationTypeLookupQuery();
   const getSubcategories = lookupApi.useSubSectorsLookupQuery(
     {
       path: {
@@ -82,6 +83,26 @@ export default function DashboardAccountSetupBusinessNonCacReg(
                 </MenuItem>
               ))}
             </TextField>
+
+            <TextField
+              fullWidth
+              label="Business Registration Type"
+              placeholder="Enter Business Registration Type"
+              {...getTextFieldProps(formik, "registrationType")}
+              select
+            >
+              {getRegistrationTypeQuery.isLoading ? (
+                <MenuItem value="" disabled>
+                  Loading...
+                </MenuItem>
+              ) : null}
+              {getRegistrationTypeQuery?.data?.data?.map?.((item) => (
+                <MenuItem key={item.cba_id} value={item.cba_id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
             <TextField
               fullWidth
               label="Business Sector"

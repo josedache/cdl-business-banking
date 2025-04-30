@@ -33,9 +33,9 @@ export default defineConfig({
     compression(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
+      // devOptions: {
+      //   enabled: true,
+      // },
       includeAssets: ["logo.svg", "apple-icon-180x180.png"],
       manifest: {
         name: "Business Banking",

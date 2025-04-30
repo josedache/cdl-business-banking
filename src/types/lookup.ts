@@ -60,3 +60,13 @@ export type StateAddressLookupApiResponse = ApiResponse<
   }>
 >;
 export type StateAddressLookupApiRequest = ApiRequest<unknown>;
+
+export type BusinessRegistrationTypeLookupApiResponse = ApiResponse<
+  Array<{
+    name: string;
+    cba_id: number;
+    is_active: boolean;
+  }>
+>;
+
+export type BusinessRegistrationTypeLookupApiRequest = ApiRequest<unknown>;
