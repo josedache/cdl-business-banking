@@ -83,7 +83,7 @@ function DashboardWalletDetailsDialog(
               {transferWalletsQueryResult?.isLoading ? (
                 <Skeleton
                   variant="text"
-                  className="w-full max-w-[200px] max-h-[37px]"
+                  className="w-full max-w-[200px] max-h-[37px] mx-auto"
                 />
               ) : (
                 <span>
