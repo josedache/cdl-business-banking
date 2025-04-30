@@ -221,7 +221,7 @@ function AuthResetPassword() {
                   ) : (
                     <div className="flex items-center justify-center">
                       <Typography className="text-center">
-                        Didn’t get the code?{" "}
+                        Didn’t receive OTP?{" "}
                         <ButtonBase
                           disableRipple
                           disabled={
