@@ -31,6 +31,8 @@ function AuthSignin() {
 
   const [loginUserMutation] = userApi.useLoginUserMutation();
   const [verifyUserOtpMutation] = userApi.useVerifyUserOtpMutation();
+  const [sendUserOtpMutation, sendUserOtpMutationResult] =
+    userApi.useUserSendOtpMutation();
 
   const [countdownDate, setCountdownDate] = useState(getCountdownDate);
 
@@ -98,7 +100,24 @@ function AuthSignin() {
     },
   });
 
-  function sendOtp() {}
+  async function sendOtp() {
+    try {
+      await sendUserOtpMutation({
+        body: { reason: "verify_login_2fa" },
+      }).unwrap();
+      setCountdownDate(getCountdownDate());
+      enqueueSnackbar("OTP sent successfully!", {
+        variant: "success",
+      });
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.errors?.[0]?.defaultUserMessage || `OTP failed to send!`,
+        {
+          variant: "error",
+        }
+      );
+    }
+  }
 
   const step1 = (
     <Fragment key={0}>
@@ -213,7 +232,7 @@ function AuthSignin() {
                   <div className="flex items-center justify-center">
                     <Typography className="text-center">
                       Didn’t receive code?{" "}
-                      {isCodeSent ? (
+                      {!isCodeSent ? (
                         <Typography
                           variant="body2"
                           color="primary"
@@ -235,9 +254,7 @@ function AuthSignin() {
                         <ButtonBase
                           disableRipple
                           color="primary"
-                          // disabled={
-                          //   signupYieldUserMutationResult?.isLoading
-                          // }
+                          disabled={sendUserOtpMutationResult?.isLoading}
                           component={MuiLink}
                           onClick={sendOtp}
                           className=""
