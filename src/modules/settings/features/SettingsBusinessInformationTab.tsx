@@ -342,7 +342,11 @@ const SettingsBusinessInformationTab = () => {
                   </div>
                   <Typography
                     className={`font-semibold ${opt.canEdit ? "cursor-pointer text-primary-main " : " text-primary-main/25"}`}
-                    onClick={opt.canEdit && opt.onClick}
+                    onClick={() => {
+                      if (opt.canEdit && !opt.isLoading) {
+                        opt.onClick();
+                      }
+                    }}
                   >
                     Edit
                   </Typography>
@@ -409,7 +413,7 @@ const SettingsBusinessInformationTab = () => {
           open={openAddressVerificationDialog}
           onClose={toggleAddressVerificationDialog}
           addressDetails={getBusinessAddress?.data?.data}
-          reFetchAddressDetails={getBusinessAddress.refetch}
+          reFetchAddressDetails={getBusinessAddress?.refetch}
         />
       )}
 
@@ -418,6 +422,7 @@ const SettingsBusinessInformationTab = () => {
           open={openEditAndAddUploadMemorandumDialog}
           onClose={toggleEditAndAddUploadMemorandumDialog}
           memorandumDocuments={getMemorandumDocument?.data?.data}
+          reFetchMemorandumDocuments={getMemorandumDocument?.refetch}
         />
       )}
       {isAccountSetup && (

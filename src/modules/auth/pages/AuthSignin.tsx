@@ -178,9 +178,12 @@ function AuthSignin() {
             className="font-medium text-center text-text-secondary"
           >
             A 6-digit OTP has been sent to{" "}
-            {formik.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
-              "*******@***"}
-            . Input the code here to continue
+            <span className="text-black">
+              {formik.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                "*******@***"}
+              .
+            </span>{" "}
+            Input the code here to continue
           </Typography>
         </div>
         <div className="grid gap-4 my-8">
