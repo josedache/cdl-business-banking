@@ -4,14 +4,13 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  ButtonBase,
   CardActionArea,
-  Chip,
   CircularProgress,
   ClickAwayListener,
   Divider,
   FormControlLabel,
   Grow,
-  MenuItem,
   MenuList,
   Paper,
   Popper,
@@ -310,67 +309,88 @@ export default function TransferSingle(props: TransferSingleProps) {
                 {getAllWalletsQuery?.isLoading ? (
                   <CircularProgress size={10} />
                 ) : null}
+
+                <Popper
+                  sx={{ zIndex: 1 }}
+                  open={actionPopover.isOpen}
+                  anchorEl={actionPopover.anchorEl}
+                  role={undefined}
+                  transition
+                  disablePortal
+                  className="w-full"
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin:
+                          placement === "bottom"
+                            ? "center top"
+                            : "center bottom",
+                      }}
+                    >
+                      <Paper className="rounded-lg mt-2 w-full">
+                        <ClickAwayListener
+                          onClickAway={actionPopover.togglePopover}
+                        >
+                          <MenuList autoFocusItem>
+                            {getAllWalletsQuery?.data?.data?.map((option) => {
+                              const selected =
+                                String(option.id) === formik.values.walletId;
+
+                              return (
+                                <ButtonBase
+                                  key={option.id}
+                                  className={clsx(
+                                    selected
+                                      ? "text-primary-main"
+                                      : "text-neutral-600",
+                                    "py-2 px-4 w-full flex justify-between items-center"
+                                  )}
+                                  onClick={() => {
+                                    formik.setFieldValue(
+                                      "walletId",
+                                      String(option.id)
+                                    );
+                                    actionPopover.togglePopover();
+                                  }}
+                                >
+                                  <Typography
+                                    className={
+                                      selected
+                                        ? "text-primary-main"
+                                        : "text-neutral-600"
+                                    }
+                                    variant="body2"
+                                  >
+                                    {option?.groupId
+                                      ? "Main wallet"
+                                      : option.name}
+                                  </Typography>{" "}
+                                  <Typography
+                                    className={
+                                      selected
+                                        ? "text-primary-main"
+                                        : "text-neutral-600"
+                                    }
+                                  >
+                                    {currencyjs(
+                                      option.accountBalance || ""
+                                    ).format({
+                                      symbol: "₦",
+                                    })}
+                                  </Typography>
+                                </ButtonBase>
+                              );
+                            })}
+                          </MenuList>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
               </CardActionArea>
             </div>
-
-            <Popper
-              sx={{ zIndex: 1 }}
-              open={actionPopover.isOpen}
-              anchorEl={actionPopover.anchorEl}
-              role={undefined}
-              transition
-              disablePortal
-            >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin:
-                      placement === "bottom" ? "center top" : "center bottom",
-                  }}
-                >
-                  <Paper className="rounded-2xl mt-2">
-                    <ClickAwayListener
-                      onClickAway={actionPopover.togglePopover}
-                    >
-                      <MenuList id="split-button-menu" autoFocusItem>
-                        {getAllWalletsQuery?.data?.data?.map((option) => (
-                          <MenuItem
-                            key={option.id}
-                            selected={
-                              String(option.id) === formik.values.walletId
-                            }
-                            onClick={() => {
-                              formik.setFieldValue(
-                                "walletId",
-                                String(option.id)
-                              );
-                            }}
-                          >
-                            <Typography
-                              className="text-neutral-600"
-                              variant="body2"
-                            >
-                              {option?.groupId
-                                ? "Main wallet Balance"
-                                : option.name}
-                            </Typography>{" "}
-                            <Chip
-                              label={currencyjs(
-                                option.accountBalance || ""
-                              ).format({
-                                symbol: "₦",
-                              })}
-                              className="ml-2"
-                            />
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper>
           </div>
 
           {hasBeneficiaries ? (
