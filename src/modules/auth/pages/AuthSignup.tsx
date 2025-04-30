@@ -143,14 +143,19 @@ function AuthSignup() {
 
   async function sendOtp() {
     try {
-      await resendSignupLinkMutation({
+      const response = await resendSignupLinkMutation({
         body: { email: formik.values.email },
       }).unwrap();
-      enqueueSnackbar("Signup link sent to your email", { variant: "success" });
-    } catch (error) {
-      enqueueSnackbar(error?.message || "Failed to send OTP", {
-        variant: "error",
+      enqueueSnackbar(response?.message || "Signup link sent to your email", {
+        variant: "success",
       });
+    } catch (error) {
+      enqueueSnackbar(
+        error?.message || error?.data?.message || "Failed to send OTP",
+        {
+          variant: "error",
+        }
+      );
     }
   }
 
