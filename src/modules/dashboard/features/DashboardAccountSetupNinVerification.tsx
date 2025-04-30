@@ -141,7 +141,7 @@ export default function DashboardAccountSetupNinVerification(
                       <>
                         <div className="flex gap-2 items-center justify-center">
                           <Typography className="text-center">
-                            Didn’t receive code?{" "}
+                            Didn’t receive OTP?{" "}
                           </Typography>
                           {isCodeSent ? (
                             <Typography

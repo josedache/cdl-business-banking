@@ -212,7 +212,7 @@ function AuthSignin() {
                 <>
                   <div className="flex items-center justify-center">
                     <Typography className="text-center">
-                      Didn’t receive code?{" "}
+                      Didn’t receive OTP?{" "}
                       {isCodeSent ? (
                         <Typography
                           variant="body2"
