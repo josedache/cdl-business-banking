@@ -59,9 +59,8 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: USER }],
     }),
     getReferralCodeUser: builder.query({
-      query: ({ path, ...config }) => ({
-        url: BASE_URL + "/get_ref_code/" + path.referral_code,
-        method: "GET",
+      query: ({ ...config }) => ({
+        url: BASE_URL + "/referral-code/",
         ...config,
       }),
       providesTags: [{ type: USER }],

@@ -80,7 +80,7 @@ const SettingsGeneralTab = () => {
     },
     {
       title: "Referral Link",
-      value: `${window.location.origin}?referral_code=${authUser?.info?.referralCode}`,
+      value: `${window.location.origin}/signup?referral_code=${authUser?.info?.referralCode}`,
     },
   ];
 

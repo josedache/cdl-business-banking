@@ -45,8 +45,8 @@ function AuthSignup() {
 
   const [searchParams] = useSearchParams();
 
-  const { yield_referral_code } = extractSearchParams(searchParams, {
-    yield_referral_code: "",
+  const { referral_code } = extractSearchParams(searchParams, {
+    referral_code: "",
   });
 
   const stepper = useStepper({ initialStep: step });
@@ -67,7 +67,7 @@ function AuthSignup() {
       // middleName: "",
       // lastName: "",
       acceptedTermsAndConditions: false,
-      referralCode: yield_referral_code ?? "",
+      referralCode: referral_code ?? "",
     },
     validationSchema: yup.object({
       // firstName: yup.string().label("First Name").required(),
@@ -133,7 +133,7 @@ function AuthSignup() {
 
   const referralCodeUserQueryResult = userApi.useGetReferralCodeUserQuery(
     useMemo(
-      () => ({ path: { referral_code: formik.values.referralCode } }),
+      () => ({ params: { referralCode: formik.values.referralCode } }),
       [formik.values.referralCode]
     ),
     { skip: !formik.values.referralCode }
