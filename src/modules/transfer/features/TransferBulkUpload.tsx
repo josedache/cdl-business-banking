@@ -97,8 +97,7 @@ export default function TransferBulkUpload(props: TransferBulkUploadProps) {
                 Upload Excel of Recipients
               </Typography>
               <Typography className="text-neutral-500 mt-2">
-                Upload a Excel file (Smaller than 1MB) with the following
-                column:
+                Upload an Excel file (less than 1MB) with the following columns:
               </Typography>
               <Typography className="text-neutral-500 font-semibold">
                 Name, Bank Name, Account number, Amount{" "}

@@ -77,7 +77,7 @@ function DashboardWalletDetailsDialog(
               variant="body2"
               className="text-neutral-500 text-center"
             >
-              Your account Number
+              Your account number
             </Typography>
             <Typography variant="h4" className="font-semibold text-center">
               {transferWalletsQueryResult?.isLoading ? (
