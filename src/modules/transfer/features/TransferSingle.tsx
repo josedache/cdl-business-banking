@@ -11,7 +11,6 @@ import {
   Divider,
   FormControlLabel,
   Grow,
-  IconButton,
   MenuItem,
   MenuList,
   Paper,
@@ -54,11 +53,9 @@ export default function TransferSingle(props: TransferSingleProps) {
 
   const actionPopover = usePopover();
 
-  const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery({
-    params: {
-      tier: String(1),
-    }, // TODO: get the tier automatically
-  });
+  const getTransactionLimitQuery = transactionApi.useGetTransactionLimitQuery(
+    {}
+  );
 
   const maximumAmount = Number(
     getTransactionLimitQuery?.data?.data?.single_transaction_limit || 0
@@ -370,14 +367,14 @@ export default function TransferSingle(props: TransferSingleProps) {
                 </Typography>
 
                 <div>
-                  <IconButton className="p-0">
+                  {/* <IconButton className="p-0">
                     <Icon
                       icon="hugeicons:search-01"
                       width="18"
                       height="18"
                       className="text-neutral-900"
                     />
-                  </IconButton>
+                  </IconButton> */}
                 </div>
               </div>
 

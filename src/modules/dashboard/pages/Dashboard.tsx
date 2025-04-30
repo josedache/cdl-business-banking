@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { TRANSFER } from "constants/urls";
 import DashboardTransactionList from "modules/dashboard/features/DashboardTransactionList.tsx";
 import { walletApi } from "apis/wallet";
+import { merchantApi } from "apis/merchant";
 
 function Dashboard() {
   const [isBlurWalletBalance, toggleIsBurWaller] = useToggle(true);
@@ -34,7 +35,13 @@ function Dashboard() {
 
   const [isAccountSetup, toggleAccountSetup] = useToggle(!isKycCompleted);
 
-  const businessName = user?.info?.businesses?.[0]?.name;
+  const getBusinessInfoQuery = merchantApi.useGetMerchantBusinessProfileQuery({
+    params: {
+      rc: user?.info?.businesses?.[0]?.rcNumber,
+    },
+  });
+
+  const businessName = getBusinessInfoQuery?.data?.data?.business?.name || "";
 
   const transferWalletsQueryResult = walletApi.useGetWalletsQuery({});
   const transferWallets = transferWalletsQueryResult.data?.data;
