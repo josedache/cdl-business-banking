@@ -35,12 +35,14 @@ type SettingsEditAndUploadMemorandumDialogProps = {
       description: string;
     },
   ];
+  reFetchMemorandumDocuments: () => void;
 } & DialogProps;
 
 const SettingsEditAndUploadMemorandum = (
   props: SettingsEditAndUploadMemorandumDialogProps
 ) => {
-  const { onClose, memorandumDocuments, ...rest } = props;
+  const { onClose, memorandumDocuments, reFetchMemorandumDocuments, ...rest } =
+    props;
   const { enqueueSnackbar } = useSnackbar();
   const user = useAuthUser();
   const businessRcNumber = user?.info?.businesses[0]?.rcNumber;
@@ -66,6 +68,7 @@ const SettingsEditAndUploadMemorandum = (
             rcNumber: businessRcNumber,
           },
         }).unwrap();
+        reFetchMemorandumDocuments();
         onClose();
         enqueueSnackbar(
           response?.message || "Memorandum uploaded successfully",
