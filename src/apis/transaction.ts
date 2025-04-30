@@ -11,7 +11,7 @@ import {
   GetTransactionApiResponse,
   GetTransactionApiRequest,
 } from "types/transaction-api";
-import downloadUrl from "utils/file/downloadUrl";
+import { downloadUrl } from "utils/file/downloadUrl";
 
 export const BASE_URL = "/transaction";
 

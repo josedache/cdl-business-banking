@@ -301,7 +301,9 @@ function TransactionDetails(props: TransactionDetailsProps) {
           >
             Share Receipt
           </Button>
-          <Button variant="outlined">Send Again</Button>
+          <Button variant="outlined" disabled>
+            Send Again
+          </Button>
         </DialogActions>
       </Dialog>
 
