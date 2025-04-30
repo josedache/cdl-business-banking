@@ -84,6 +84,7 @@ function AuthSignin() {
             enqueueSnackbar(data?.message || "Logged In Successfully!", {
               variant: "success",
             });
+            stepper.reset();
             navigate(DASHBOARD);
           }
         }
