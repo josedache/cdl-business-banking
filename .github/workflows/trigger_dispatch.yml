@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "develop"
+      - "qa"
 
 jobs:
   trigger:
@@ -14,5 +14,5 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
-          event-type: trigger-develop-workflow
+          event-type: trigger-qa-workflow
           token: ${{ secrets.PAT }}
