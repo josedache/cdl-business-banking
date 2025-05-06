@@ -13,6 +13,7 @@ import SettingsRoutes from "modules/settings/SettingsRoutes";
 import TransferRoutes from "modules/transfer/TransferRoutes";
 import { createBrowserRouter } from "react-router-dom";
 import TransactionRoutes from "modules/transaction/TransactionRoutes.tsx";
+import LandingPageRoutes from "modules/landingPage/LandingPageRoutes";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
           {
             lazy: () => import("./modules/auth/Auth"),
             children: AuthRoutes,
+          },
+          {
+            lazy: () => import("./modules/landingPage/LandingPage"),
+            children: LandingPageRoutes,
           },
         ],
       },

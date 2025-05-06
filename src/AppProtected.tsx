@@ -9,7 +9,7 @@ import useToggle from "hooks/use-toggle";
 import useLogout from "hooks/use-logout";
 import { userApi } from "apis/user.ts";
 import store from "configs/store";
-import { SIGNIN } from "constants/urls";
+import { ENTRY } from "constants/urls";
 import { CircularProgress } from "@mui/material";
 import Logo from "components/Logo";
 
@@ -83,7 +83,7 @@ export function loader() {
   const { authUser } = store.getState().global;
 
   if (!authUser?.isAuthenticated) {
-    return redirect(SIGNIN);
+    return redirect(ENTRY);
   }
 
   return null;
