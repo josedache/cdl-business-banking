@@ -46,7 +46,7 @@ const SettingsDirectorProfileDialog = (
   const { onClose, directorsList, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
   const stepper = useStepper({
-    initialStep: SettingsDirectorssProfileStep.DIRECTORS_DETAILS,
+    initialStep: SettingsDirectorssProfileStep.ALL_DIRECTORS_PROFILES,
   });
 
   const countries = [
@@ -145,7 +145,7 @@ const SettingsDirectorProfileDialog = (
     {
       title: "Edit Director’s details",
       content: (
-        <div className="mt-8">
+        <div className="px-6 mt-8">
           <TextField
             fullWidth
             label="BVN"
@@ -412,8 +412,8 @@ const SettingsDirectorProfileDialog = (
         )}
       </DialogTitleXCloseButton>
       <Divider />
-      <DialogContent>
-        <Typography variant="h5" className="font-semibold text-start">
+      <DialogContent className="px-0">
+        <Typography variant="h5" className="font-semibold text-start px-6">
           {tabs[stepper.step]?.title}
         </Typography>
         {tabs[stepper.step]?.content}
