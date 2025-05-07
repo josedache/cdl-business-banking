@@ -13,13 +13,24 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Logo from "components/Logo";
+import { Link } from "react-router-dom";
 
 interface Props {
   window?: () => Window;
 }
 
 const drawerWidth = 240;
-const navItems = ["Home", "About", "Contact"];
+
+const navItems = [
+  {
+    href: "/",
+    displayText: "Products",
+  },
+  {
+    href: "",
+    displayText: "About us",
+  },
+];
 
 export default function LandingPageHeader(props: Props) {
   const { window } = props;
@@ -32,14 +43,14 @@ export default function LandingPageHeader(props: Props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        <Logo variant="1" />
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
+        {navItems.map((item, index) => (
+          <ListItem key={index} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
+              <ListItemText primary={item.displayText} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -55,33 +66,58 @@ export default function LandingPageHeader(props: Props) {
       <CssBaseline />
       <div>
         <Toolbar>
-          <IconButton
-            // color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <Iconify
-              fontSize={18}
-              icon="material-symbols:menu-rounded"
-              className="cursor-pointer text-neutral-300 hover:text-primary-main"
-            />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            <Logo variant="1" />
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
-                {item}
-              </Button>
-            ))}
-          </Box>
+          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container">
+            <Link to="/">
+              <Logo variant="1" />
+            </Link>
+
+            <IconButton
+              aria-label="open drawer"
+              edge="end"
+              onClick={handleDrawerToggle}
+              className="text-primary-main block md:hidden"
+              // sx={{ mr: 2, display: { md: "none" } }}
+            >
+              <Iconify
+                fontSize={35}
+                icon="material-symbols:menu-rounded"
+                className="cursor-pointer text-primary-main"
+              />
+            </IconButton>
+
+            <Box className="hidden md:flex items-center ml-auto gap-15">
+              <div className="flex gap-9">
+                {navItems.map((item) => (
+                  <Link
+                    to={item.href}
+                    key={item.displayText}
+                    className="font-semibold "
+                  >
+                    {item.displayText}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="flex gap-4">
+                <Button
+                  href=""
+                  variant="outlined"
+                  size="large"
+                  className=" text-neutral-800 border-neutral-300 font-semibold"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  href=""
+                  variant="gradient"
+                  size="large"
+                  className="font-semibold "
+                >
+                  Create business account
+                </Button>
+              </div>
+            </Box>
+          </div>
         </Toolbar>
       </div>
       <nav>
