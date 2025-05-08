@@ -373,7 +373,7 @@ function AuthSignup() {
           </Typography>
         </div>
         <div className="flex items-center justify-center">
-          <Typography className="text-center font-medium text-text-secondary">
+          <Typography className="text-center font-medium text-text-secondary flex items-center gap-1">
             Already have an account?{" "}
             <ButtonBase
               component="span"
