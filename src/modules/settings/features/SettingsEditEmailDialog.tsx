@@ -306,7 +306,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
             <Typography className="text-text-secondary mx-auto text-center w-3/5 pb-2 text-sm font-medium mt-4">
               A 6-digit OTP has been sent to{" "}
               <span className="text-black">
-                {formik?.values?.newEmail?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                {formik?.values?.oldEmail?.replace(/\w(?=\w{0,2}@)/g, "*") ||
                   "*******@***"}
                 .
               </span>{" "}

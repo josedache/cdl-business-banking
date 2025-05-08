@@ -25,6 +25,9 @@ import { Icon as Iconify } from "@iconify/react";
 import useClipboard from "hooks/use-clipboard.ts";
 import useStepper from "hooks/use-stepper.ts";
 import { useSnackbar } from "notistack";
+import { transferApi } from "apis/transfer.ts";
+import { TRANSFER } from "constants/urls.ts";
+import { useNavigate } from "react-router-dom";
 
 function TransactionDetails(props: TransactionDetailsProps) {
   const {
@@ -37,6 +40,8 @@ function TransactionDetails(props: TransactionDetailsProps) {
 
   const clipboard = useClipboard();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
   const [isOpen, toggleOpen, setOpen] = useToggle();
 
   const stepper = useStepper();
@@ -47,6 +52,16 @@ function TransactionDetails(props: TransactionDetailsProps) {
   );
 
   const transaction = propsTransaction ?? transactionQueryResult.data?.data;
+
+  const localTransferQueryResult = transferApi.useGetTransferLocalQuery(
+    useMemo(
+      () => ({ path: { reference: transaction?.reference_number } }),
+      [transaction]
+    ),
+    { skip: !transaction }
+  );
+
+  const localTransfer = localTransferQueryResult.data?.data;
 
   const isBulk = false;
 
@@ -301,7 +316,20 @@ function TransactionDetails(props: TransactionDetailsProps) {
           >
             Share Receipt
           </Button>
-          <Button variant="outlined" disabled>
+          <Button
+            variant="outlined"
+            disabled={!localTransfer}
+            onClick={() => {
+              navigate(TRANSFER, {
+                state: {
+                  accountNumber: localTransfer?.accountNumber,
+                  accountName: localTransfer?.accountName,
+                  bankSortCode: localTransfer?.bankSortCode,
+                  nameEnquiryReference: localTransfer?.nameEnquiryReference,
+                },
+              });
+            }}
+          >
             Send Again
           </Button>
         </DialogActions>
