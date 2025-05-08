@@ -198,7 +198,7 @@ const SettingsBusinessInformationTab = () => {
       onClick: () => {
         setOpenAddressVerificationDialog(true);
       },
-      isValueAvailable: getBusinessAddress?.data?.data,
+      isValueAvailable: getBusinessAddress?.data?.data?.lga_id,
     },
     {
       title: "MEMAT (Memorandum of articles of association)",
@@ -229,7 +229,7 @@ const SettingsBusinessInformationTab = () => {
       onClick: () => {
         setOpenEditAndAddUploadMemorandumDialog(true);
       },
-      isValueAvailable: getMemorandumDocument?.data?.data,
+      isValueAvailable: (getMemorandumDocument?.data?.data?.length ?? 0) > 0,
     },
   ];
   // async function handleSelfieUpdate(file: File) {
