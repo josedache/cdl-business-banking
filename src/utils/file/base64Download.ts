@@ -10,7 +10,6 @@ export function downloadAsPDF(base64: string, filename: string) {
       mimeType = match[1];
       extension = mimeType.split("/")[1];
     } else {
-      alert("Invalid Image.");
       return;
     }
   } else {
@@ -25,7 +24,6 @@ export function downloadAsPDF(base64: string, filename: string) {
       mimeType = "image/png";
       extension = "png";
     } else {
-      alert("Unknown file type. Unable to download.");
       return;
     }
 
