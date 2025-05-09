@@ -136,7 +136,7 @@ function Dashboard() {
             >
               <Icon
                 icon={
-                  isBlurWalletBalance ? "solar:eye-outline" : "bi:eye-slash"
+                  isBlurWalletBalance ? "bi:eye-slash" : "solar:eye-outline"
                 }
                 width="24"
                 height="24"

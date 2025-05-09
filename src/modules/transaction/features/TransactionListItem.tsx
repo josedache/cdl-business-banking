@@ -13,7 +13,7 @@ function TransactionListItem(props: {
 }) {
   const { transaction, divider } = props;
 
-  const isDebit = [TransactionType.deposit, TransactionType.interest].includes(
+  const isDebit = ![TransactionType.deposit, TransactionType.interest].includes(
     transaction?.transaction_type_id
   );
 

@@ -65,7 +65,7 @@ export default function DashboardAccountSetupBvn(
             Provide BVN
           </Typography>
           <Typography className=" text-neutral-500">
-            Your BVN helps us link your bank account and unlock transactions.
+            Owner or Director's BVN
           </Typography>
           <NumberTextField
             freeSolo
