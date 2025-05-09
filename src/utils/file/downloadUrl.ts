@@ -5,8 +5,12 @@
  */
 export function downloadUrl(url: string, fileName = "file") {
   const link = document.createElement("a");
+  link.target = "_blank";
   link.href = url;
+
+  // Download other files in the background
   link.setAttribute("download", fileName);
   document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 }

@@ -158,6 +158,7 @@ const SettingsEditEmailDialog = (props: SettingsEditEmailDialogProps) => {
               numInputs={6}
               shouldAutoFocus
               slot={{ input: NumberInput }}
+              inputType="password"
               slotProps={{
                 input: {
                   style: { opacity: formik.isSubmitting ? 0.5 : 1 },
