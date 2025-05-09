@@ -1,0 +1,42 @@
+.bg-custom-gradient {
+  background:
+    linear-gradient(192deg, rgba(246, 247, 250, 0) 67.77%, #ffe9d4 99.59%),
+    linear-gradient(46deg, #f6f7fa 26.62%, #ffe9d4 156.28%);
+}
+@keyframes cssmarquee {
+  0% {
+    transform: translateX(10%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .scrollingAnimate {
+    width: 150%;
+    animation: cssmarquee 30s linear infinite;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.linearGradientText {
+  background: var(
+    --Primary-gradients-CD-CTA,
+    linear-gradient(112deg, #ff6630 46.77%, #f89130 76.64%, #efc531 119.62%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

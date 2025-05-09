@@ -66,7 +66,7 @@ export default function LandingPageHeader(props: Props) {
       <CssBaseline />
       <div>
         <Toolbar>
-          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container">
+          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container px-2">
             <Link to="/">
               <Logo variant="1" />
             </Link>
@@ -75,8 +75,7 @@ export default function LandingPageHeader(props: Props) {
               aria-label="open drawer"
               edge="end"
               onClick={handleDrawerToggle}
-              className="text-primary-main block md:hidden"
-              // sx={{ mr: 2, display: { md: "none" } }}
+              className="text-primary-main block lg:hidden"
             >
               <Iconify
                 fontSize={35}
@@ -85,7 +84,7 @@ export default function LandingPageHeader(props: Props) {
               />
             </IconButton>
 
-            <Box className="hidden md:flex items-center ml-auto gap-15">
+            <Box className="hidden lg:flex items-center ml-auto gap-15">
               <div className="flex gap-9">
                 {navItems.map((item) => (
                   <Link

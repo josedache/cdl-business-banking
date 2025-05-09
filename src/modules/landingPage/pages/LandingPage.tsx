@@ -1,5 +1,17 @@
+import LandingPageBusinessReasons from "../features/LandingPageBusinessReasons";
+import LandingPageFAQSection from "../features/LandingPageFAQSection";
+import LandingPageHeroSection from "../features/LandingPageHeroSection";
+import LandingPageMoreFeatures from "../features/LandingPageMoreFeatures";
+
 const LandingPageIndex = () => {
-  return <div className="text-5xl">hiiiii</div>;
+  return (
+    <div>
+      <LandingPageHeroSection />
+      <LandingPageBusinessReasons />
+      <LandingPageMoreFeatures />
+      <LandingPageFAQSection />
+    </div>
+  );
 };
 
 export default LandingPageIndex;
