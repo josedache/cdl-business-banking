@@ -40,3 +40,77 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.moreFeaturesBg-gradient {
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      0deg,
+      rgba(28, 32, 42, 0.72) 0%,
+      rgba(28, 32, 42, 0.72) 100%
+    ),
+    linear-gradient(150deg, #ff4f03 -36.14%, #402824 1.67%, #1c202a 52.77%);
+  transition: background 0.4s ease;
+}
+
+.moreFeaturesBg-gradient:hover {
+  background: linear-gradient(
+    299deg,
+    #402824 -31.66%,
+    #2b2327 10.46%,
+    #1c202a 103.22%
+  );
+}
+.herobuttonhover:hover {
+  background: linear-gradient(
+    112deg,
+    #ff6630 46.77%,
+    #f89130 111.5%,
+    #efc531 168.7%
+  );
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-200px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1.2s ease-out forwards;
+}
+
+.slide-in-top {
+  animation: slideInTop 1.2s ease-out forwards;
+}
+
+.slide-in-bottom {
+  animation: slideInBottom 1.8s ease-out forwards;
+}

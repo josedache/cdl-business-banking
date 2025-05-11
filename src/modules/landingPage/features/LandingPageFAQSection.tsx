@@ -37,12 +37,11 @@ const LandingPageFAQSection = () => {
   ];
   return (
     <div>
-      {" "}
-      <div className="mx-auto container text-center py-29 bg-[#FCFCFC] rounded-3xl">
+      <div className="mx-auto container px-4 sm:px-2 text-center py-29 bg-[#FCFCFC] rounded-3xl">
         <Typography variant="h2" className="font-semibold text-neutral-800 ">
           Frequently Asked Questions
         </Typography>
-        <div className="mt-15 md:w-5/6 mx-auto ">
+        <div className="mt-15 md:w-4/6 mx-auto ">
           {faqs.map((faq, index) => (
             <Accordion
               key={index}
@@ -91,18 +90,24 @@ const LandingPageFAQSection = () => {
         </div>
       </div>
       <div
-        className="rounded-3xl mx-auto py-20 px-15 text-white"
+        className=" rounded-3xl mx-auto py-20 px-15 text-white px-4 sm:px-2 "
         style={{
-          backgroundImage: `url(${SwirlyBackground})`,
-          background:
-            "linear-gradient(252.66deg, #FFFFFF 31.57%, #F79009 140.15%), linear-gradient(124.29deg, #96324A -7.26%, #FF6731 64.16%, #EFC531 122.07%)",
+          backgroundImage: `
+            linear-gradient(252.66deg, #FFFFFF 31.57%, #F79009 140.15%),
+            linear-gradient(124.29deg, #96324A -7.26%, #FF6731 64.16%, #EFC531 122.07%),
+            url(${SwirlyBackground})
+          `,
+          backgroundBlendMode: "overlay",
         }}
       >
         <div className="text-center">
-          <Typography variant="h2" className="font-semibold">
+          <Typography
+            variant="h2"
+            className="font-semibold mx-auto lg:w-2/3 xl:w-1/3"
+          >
             Ready to join 20,000+ satisfied customers?
           </Typography>
-          <Button className="bg-white text-[#282F3B] mt-20">
+          <Button className="bg-white text-[#282F3B] mt-20 font-semibold">
             Create business account
           </Button>
         </div>

@@ -19,7 +19,7 @@ interface Props {
   window?: () => Window;
 }
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const navItems = [
   {
@@ -66,7 +66,7 @@ export default function LandingPageHeader(props: Props) {
       <CssBaseline />
       <div>
         <Toolbar>
-          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container px-2">
+          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container sm:px-2">
             <Link to="/">
               <Logo variant="1" />
             </Link>
@@ -129,7 +129,7 @@ export default function LandingPageHeader(props: Props) {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: "block", sm: "none" },
+            display: { xs: "block", lg: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,

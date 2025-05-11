@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 
 const LandingPageBusinessReasons = () => {
   const businessReasons = [
@@ -33,10 +34,10 @@ const LandingPageBusinessReasons = () => {
       <Typography className="font-normal text-primary-darker ">
         There's something for every business
       </Typography>
-      <Typography className=" text-6xl font-semibold text-neutral-800 mt-2">
+      <Typography variant="h2" className=" font-semibold text-neutral-800 mt-2">
         Designed for <span className="text-primary-main"> Businesses.</span>
       </Typography>
-      <Typography className=" text-6xl font-semibold text-neutral-800 mt-2">
+      <Typography variant="h2" className="font-semibold text-neutral-800 ">
         Built for <span className="linearGradientText">Growth.</span>
       </Typography>
 
@@ -45,11 +46,7 @@ const LandingPageBusinessReasons = () => {
           return (
             <div
               key={item.id}
-              className="text-start rounded-2xl py-15 px-8"
-              style={{
-                background:
-                  "linear-gradient(0deg, rgba(28, 32, 42, 0.72) 0%, rgba(28, 32, 42, 0.72) 100%), linear-gradient(150deg, #FF4F03 -36.14%, #402824 1.67%, #1C202A 52.77%)",
-              }}
+              className="group text-start rounded-2xl py-15 px-8 moreFeaturesBg-gradient "
             >
               <Typography variant="h5" className="font-semibold text-[#FCF2E5]">
                 {item.title}
@@ -60,8 +57,15 @@ const LandingPageBusinessReasons = () => {
               >
                 {item.note}
               </Typography>
-              <Typography className="font-semibold mt-5.5 text-[#FFF9F7]">
+              <Typography className="flex items-center font-semibold mt-5.5 text-[#FFF9F7] group-hover:text-primary-main transition-colors duration-300">
                 {item.subTitle}
+                <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-400">
+                  <Iconify
+                    fontSize={20}
+                    icon="tabler:arrow-right"
+                    className="cursor-pointer text-primary-main"
+                  />
+                </span>
               </Typography>
             </div>
           );

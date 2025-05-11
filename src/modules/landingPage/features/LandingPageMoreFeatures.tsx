@@ -50,7 +50,7 @@ const LandingPageMoreFeatures = () => {
       <Typography className="font-normal text-primary-darker ">
         Services coming soon...
       </Typography>
-      <Typography className=" text-6xl font-semibold text-neutral-800 mt-2">
+      <Typography variant="h2" className="font-semibold text-neutral-800 mt-2">
         There is more to come
       </Typography>
 
