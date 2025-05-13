@@ -70,11 +70,26 @@ export type MerchantBusinessDirectorsApiResponse = ApiResponse<
       lastName: string;
       phone?: string;
       avatar?: string;
+      sharePercentage: string;
+      bvn: string;
+      nin: string;
+      is_director: string;
+      date_of_birth: string;
+      id: string;
+      businessId: string;
+      state: string;
+      street?: string;
+      lga: string;
+      isPoliticallyExposed: boolean;
+      ownsMoreThanFivePercent: boolean;
     },
   ]
 >;
 
 export type MerchantBusinessDirectorsApiRequest = ApiRequest<void>;
+
+export type SubmitMerchantBusinessDirectorsApiRequest = ApiRequest<unknown>;
+export type SubmitMerchantBusinessDirectorsApiResponse = ApiResponse<unknown>;
 
 export type MerchantAddressStatesApiResponse = ApiResponse<unknown>;
 

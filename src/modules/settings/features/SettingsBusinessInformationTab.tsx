@@ -406,6 +406,7 @@ const SettingsBusinessInformationTab = () => {
           directorsList={businessDirectors?.data}
           open={openDirectorsProfileDialog}
           onClose={toggleDirectorsProfileDialog}
+          reFetchDirectorsDetails={getBusinessDirectors?.refetch}
         />
       )}
       {openAddressVerificationDialog && (

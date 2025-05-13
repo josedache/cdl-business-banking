@@ -18,6 +18,8 @@ import {
   MerchantRegistrationCacApiResponse,
   MerchantRegistrationNonCacApiRequest,
   MerchantRegistrationNonCacApiResponse,
+  SubmitMerchantBusinessDirectorsApiRequest,
+  SubmitMerchantBusinessDirectorsApiResponse,
 } from "types/merchant";
 
 export const BASE_URL = "/merchant";
@@ -80,6 +82,17 @@ export const merchantApi = baseApi.injectEndpoints({
         ...config,
       }),
       providesTags: [{ type: USER }],
+    }),
+    submitMerchantBusinessDirectors: builder.mutation<
+      SubmitMerchantBusinessDirectorsApiResponse,
+      SubmitMerchantBusinessDirectorsApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + "/directors/" + path.rcNumber,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: [{ type: MERCHANT }],
     }),
 
     addMerchantAddressDetails: builder.mutation<

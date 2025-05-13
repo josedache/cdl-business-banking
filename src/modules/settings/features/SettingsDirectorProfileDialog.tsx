@@ -26,7 +26,8 @@ import useStepper from "hooks/use-stepper";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import { useState } from "react";
-import Dropzone from "react-dropzone";
+import { merchantApi } from "apis/merchant";
+import useAuthUser from "hooks/use-auth-user";
 
 type SettingsDirectorProfileDialogProps = {
   onClose: () => void;
@@ -34,20 +35,29 @@ type SettingsDirectorProfileDialogProps = {
     {
       firstName: string;
       lastName: string;
+      bvn: string;
       phone?: string;
       avatar?: string;
+      sharePercentage: string;
+      isPoliticallyExposed: boolean;
+      ownsMoreThanFivePercent: boolean;
+      id: string;
+      street?: string;
     },
   ];
+  reFetchDirectorsDetails: () => void;
 } & DialogProps;
 
 const SettingsDirectorProfileDialog = (
   props: SettingsDirectorProfileDialogProps
 ) => {
-  const { onClose, directorsList, ...rest } = props;
+  const { onClose, directorsList, reFetchDirectorsDetails, ...rest } = props;
   const { enqueueSnackbar } = useSnackbar();
+  const user = useAuthUser();
   const stepper = useStepper({
     initialStep: SettingsDirectorssProfileStep.ALL_DIRECTORS_PROFILES,
   });
+  const enumStep = stepper.step;
 
   const countries = [
     { name: "Nigeria", code: "+234", icon: "emojione-v1:flag-for-nigeria" },
@@ -60,27 +70,114 @@ const SettingsDirectorProfileDialog = (
     { name: "Ghana", code: "+233", icon: "twemoji:flag-ghana" },
   ];
   const [selectedCode, setSelectedCode] = useState(countries[0].code);
+  const [isPoliticallyExposed, setIsPoliticallyExposed] = useState(false);
+  const [ownsMoreThanFivePercent, setOwnsMoreThanFivePercent] = useState(false);
+
+  const [submitBusinessDirectorsDetailsMutation] =
+    merchantApi.useSubmitMerchantBusinessDirectorsMutation();
 
   const handleCountryChange = (event) => {
-    const country = countries.find((c) => c.name === event.target.value);
+    const country = countries.find((c) => c.code === event.target.value);
     setSelectedCode(country?.code || "");
     formik.setFieldValue("country", event.target.value);
   };
+  const handleTogglePoliticallyExposed = (val: boolean) => {
+    setIsPoliticallyExposed(val);
+  };
+  const handleToggleOwnsMoreThanFivePercent = (val: boolean) => {
+    setOwnsMoreThanFivePercent(val);
+  };
+
+  const splitPhoneNumber = (input: string, countries: { code: string }[]) => {
+    if (!input) return { countryCode: countries[0].code, phoneNumber: "" };
+    const digits = input.replace(/\D/g, "");
+    const withPlus = input.startsWith("+") ? input : `+${digits}`;
+
+    const match = countries.find((c) => withPlus.startsWith(c.code));
+
+    if (match) {
+      const numberWithoutCode = digits.slice(
+        match.code.replace("+", "").length
+      );
+      return { countryCode: match.code, phoneNumber: numberWithoutCode };
+    }
+
+    return { countryCode: "", phoneNumber: digits };
+  };
+
   const formik = useFormik<SettingsDirectorProfileValues>({
     initialValues: {
       bvn: "",
+      userId: "",
       firstName: "",
       lastName: "",
       phoneNumber: "",
       address: "",
-      nin: "",
-      shareHolderPercentage: "",
-      country: countries[0].name,
+      country: countries[0].code,
+      isPoliticallyExposed: isPoliticallyExposed,
+      ownsMoreThanFivePercent: ownsMoreThanFivePercent,
+      sharePercentage: "",
     },
     validateOnBlur: true,
-    validationSchema: yup.object().shape({}),
-    onSubmit: async () => {
+    validationSchema: yup.object().shape({
+      ...{
+        [SettingsDirectorssProfileStep.ALL_DIRECTORS_PROFILES]: {},
+        [SettingsDirectorssProfileStep.DIRECTORS_DETAILS]: {
+          bvn: yup
+            .string()
+            .label("BVN")
+            .required("Required")
+            .matches(/^[0-9\b]+$/, "Enter a valid BVN")
+            .min(11, "BVN is not complete")
+            .max(11, "BVN is too long"),
+          firstName: yup.string().label("First Name").trim().required(),
+          lastName: yup.string().label("Last Name").trim().required(),
+          phoneNumber: yup
+            .string()
+            .label("Phone Number")
+            .required("Required")
+            .matches(/^[0-9\b]+$/, "Enter a valid Phone number"),
+          address: yup.string().label("Address").trim().required(),
+          sharePercentage: yup
+            .string()
+            .label("Share Percentage")
+            .matches(/^[0-9\b]+$/, "Enter a valid Share Percentage")
+            .trim()
+            .required(),
+        },
+      }[enumStep],
+    }),
+    onSubmit: async (values) => {
       try {
+        switch (enumStep) {
+          case SettingsDirectorssProfileStep.DIRECTORS_DETAILS: {
+            const data = await submitBusinessDirectorsDetailsMutation({
+              body: {
+                bvn: values.bvn,
+                userId: values.userId,
+                street: values.address,
+                firstName: values.firstName,
+                lastName: values.lastName,
+                phone: `${values.country}${values.phoneNumber}`,
+                isPoliticallyExposed: isPoliticallyExposed,
+                ownsMoreThanFivePercent: ownsMoreThanFivePercent,
+                sharePercentage: Number(values.sharePercentage),
+              },
+              path: {
+                rcNumber: user?.info?.businesses[0]?.rcNumber,
+              },
+            }).unwrap();
+            reFetchDirectorsDetails();
+            enqueueSnackbar(
+              data?.message || "Director's profile edited successfully",
+              {
+                variant: "success",
+              }
+            );
+            onClose();
+            break;
+          }
+        }
       } catch (error: any) {
         enqueueSnackbar(error?.data?.message || "Failed to process", {
           variant: "error",
@@ -88,6 +185,33 @@ const SettingsDirectorProfileDialog = (
       }
     },
   });
+
+  const reInitializeFormikValues = (index: number) => {
+    const director = directorsList[index];
+    const { countryCode, phoneNumber } = splitPhoneNumber(
+      director?.phone,
+      countries
+    );
+    formik.setValues({
+      bvn: director?.bvn || "",
+      firstName: director?.firstName || "",
+      lastName: director?.lastName || "",
+      phoneNumber: phoneNumber || "",
+      address: director?.street || "",
+      country: countryCode || countries[0]?.code,
+      isPoliticallyExposed,
+      ownsMoreThanFivePercent,
+      sharePercentage: director?.sharePercentage || "",
+      userId: director?.id,
+    });
+    setSelectedCode(countryCode);
+    setIsPoliticallyExposed(director?.isPoliticallyExposed);
+    setOwnsMoreThanFivePercent(director?.ownsMoreThanFivePercent);
+    stepper.next();
+  };
+
+  // console.log({ formik });
+  // console.log(selectedCode);
 
   const tabs = [
     {
@@ -121,7 +245,14 @@ const SettingsDirectorProfileDialog = (
                     </div>
                   </div>
 
-                  <Typography className="text-primary-main/25 font-semibold cursor-pointer">
+                  <Typography
+                    onClick={() => {
+                      reInitializeFormikValues(index);
+                      // setEditingDirector(index);
+                      // stepper.next();
+                    }}
+                    className="text-primary-main font-semibold cursor-pointer"
+                  >
                     Edit
                   </Typography>
                 </div>
@@ -192,7 +323,7 @@ const SettingsDirectorProfileDialog = (
                 <FormControl fullWidth>
                   <Select
                     value={formik.values.country}
-                    defaultValue={countries[0].name}
+                    defaultValue={countries[0].code}
                     onChange={handleCountryChange}
                     className="border-0 outline-none"
                     sx={{
@@ -207,13 +338,12 @@ const SettingsDirectorProfileDialog = (
                     }}
                   >
                     {countries.map((country) => (
-                      <MenuItem key={country.code} value={country.name}>
+                      <MenuItem key={country.code} value={country.code}>
                         <Iconify
                           fontSize={20}
                           icon={country.icon}
                           className="text-neutral-500 p-0"
                         />
-                        {/* {country.name} */}
                       </MenuItem>
                     ))}
                   </Select>
@@ -252,10 +382,13 @@ const SettingsDirectorProfileDialog = (
                 />
               </div>
             </div>
+            <span className="text-red-600 text-xs ml-2">
+              {formik?.errors?.phoneNumber}
+            </span>
           </div>
           <TextField
             fullWidth
-            className="mt-6"
+            className="mt-2"
             label="Address"
             placeholder="Enter your Address"
             {...getTextFieldProps(formik, "address")}
@@ -288,14 +421,26 @@ const SettingsDirectorProfileDialog = (
             Is this person a Politically Exposed Person (PEP){" "}
           </Typography>{" "}
           <div className="flex gap-6 mt-4">
-            <Button className="bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold">
+            <Button
+              type="button"
+              onClick={() => {
+                handleTogglePoliticallyExposed(true);
+              }}
+              className={`${isPoliticallyExposed ? "border-[1.5px] border-neutral-800 font-semibold" : ""} bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold`}
+            >
               Yes
             </Button>
-            <Button className="bg-neutral-200  px-8 py-1.5 font-medium hover:border-[1.5px] hover:border-neutral-800 text-neutral-800 hover:font-semibold">
+            <Button
+              type="button"
+              onClick={() => {
+                handleTogglePoliticallyExposed(false);
+              }}
+              className={`${!isPoliticallyExposed ? "border-[1.5px] border-neutral-800 font-semibold" : ""} bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold`}
+            >
               No
             </Button>
           </div>
-          <Typography
+          {/* <Typography
             variant="h6"
             className="mt-6 font-medium text-neutral-900"
           >
@@ -307,8 +452,8 @@ const SettingsDirectorProfileDialog = (
             label="Identification Number"
             placeholder=" Enter NIN"
             {...getTextFieldProps(formik, "nin")}
-          />
-          <Dropzone
+          /> */}
+          {/* <Dropzone
             multiple={false}
             maxSize={1024 * 1024 * 2}
             accept={{ "image/*": [] }}
@@ -328,7 +473,7 @@ const SettingsDirectorProfileDialog = (
                 {...getRootProps()}
                 className="w-full mt-6 border border-neutral-200 border-dashed rounded-xl py-4 cursor-pointer bg-neutral-50"
               >
-                {/* <input {...getInputProps()} /> */}
+                <input {...getInputProps()} />
                 <div className="flex flex-col items-center justify-center py-2 gap-1">
                   <Iconify
                     fontSize={20}
@@ -350,16 +495,28 @@ const SettingsDirectorProfileDialog = (
                 </div>
               </div>
             )}
-          </Dropzone>
+          </Dropzone> */}
           <Typography className="mt-6 font-medium text-neutral-600">
             Does this director own 5% or more shares in the company. If yes,
             they would be added as a shareholder
           </Typography>{" "}
           <div className="flex gap-6 mt-6">
-            <Button className="bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px] hover:border-neutral-800 text-neutral-800 hover:font-semibold">
+            <Button
+              type="button"
+              onClick={() => {
+                handleToggleOwnsMoreThanFivePercent(true);
+              }}
+              className={`${ownsMoreThanFivePercent ? "border-[1.5px] border-neutral-800 font-semibold" : ""} bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold`}
+            >
               Yes
             </Button>
-            <Button className="bg-neutral-200  px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold">
+            <Button
+              type="button"
+              onClick={() => {
+                handleToggleOwnsMoreThanFivePercent(false);
+              }}
+              className={`${!ownsMoreThanFivePercent ? "border-[1.5px] border-neutral-800 font-semibold" : ""} bg-neutral-200 px-8 py-1.5 font-medium hover:border-[1.5px]  hover:border-neutral-800 text-neutral-800 hover:font-semibold`}
+            >
               No
             </Button>
           </div>
@@ -368,7 +525,7 @@ const SettingsDirectorProfileDialog = (
             className="mt-6"
             label="Share holder Percentage"
             placeholder="8%"
-            {...getTextFieldProps(formik, "shareHolderPercentage")}
+            {...getTextFieldProps(formik, "sharePercentage")}
           />
         </div>
       ),
@@ -385,7 +542,7 @@ const SettingsDirectorProfileDialog = (
         "& .MuiDialog-container": {
           "& .MuiPaper-root": {
             width: "100%",
-            maxWidth: "520px", // Set your width here
+            maxWidth: "520px",
           },
         },
       }}
@@ -424,7 +581,7 @@ const SettingsDirectorProfileDialog = (
           variant="gradient"
           type="submit"
           size="large"
-          disabled
+          // disabled
           loading={formik.isSubmitting}
           loadingPosition="end"
           className="flex ml-auto px-10 "

@@ -4,7 +4,9 @@ export interface SettingsDirectorProfileValues {
   lastName: string;
   phoneNumber: string;
   country: string;
+  userId: string;
   address: string;
-  nin: string;
-  shareHolderPercentage: string;
+  isPoliticallyExposed: boolean;
+  ownsMoreThanFivePercent: boolean;
+  sharePercentage: string;
 }
