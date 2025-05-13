@@ -54,11 +54,7 @@ export default function TransferBulkUploadPaymentPinVerification(
                   }}
                 />
 
-                <ButtonBase
-                  className="text-primary-main"
-                  disableRipple
-                  onClick={() => stepper.previous()}
-                >
+                <ButtonBase className="text-primary-main" disableRipple>
                   Forgot payment PIN?
                 </ButtonBase>
               </div>
