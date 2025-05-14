@@ -15,36 +15,29 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
-import { SettingsDirectorProfileValues } from "../types/settings-director-profile";
+import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
+import { useState } from "react";
+
+import {
+  Director,
+  SettingsDirectorProfileValues,
+} from "../types/settings-director-profile";
+import DialogTitleXCloseButton from "components/DialogTitleXCloseButton";
 import { SettingsDirectorssProfileStep } from "../enums/settings-directos-profile-step";
 import useStepper from "hooks/use-stepper";
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
-import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
-import { useState } from "react";
 import { merchantApi } from "apis/merchant";
 import useAuthUser from "hooks/use-auth-user";
+import COUNTRIES from "../constants/settings-countries";
+import splitPhoneNumber from "utils/phone/split-phone-number";
 
 type SettingsDirectorProfileDialogProps = {
   onClose: () => void;
-  directorsList: [
-    {
-      firstName: string;
-      lastName: string;
-      bvn: string;
-      phone?: string;
-      avatar?: string;
-      sharePercentage: string;
-      isPoliticallyExposed: boolean;
-      ownsMoreThanFivePercent: boolean;
-      id: string;
-      street?: string;
-    },
-  ];
+  directorsList: Director[];
   reFetchDirectorsDetails: () => void;
 } & DialogProps;
 
@@ -52,6 +45,7 @@ const SettingsDirectorProfileDialog = (
   props: SettingsDirectorProfileDialogProps
 ) => {
   const { onClose, directorsList, reFetchDirectorsDetails, ...rest } = props;
+
   const { enqueueSnackbar } = useSnackbar();
   const user = useAuthUser();
   const stepper = useStepper({
@@ -59,17 +53,7 @@ const SettingsDirectorProfileDialog = (
   });
   const enumStep = stepper.step;
 
-  const countries = [
-    { name: "Nigeria", code: "+234", icon: "emojione-v1:flag-for-nigeria" },
-    { name: "United States", code: "+1", icon: "twemoji:flag-united-states" },
-    {
-      name: "United Kingdom",
-      code: "+44",
-      icon: "emojione-v1:flag-for-united-kingdom",
-    },
-    { name: "Ghana", code: "+233", icon: "twemoji:flag-ghana" },
-  ];
-  const [selectedCode, setSelectedCode] = useState(countries[0].code);
+  const [selectedCode, setSelectedCode] = useState(COUNTRIES[0].code);
   const [isPoliticallyExposed, setIsPoliticallyExposed] = useState(false);
   const [ownsMoreThanFivePercent, setOwnsMoreThanFivePercent] = useState(false);
 
@@ -77,7 +61,7 @@ const SettingsDirectorProfileDialog = (
     merchantApi.useSubmitMerchantBusinessDirectorsMutation();
 
   const handleCountryChange = (event) => {
-    const country = countries.find((c) => c.code === event.target.value);
+    const country = COUNTRIES.find((c) => c.code === event.target.value);
     setSelectedCode(country?.code || "");
     formik.setFieldValue("country", event.target.value);
   };
@@ -88,23 +72,6 @@ const SettingsDirectorProfileDialog = (
     setOwnsMoreThanFivePercent(val);
   };
 
-  const splitPhoneNumber = (input: string, countries: { code: string }[]) => {
-    if (!input) return { countryCode: countries[0].code, phoneNumber: "" };
-    const digits = input.replace(/\D/g, "");
-    const withPlus = input.startsWith("+") ? input : `+${digits}`;
-
-    const match = countries.find((c) => withPlus.startsWith(c.code));
-
-    if (match) {
-      const numberWithoutCode = digits.slice(
-        match.code.replace("+", "").length
-      );
-      return { countryCode: match.code, phoneNumber: numberWithoutCode };
-    }
-
-    return { countryCode: "", phoneNumber: digits };
-  };
-
   const formik = useFormik<SettingsDirectorProfileValues>({
     initialValues: {
       bvn: "",
@@ -113,12 +80,13 @@ const SettingsDirectorProfileDialog = (
       lastName: "",
       phoneNumber: "",
       address: "",
-      country: countries[0].code,
+      country: COUNTRIES[0].code,
       isPoliticallyExposed: isPoliticallyExposed,
       ownsMoreThanFivePercent: ownsMoreThanFivePercent,
       sharePercentage: "",
     },
     validateOnBlur: true,
+
     validationSchema: yup.object().shape({
       ...{
         [SettingsDirectorssProfileStep.ALL_DIRECTORS_PROFILES]: {},
@@ -190,7 +158,7 @@ const SettingsDirectorProfileDialog = (
     const director = directorsList[index];
     const { countryCode, phoneNumber } = splitPhoneNumber(
       director?.phone,
-      countries
+      COUNTRIES
     );
     formik.setValues({
       bvn: director?.bvn || "",
@@ -198,7 +166,7 @@ const SettingsDirectorProfileDialog = (
       lastName: director?.lastName || "",
       phoneNumber: phoneNumber || "",
       address: director?.street || "",
-      country: countryCode || countries[0]?.code,
+      country: countryCode || COUNTRIES[0].code,
       isPoliticallyExposed,
       ownsMoreThanFivePercent,
       sharePercentage: director?.sharePercentage || "",
@@ -245,8 +213,6 @@ const SettingsDirectorProfileDialog = (
                   <Typography
                     onClick={() => {
                       reInitializeFormikValues(index);
-                      // setEditingDirector(index);
-                      // stepper.next();
                     }}
                     className="text-primary-main font-semibold cursor-pointer"
                   >
@@ -255,17 +221,6 @@ const SettingsDirectorProfileDialog = (
                 </div>
               );
             })}
-
-            {/* <div className="mt-6 mb-6">
-              <Typography
-                onClick={() => {
-                  stepper.next();
-                }}
-                className="font-semibold text-primary-main ml-4"
-              >
-                + Add Another Director
-              </Typography>
-            </div> */}
           </div>
         </div>
       ),
@@ -320,7 +275,7 @@ const SettingsDirectorProfileDialog = (
                 <FormControl fullWidth>
                   <Select
                     value={formik.values.country}
-                    defaultValue={countries[0].code}
+                    defaultValue={COUNTRIES[0].code}
                     onChange={handleCountryChange}
                     className="border-0 outline-none"
                     sx={{
@@ -334,7 +289,7 @@ const SettingsDirectorProfileDialog = (
                       },
                     }}
                   >
-                    {countries.map((country) => (
+                    {COUNTRIES.map((country) => (
                       <MenuItem key={country.code} value={country.code}>
                         <Iconify
                           fontSize={20}
@@ -437,62 +392,6 @@ const SettingsDirectorProfileDialog = (
               No
             </Button>
           </div>
-          {/* <Typography
-            variant="h6"
-            className="mt-6 font-medium text-neutral-900"
-          >
-            Identity Verification
-          </Typography>{" "}
-          <TextField
-            fullWidth
-            className="mt-8"
-            label="Identification Number"
-            placeholder=" Enter NIN"
-            {...getTextFieldProps(formik, "nin")}
-          /> */}
-          {/* <Dropzone
-            multiple={false}
-            maxSize={1024 * 1024 * 2}
-            accept={{ "image/*": [] }}
-            // onDropAccepted={(files) => {
-            //   const file = files[0];
-            //   handleSelfieUpdate(file);
-            // }}
-            onDropRejected={(fileRejection) => {
-              enqueueSnackbar(
-                fileRejection[0].errors?.[0].message || "File Rejected",
-                { variant: "error" }
-              );
-            }}
-          >
-            {({ getRootProps }) => (
-              <div
-                {...getRootProps()}
-                className="w-full mt-6 border border-neutral-200 border-dashed rounded-xl py-4 cursor-pointer bg-neutral-50"
-              >
-                <input {...getInputProps()} />
-                <div className="flex flex-col items-center justify-center py-2 gap-1">
-                  <Iconify
-                    fontSize={20}
-                    icon="solar:cloud-upload-outline"
-                    className="text-neutral-500 p-0"
-                  />
-                  <Typography
-                    variant="body2"
-                    className="font-medium cursor-pointer text-neutral-500 "
-                  >
-                    Upload Identity Card
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="font-normal cursor-pointer text-neutral-500 "
-                  >
-                    format: <span className="font-medium">JPEG, PNG</span>
-                  </Typography>
-                </div>
-              </div>
-            )}
-          </Dropzone> */}
           <Typography className="mt-6 font-medium text-neutral-600">
             Does this director own 5% or more shares in the company. If yes,
             they would be added as a shareholder
@@ -572,13 +471,11 @@ const SettingsDirectorProfileDialog = (
         </Typography>
         {tabs[stepper.step]?.content}
       </DialogContent>
-      {/* <Divider /> */}
       <DialogActions className=" px-6 py-5 flex ml-auto">
         <LoadingButton
           variant="gradient"
           type="submit"
           size="large"
-          // disabled
           loading={formik.isSubmitting}
           loadingPosition="end"
           className="flex ml-auto px-10 "
