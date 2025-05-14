@@ -1,4 +1,4 @@
-export interface SettingsDirectorProfileValues {
+export interface SettingsDirectorProfileFormikValues {
   bvn: string;
   firstName: string;
   lastName: string;
