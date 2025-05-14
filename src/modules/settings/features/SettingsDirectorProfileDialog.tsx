@@ -210,9 +210,6 @@ const SettingsDirectorProfileDialog = (
     stepper.next();
   };
 
-  // console.log({ formik });
-  // console.log(selectedCode);
-
   const tabs = [
     {
       title: "",
