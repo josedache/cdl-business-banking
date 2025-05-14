@@ -42,7 +42,7 @@ export default function TransferBulkUploadTransferSummary(
     },
     {
       title: "Send to",
-      value: `${batchSummary?.length} Receipients`,
+      value: `${batchSummary?.length} Recipients`,
     },
     {
       title: "Transaction Fee",

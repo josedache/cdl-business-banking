@@ -76,8 +76,7 @@ export default function DashboardAccountSetupNin(
             Provide NIN
           </Typography>
           <Typography className=" text-neutral-500">
-            We need your NIN to confirm your identity and keep your account
-            secure
+            Business Owner or Director's NIN
           </Typography>
           <NumberTextField
             disabled={isPreview}

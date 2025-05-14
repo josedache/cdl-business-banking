@@ -52,9 +52,7 @@ export default function TransferSingleEnterPaymentPin(
                 }}
               />
 
-              <ButtonBase disableRipple onClick={() => stepper.previous()}>
-                Forgot payment PIN?
-              </ButtonBase>
+              <ButtonBase disableRipple>Forgot payment PIN?</ButtonBase>
             </div>
           </div>
         </div>

@@ -19,7 +19,7 @@ function TransactionList() {
             >
               {[
                 { label: "All", value: 0 },
-                { label: "Transfers", value: 1 },
+                // { label: "Transfers", value: 1 },
                 // {
                 //   label: "Airtime & Data",
                 //   value: 2,
