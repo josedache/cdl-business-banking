@@ -141,3 +141,11 @@ export type GetTransferBulkSummaryApiRequest = ApiRequest<
   }
 >;
 export type GetTransferBulkSummaryApiResponse = ApiResponse<any>;
+
+export type GetTransferLocalApiRequest = ApiRequest<
+  void,
+  {
+    reference: string;
+  }
+>;
+export type GetTransferLocalApiResponse = ApiResponse<any>;

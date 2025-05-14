@@ -288,7 +288,7 @@ function DashboardAccountSetup() {
           case ONBOARDING_STEPS.PIN_SETUP_VERIFICATION: {
             const resp = await userPinMutation({
               body: {
-                pin: values.transactionPin,
+                pin: values.confirmTransactionPin,
               },
               params: {
                 action: "confirm",
