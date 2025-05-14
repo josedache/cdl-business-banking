@@ -30,7 +30,7 @@ const LandingPageBusinessReasons = () => {
   ];
 
   return (
-    <div className="mx-auto container  px-4 sm:px-2  text-center mt-7.5 pt-21.5 pb-15">
+    <div className="mx-auto container px-4 sm:px-2  text-center mt-20 md:mt-7.5 md:pt-21.5 md:pb-15">
       <Typography className="font-normal text-primary-darker ">
         There's something for every business
       </Typography>
@@ -41,7 +41,7 @@ const LandingPageBusinessReasons = () => {
         Built for <span className="linearGradientText">Growth.</span>
       </Typography>
 
-      <div className="grid md:grid-cols-2 mt-20 gap-4">
+      <div className="grid md:grid-cols-2 mt-8 md:mt-20 gap-4">
         {businessReasons.map((item) => {
           return (
             <div

@@ -65,8 +65,8 @@ export default function LandingPageHeader(props: Props) {
     <header className="inset-x-0 top-0 z-50 ">
       <CssBaseline />
       <div>
-        <Toolbar>
-          <div className="flex flex-wrap justify-between items-center mx-auto py-2 sm:py-4 w-full container sm:px-2">
+        <Toolbar className="p-0">
+          <div className="flex flex-wrap justify-between items-center mx-auto px-4 py-6 w-full container lg:px-2">
             <Link to="/">
               <Logo variant="1" />
             </Link>

@@ -46,7 +46,7 @@ const LandingPageMoreFeatures = () => {
     },
   ];
   return (
-    <div className="mx-auto container  px-4 sm:px-2  text-center mt-5 py-20 ">
+    <div className="mx-auto container  px-4 sm:px-2  text-center md:mt-5 py-20 ">
       <Typography className="font-normal text-primary-darker ">
         Services coming soon...
       </Typography>
@@ -54,7 +54,7 @@ const LandingPageMoreFeatures = () => {
         There is more to come
       </Typography>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 mt-15 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 mt-8 md:mt-15 gap-6">
         {futureIdeas.map((item) => {
           return (
             <div
