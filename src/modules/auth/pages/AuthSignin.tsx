@@ -197,9 +197,11 @@ function AuthSignin() {
             className="font-medium text-center text-text-secondary"
           >
             A 6-digit OTP has been sent to{" "}
-            {formik.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
-              "*******@***"}
-            . Input the code here to continue
+            <b>
+              {formik.values?.email?.replace(/\w(?=\w{0,2}@)/g, "*") ||
+                "*******@***"}
+            </b>
+            . Input the OTP here to continue
           </Typography>
         </div>
         <div className="grid gap-4 my-8">
@@ -230,9 +232,9 @@ function AuthSignin() {
               return (
                 <>
                   <div className="flex items-center justify-center">
-                    <Typography className="text-center">
-                      Didn’t receive code?{" "}
-                      {!isCodeSent ? (
+                    <Typography className="text-center flex items-center gap-1">
+                      Didn't receive OTP?{" "}
+                      {isCodeSent ? (
                         <Typography
                           variant="body2"
                           color="primary"
@@ -259,7 +261,7 @@ function AuthSignin() {
                           onClick={sendOtp}
                           className=""
                         >
-                          Resend OTP
+                          <span className="text-primary-main">Resend OTP</span>
                         </ButtonBase>
                       )}
                     </Typography>

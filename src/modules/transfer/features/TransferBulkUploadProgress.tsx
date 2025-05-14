@@ -67,7 +67,7 @@ export default function TransferBulkUploadProgress(
           <div>
             <div>
               <Typography variant="h4" className="font-semibold">
-                Upload CSV of Recipients
+                Upload Excel of Recipients
               </Typography>
             </div>
 

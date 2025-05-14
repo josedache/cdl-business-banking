@@ -140,7 +140,7 @@ export default function TransferBulkTab(props: TransferBulkTabProps) {
                                   {[
                                     {
                                       icon: "tabler:upload",
-                                      name: "Upload CSV",
+                                      name: "Upload Excel",
                                       onClick: () => {
                                         navigate(TRANSFER_BULK);
                                       },

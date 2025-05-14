@@ -11,7 +11,7 @@ import {
   GetTransferBulkSummariesApiRequest,
   GetTransferBulkSummariesApiResponse,
   GetTransferBulkSummaryApiRequest,
-  GetTransferBulkSummaryApiResponse,
+  GetTransferBulkSummaryApiResponse, GetTransferLocalApiRequest, GetTransferLocalApiResponse,
   GetTransferWalletsApiRequest,
   GetTransferWalletsApiResponse,
   TransferApiRequest,
@@ -122,6 +122,16 @@ export const transferApi = baseApi.injectEndpoints({
     >({
       query: ({ path, ...config }) => ({
         url: BASE_URL + `/bulk/summary/${path?.batchNumber}`,
+        method: "GET",
+        ...config,
+      }),
+    }),
+    getTransferLocal: builder.query<
+      GetTransferLocalApiResponse,
+      GetTransferLocalApiRequest
+    >({
+      query: ({ path, ...config }) => ({
+        url: BASE_URL + `/${path?.reference}/local`,
         method: "GET",
         ...config,
       }),

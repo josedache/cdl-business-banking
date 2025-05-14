@@ -168,7 +168,7 @@ function AuthSignup() {
         <div className="grid gap-4 my-8">
           <TextField
             fullWidth
-            label="Email Address"
+            label="Owner's Email Address"
             placeholder="Enter your Email Address"
             {...getTextFieldProps(formik, "email")}
           />
@@ -378,7 +378,7 @@ function AuthSignup() {
           </Typography>
         </div>
         <div className="flex items-center justify-center">
-          <Typography className="text-center font-medium text-text-secondary">
+          <Typography className="text-center font-medium text-text-secondary flex items-center gap-1">
             Already have an account?{" "}
             <ButtonBase
               component="span"
