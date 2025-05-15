@@ -8,9 +8,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
-import SwirlyBackground from "../../../assets/imgs/readytojoin-bg.png";
+import SwirlyBackground from "assets/imgs/readytojoin-bg.png";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 const LandingPageFAQSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
@@ -36,8 +40,13 @@ const LandingPageFAQSection = () => {
     },
   ];
   return (
-    <div>
-      <div className="mx-auto container px-4 sm:px-2 text-center md:py-29 bg-[#FCFCFC] rounded-3xl">
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 100 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
+    >
+      <div className="mx-auto container px-4 lg:px-2 text-center py-5 md:py-29 bg-[#FCFCFC] rounded-t-3xl">
         <Typography variant="h2" className="font-semibold text-neutral-800 ">
           Frequently Asked Questions
         </Typography>
@@ -90,7 +99,7 @@ const LandingPageFAQSection = () => {
         </div>
       </div>
       <div
-        className=" rounded-3xl mx-auto py-20 text-white px-4 sm:px-2 "
+        className="w-full max-w-screen-2xl bg-[rgba(0,0,0,.5)] rounded-3xl mx-auto py-20 text-white px-4 lg:px-2 -mt-5 bg-repeat"
         style={{
           backgroundImage: `
             linear-gradient(252.66deg, #FFFFFF 31.57%, #F79009 140.15%),
@@ -103,16 +112,26 @@ const LandingPageFAQSection = () => {
         <div className="text-center">
           <Typography
             variant="h2"
-            className="font-semibold mx-auto lg:w-2/3 xl:w-1/3"
+            className="font-semibold mx-auto lg:w-3/5 xl:w-5/12 "
           >
             Ready to join 20,000+ satisfied customers?
           </Typography>
-          <Button className="bg-white text-[#282F3B] mt-20 font-semibold">
+          <Button
+            href="/signup"
+            className="bg-white group text-[#282F3B] mt-20 font-semibold"
+          >
             Create business account
+            <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-400 ">
+              <Iconify
+                fontSize={20}
+                icon="tabler:arrow-right"
+                className="cursor-pointer "
+              />
+            </span>
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -3,6 +3,11 @@
     linear-gradient(192deg, rgba(246, 247, 250, 0) 67.77%, #ffe9d4 99.59%),
     linear-gradient(46deg, #f6f7fa 26.62%, #ffe9d4 156.28%);
 }
+.bg-header-gradient {
+  background:
+    linear-gradient(182deg, rgba(0, 0, 0, 0) 0.1%, #ffe9d4 156.28%),
+    linear-gradient(46deg, #f6f7fa 46.62%, #ffe9d4 156.28%);
+}
 @keyframes cssmarquee {
   0% {
     transform: translateX(10%);
@@ -68,49 +73,4 @@
     #f89130 111.5%,
     #efc531 168.7%
   );
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInTop {
-  0% {
-    opacity: 0;
-    transform: translateY(-200px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInBottom {
-  0% {
-    opacity: 0;
-    transform: translateY(200px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in-up {
-  animation: fadeInUp 1.2s ease-out forwards;
-}
-
-.slide-in-top {
-  animation: slideInTop 1.2s ease-out forwards;
-}
-
-.slide-in-bottom {
-  animation: slideInBottom 1.8s ease-out forwards;
 }

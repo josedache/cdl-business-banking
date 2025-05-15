@@ -41,7 +41,10 @@ export default function LandingPageHeader(props: Props) {
   };
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+    <Box
+      onClick={handleDrawerToggle}
+      className="text-center bg-custom-gradient h-full"
+    >
       <Typography variant="h6" sx={{ my: 2 }}>
         <Logo variant="1" />
       </Typography>
@@ -62,9 +65,9 @@ export default function LandingPageHeader(props: Props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <header className="inset-x-0 top-0 z-50 ">
+    <header className="inset-x-0 top-0 z-50 sticky">
       <CssBaseline />
-      <div>
+      <div className=" bg-header-gradient">
         <Toolbar className="p-0">
           <div className="flex flex-wrap justify-between items-center mx-auto px-4 py-6 w-full container lg:px-2">
             <Link to="/">
@@ -99,7 +102,7 @@ export default function LandingPageHeader(props: Props) {
 
               <div className="flex gap-4">
                 <Button
-                  href=""
+                  href="/signin"
                   variant="outlined"
                   size="large"
                   className=" text-neutral-800 border-neutral-300 font-semibold"
@@ -107,7 +110,7 @@ export default function LandingPageHeader(props: Props) {
                   Sign In
                 </Button>
                 <Button
-                  href=""
+                  href="/signup"
                   variant="gradient"
                   size="large"
                   className="font-semibold "

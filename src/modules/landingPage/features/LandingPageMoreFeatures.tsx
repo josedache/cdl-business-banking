@@ -5,8 +5,12 @@ import InvestmentLogo from "../../../assets/svgs/investment-logo.svg";
 import LoanLogo from "../../../assets/svgs/loan-logo.svg";
 import BnplLogo from "../../../assets/svgs/bnpl-logo.svg";
 import AccountLogo from "../../../assets/svgs/account-logo.svg";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 const LandingPageMoreFeatures = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
   const futureIdeas = [
     {
       id: 1,
@@ -46,7 +50,13 @@ const LandingPageMoreFeatures = () => {
     },
   ];
   return (
-    <div className="mx-auto container  px-4 sm:px-2  text-center md:mt-5 py-20 ">
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 100 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+      className="mx-auto container  px-4 lg:px-2  text-center md:mt-5 py-20 "
+    >
       <Typography className="font-normal text-primary-darker ">
         Services coming soon...
       </Typography>
@@ -57,7 +67,11 @@ const LandingPageMoreFeatures = () => {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 mt-8 md:mt-15 gap-6">
         {futureIdeas.map((item) => {
           return (
-            <div
+            <motion.div
+              ref={ref}
+              initial={{ opacity: 0, y: 100 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
               key={item.id}
               className=" text-[#282F3B] text-start rounded-3xl border border-[#EAEAEA] p-6"
               style={{
@@ -72,11 +86,11 @@ const LandingPageMoreFeatures = () => {
               <Typography className="font-normal mt-2 xl:w-89.5">
                 {item.note}
               </Typography>
-            </div>
+            </motion.div>
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
