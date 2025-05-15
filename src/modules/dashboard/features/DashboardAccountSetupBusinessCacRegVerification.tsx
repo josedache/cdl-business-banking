@@ -7,13 +7,15 @@ import {
   Typography,
   Link as MuiLink,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Countdown from "components/Countdown";
 import NumberInput from "components/NumberInput";
 import OtpInput from "components/OtpInput";
 import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import getCountdownDate from "utils/date/get-countdown-date";
+import { enqueueSnackbar } from "notistack";
+import { userApi } from "apis/user";
 
 type DashboardAccountSetupBusinessCacRegVerificationProps = {
   phone: string;
@@ -25,16 +27,27 @@ export default function DashboardAccountSetupBusinessCacRegVerification(
 ) {
   const { phone, expiration, formik, stepper } = props;
   const [countdownDate, setCountdownDate] = useState<any>(getCountdownDate);
+  const [sendUserOtpMutation, sendUserOtpMutationResult] =
+    userApi.useUserSendOtpMutation();
 
-  function sendOtp() {}
-
-  useEffect(() => {
-    setCountdownDate(getCountdownDate(expiration));
-
-    return () => {
-      setCountdownDate(0);
-    };
-  }, [expiration]);
+  async function sendOtp() {
+    try {
+      await sendUserOtpMutation({
+        body: { reason: "verify_business" },
+      }).unwrap();
+      setCountdownDate(getCountdownDate(expiration));
+      enqueueSnackbar("OTP sent successfully!", {
+        variant: "success",
+      });
+    } catch (error) {
+      enqueueSnackbar(
+        error?.data?.error || "Error sending OTP, please try again",
+        {
+          variant: "error",
+        }
+      );
+    }
+  }
 
   return (
     <Paper elevation={0} className="mx-auto max-w-[520px]">
@@ -117,9 +130,7 @@ export default function DashboardAccountSetupBusinessCacRegVerification(
                             <ButtonBase
                               disableRipple
                               color="primary"
-                              // disabled={
-                              //   signupYieldUserMutationResult?.isLoading
-                              // }
+                              disabled={sendUserOtpMutationResult?.isLoading}
                               component={MuiLink}
                               onClick={sendOtp}
                               className="font-semibold text-primary-main"

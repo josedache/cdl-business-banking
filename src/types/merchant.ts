@@ -1,3 +1,4 @@
+import { Director } from "modules/settings/types/settings-director-profile";
 import { ApiRequest, ApiResponse } from "./api";
 
 export type MerchantRegistrationNonCacApiResponse = ApiResponse<unknown>;
@@ -63,18 +64,12 @@ export type MerchantBusinessProfileApiResponse = ApiResponse<{
 
 export type MerchantBusinessProfileApiRequest = ApiRequest<void>;
 
-export type MerchantBusinessDirectorsApiResponse = ApiResponse<
-  [
-    {
-      firstName: string;
-      lastName: string;
-      phone?: string;
-      avatar?: string;
-    },
-  ]
->;
+export type MerchantBusinessDirectorsApiResponse = ApiResponse<Director[]>;
 
 export type MerchantBusinessDirectorsApiRequest = ApiRequest<void>;
+
+export type SubmitMerchantBusinessDirectorsApiRequest = ApiRequest<unknown>;
+export type SubmitMerchantBusinessDirectorsApiResponse = ApiResponse<unknown>;
 
 export type MerchantAddressStatesApiResponse = ApiResponse<unknown>;
 

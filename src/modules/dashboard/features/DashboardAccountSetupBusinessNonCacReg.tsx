@@ -9,12 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 import { merchantApi } from "apis/merchant";
-import NumberTextField from "components/NumberTextField";
 import SecuredDataBadge from "components/SecuredDataBadge";
 
 import { getTextFieldProps } from "utils/formik/get-text-field-props";
 import { DashboardAccountSetupContentProps } from "../types/DashboardStepForm";
 import { lookupApi } from "apis/lookup";
+import CurrencyTextField from "components/CurrencyTextField";
 
 type DashboardAccountSetupBusinessNonCacRegProps =
   {} & DashboardAccountSetupContentProps;
@@ -145,10 +145,10 @@ export default function DashboardAccountSetupBusinessNonCacReg(
               ))}
             </TextField>
 
-            <NumberTextField
+            <CurrencyTextField
               fullWidth
               label="Annual Turn Over"
-              placeholder="Enter Annual Turn Over"
+              placeholder="10,000,000"
               {...getTextFieldProps(formik, "annualTurnOver")}
             />
           </div>
