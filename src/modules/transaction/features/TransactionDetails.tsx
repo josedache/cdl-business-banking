@@ -48,7 +48,7 @@ function TransactionDetails(props: TransactionDetailsProps) {
 
   const transactionQueryResult = transactionApi.useGetTransactionQuery(
     useMemo(() => ({ path: { id } }), [id]),
-    { skip: !(id || !propsTransaction) }
+    { skip: !((id || !propsTransaction) && (props.open || isOpen)) }
   );
 
   const transaction = propsTransaction ?? transactionQueryResult.data?.data;
