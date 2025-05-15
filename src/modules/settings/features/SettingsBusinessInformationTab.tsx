@@ -168,7 +168,8 @@ const SettingsBusinessInformationTab = () => {
           Listed
         </Typography>
       ),
-      isLoading: getBusinessDirectors?.isLoading,
+      isLoading:
+        getBusinessDirectors?.isLoading || getBusinessDirectors?.isFetching,
       canEdit: (businessDirectors?.data?.length ?? 0) > 0,
       onClick: () => {
         setOpenDirectorsProfileDialog(true);
@@ -177,7 +178,8 @@ const SettingsBusinessInformationTab = () => {
     },
     {
       title: "Address Verification",
-      isLoading: getBusinessAddress?.isLoading,
+      isLoading:
+        getBusinessAddress?.isLoading || getBusinessAddress?.isFetching,
       value: (
         <Chip
           label={
@@ -202,7 +204,8 @@ const SettingsBusinessInformationTab = () => {
     },
     {
       title: "MEMAT (Memorandum of articles of association)",
-      isLoading: getMemorandumDocument?.isLoading,
+      isLoading:
+        getMemorandumDocument?.isLoading || getMemorandumDocument?.isFetching,
       value: (
         <>
           {getMemorandumDocument?.isLoading ? (
