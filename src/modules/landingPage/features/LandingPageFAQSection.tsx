@@ -99,7 +99,7 @@ const LandingPageFAQSection = () => {
         </div>
       </div>
       <div
-        className="w-full max-w-screen-2xl bg-[rgba(0,0,0,.5)] rounded-3xl mx-auto py-20 text-white px-4 lg:px-2 -mt-5 bg-repeat"
+        className="w-full container bg-[rgba(0,0,0,.5)] rounded-3xl mx-auto py-20 text-white px-4 lg:px-2 -mt-5 bg-repeat"
         style={{
           backgroundImage: `
             linear-gradient(252.66deg, #FFFFFF 31.57%, #F79009 140.15%),
@@ -118,7 +118,7 @@ const LandingPageFAQSection = () => {
           </Typography>
           <Button
             href="/signup"
-            className="bg-white group text-[#282F3B] mt-20 font-semibold"
+            className="bg-white group text-[#282F3B] mt-6 md:mt-20 font-semibold"
           >
             Create business account
             <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-400 ">

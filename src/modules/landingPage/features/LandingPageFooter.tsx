@@ -12,7 +12,7 @@ const LandingPageFooter = () => {
 
   return (
     <footer className="container mx-auto  px-4 lg:px-2  pt-17.5 pb-10">
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-33 ">
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-33 ">
         <div>
           <Link to="/">
             <Logo variant="1" />
@@ -27,7 +27,7 @@ const LandingPageFooter = () => {
           <Typography variant="h5" className="font-medium">
             Support
           </Typography>
-          <Typography className="font-normal">Contact Us</Typography>
+          <Typography className="font-normal mt-2">Contact Us</Typography>
         </div>
       </div>
 
@@ -45,7 +45,7 @@ const LandingPageFooter = () => {
         })}
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between mt-6">
+      <div className="flex flex-col md:flex-row justify-between mt-6 gap-2 ">
         <Typography className="font-normal">
           © 2025 CDL Business. All rights reserved.
         </Typography>
