@@ -23,20 +23,24 @@ const LandingPageFAQSection = () => {
     };
   const faqs = [
     {
-      question: "Do I need a registered company to use CDL Business?",
-      answer: "Yes",
+      question: "Who can open a business account?",
+      answer:
+        "Any registered business (e.g., sole proprietorship, limited liability company, or partnership) with valid documentation (CAC certificate, TIN) can open an account.",
     },
     {
       question: "Are there any hidden fees?",
-      answer: "Nope!",
+      answer:
+        "No hidden charges. We operate a transparent fee structure — with no maintenance fees on standard accounts.",
     },
     {
       question: "What do I need to create an account??",
-      answer: "Chi ching Chi ching fundzzzz",
+      answer:
+        "You’ll need Corporate Affairs Commission (CAC) registration documents,Tax Identification Number (TIN), Valid ID of business owner(s), and Bank Verification Number (BVN)",
     },
     {
       question: "How safe are my details?",
-      answer: "Like God wraps you safe",
+      answer:
+        "We use bank-grade encryption, multi-factor authentication (MFA), and secure cloud infrastructure to protect your data.",
     },
   ];
   return (
