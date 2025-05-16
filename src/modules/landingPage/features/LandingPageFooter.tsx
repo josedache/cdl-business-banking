@@ -5,9 +5,33 @@ import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 
 const LandingPageFooter = () => {
   const media = [
-    { id: 1, icon: "uim:facebook-f", link: "/" },
-    { id: 2, icon: "icon-park-solid:instagram", link: "/" },
-    { id: 3, icon: "grommet-icons:linkedin-option", link: "/" },
+    {
+      id: 1,
+      icon: "uim:facebook-f",
+      link: "https://www.facebook.com/creditdirectltd/",
+    },
+    {
+      id: 2,
+      icon: "icon-park-solid:instagram",
+      link: "https://www.instagram.com/creditdirectltd/",
+    },
+    {
+      id: 3,
+      icon: "grommet-icons:linkedin-option",
+      link: "https://www.linkedin.com/company/11500510",
+    },
+  ];
+
+  const company = [
+    {
+      name: "Privacy Policy",
+      href: "https://www.creditdirect.ng/privacy-policy/",
+    },
+    {
+      name: "Terms of Service",
+      href: "https://yield.creditdirect.ng/terms-and-conditions",
+    },
+    { name: "About", href: "https://www.creditdirect.ng/about-us/" },
   ];
 
   return (
@@ -27,7 +51,9 @@ const LandingPageFooter = () => {
           <Typography variant="h5" className="font-medium">
             Support
           </Typography>
-          <Typography className="font-normal mt-2">Contact Us</Typography>
+          <Link to="https://www.creditdirect.ng/contact-us" target="_blank">
+            <Typography className="font-normal mt-2">Contact Us</Typography>
+          </Link>
         </div>
       </div>
 
@@ -36,6 +62,7 @@ const LandingPageFooter = () => {
           return (
             <Link
               to={item.link}
+              target="_blank"
               key={item.id}
               className="bg-white p-1 rounded-sm"
             >
@@ -54,9 +81,13 @@ const LandingPageFooter = () => {
           © 2025 CDL Business. All rights reserved.
         </Typography>
         <div className=" flex font-normal gap-4">
-          <Typography className="font-normal">Privacy Policy </Typography>
-          <Typography className="font-normal">Terms of Service</Typography>
-          <Typography className="font-normal"> Cookie Policy</Typography>
+          {company?.map((item, index) => {
+            return (
+              <Link to={item.href} target="_blank" key={index} className="">
+                <Typography className="font-normal">{item.name} </Typography>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </footer>

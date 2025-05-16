@@ -114,39 +114,39 @@ const LandingPageHeroSection = () => {
         transition={{ duration: 1.8, ease: "easeOut", delay: 0.8 }}
         className="px-0 lg:px-2"
       >
-        <div className="bg-white p-8.5 rounded-3xl mt-20 lg:mt-0">
+        <div className="sm:bg-white sm:p-8.5 rounded-3xl mt-20 lg:mt-0">
           <Typography
             variant="body2"
-            className="font-semibold text-primary-darker text-center"
+            className="font-semibold text-primary-darker text-center hidden sm:block"
           >
             TRUSTED BY
           </Typography>
           <div className="grid grid-flow-col auto-cols-max lg:auto-cols-auto scrollbar-hide  mt-8.5 px-6 overflow-auto scroll-smooth snap-x ">
-            <div className="flex scrollingAnimate items-center justify-between">
+            <div className="flex scrollingAnimate items-center justify-between gap-2 sm:gap-0">
               <img
                 src={SlotLogo}
                 alt="Slot Logo"
-                className="opacity-50 hover:opacity-100"
+                className="opacity-50 hover:opacity-100 rounded-3xl sm:rounded-none bg-white py-8.5 sm:py-0 px-8.5 sm:px-0"
               />
               <img
                 src={ChubLogo}
                 alt="3CHub Logo"
-                className="opacity-50 hover:opacity-100"
+                className="opacity-50 hover:opacity-100 rounded-3xl sm:rounded-none bg-white  py-8.5 sm:py-0 px-8.5 sm:px-0"
               />
               <img
                 src={ElectromartLogo}
                 alt="Electromart Logo"
-                className="opacity-50 hover:opacity-100"
+                className="opacity-50 hover:opacity-100 rounded-3xl sm:rounded-none bg-white py-8.5 sm:py-0 px-8.5 sm:px-0"
               />
               <img
                 src={FootCityLogo}
                 alt="FootCity Logo"
-                className="opacity-50 hover:opacity-100"
+                className="opacity-50 hover:opacity-100 rounded-3xl sm:rounded-none bg-white py-7 sm:py-0 px-8.5 sm:px-0"
               />{" "}
               <img
                 src={TopSuccessLogo}
                 alt="TopSuccess Logo"
-                className="opacity-50 hover:opacity-100"
+                className="opacity-50 hover:opacity-100 rounded-3xl sm:rounded-none bg-white py-8.5 sm:py-0 px-8.5 sm:px-0"
               />
             </div>
           </div>
