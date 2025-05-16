@@ -65,11 +65,11 @@ export default function LandingPageHeader(props: Props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <header className="inset-x-0 top-0 z-50 sticky">
+    <header className="inset-x-0 top-0 z-50 sm:sticky">
       <CssBaseline />
       <div className=" bg-header-gradient">
         <Toolbar className="p-0">
-          <div className="flex flex-wrap justify-between items-center mx-auto px-4 py-6 w-full container lg:px-2">
+          <div className="flex flex-wrap justify-between items-center mx-auto px-4 py-6 container lg:px-2">
             <Link to="/">
               <Logo variant="1" />
             </Link>

@@ -1,7 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import POSWoman from "assets/imgs/pos-woman.png";
 import SmilingMan from "assets/imgs/smiling-man.jpg";
-import SmilingWoman from "assets/imgs/smiling-woman.jpg";
+import SmilingWoman from "assets/imgs/folding-handsman.jpg";
 import SlotLogo from "assets/imgs/slot-logo.png";
 import ChubLogo from "assets/imgs/3Chub-logo.png";
 import ElectromartLogo from "assets/imgs/electromart-logo.png";

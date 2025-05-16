@@ -34,7 +34,11 @@ const LandingPageFooter = () => {
       <div className="flex gap-4 items-center mt-7">
         {media?.map((item) => {
           return (
-            <Link to={item.link} key={item.id} className="bg-white p-1">
+            <Link
+              to={item.link}
+              key={item.id}
+              className="bg-white p-1 rounded-sm"
+            >
               <Iconify
                 fontSize={18}
                 icon={item.icon}

@@ -45,6 +45,7 @@ const LandingPageFAQSection = () => {
       initial={{ opacity: 0, y: 100 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
+      className="mb-2.5 xl:mb-40"
     >
       <div className="mx-auto container px-4 lg:px-2 text-center py-5 md:py-29 bg-[#FCFCFC] rounded-t-3xl">
         <Typography variant="h2" className="font-semibold text-neutral-800 ">
@@ -62,7 +63,7 @@ const LandingPageFAQSection = () => {
                   display: "none",
                 },
               }}
-              className=" bg-white rounded-lg px-2 py-4 mb-2 text-[#282F3B]"
+              className="bg-white rounded-lg py-4 mb-2 text-[#282F3B]"
             >
               <AccordionSummary
                 key={faq.question}
@@ -87,7 +88,7 @@ const LandingPageFAQSection = () => {
                 }
                 aria-controls={`panel-${index}-content`}
                 id={`panel-${index}-header`}
-                className=" font-semibold "
+                className=" font-semibold py-0"
               >
                 {faq.question}
               </AccordionSummary>
@@ -99,7 +100,7 @@ const LandingPageFAQSection = () => {
         </div>
       </div>
       <div
-        className="w-full container bg-[rgba(0,0,0,.5)] rounded-3xl mx-auto py-20 text-white px-4 lg:px-2 -mt-5 bg-repeat"
+        className="container bg-[rgba(0,0,0,.5)] rounded-3xl mx-auto py-8 sm:py-20 text-white px-4 lg:px-2 -mt-5 bg-repeat"
         style={{
           backgroundImage: `
             linear-gradient(252.66deg, #FFFFFF 31.57%, #F79009 140.15%),
@@ -118,14 +119,14 @@ const LandingPageFAQSection = () => {
           </Typography>
           <Button
             href="/signup"
-            className="bg-white group text-[#282F3B] mt-6 md:mt-20 font-semibold"
+            className="bg-white group text-[#282F3B] mt-6 md:mt-20 font-semibold md:mb-14"
           >
             Create business account
             <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1 transition-all duration-400 ">
               <Iconify
                 fontSize={20}
                 icon="tabler:arrow-right"
-                className="cursor-pointer "
+                className="cursor-pointer"
               />
             </span>
           </Button>
