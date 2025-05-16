@@ -105,7 +105,7 @@ export default function LandingPageHeader(props: Props) {
                   href="/signin"
                   variant="outlined"
                   size="large"
-                  className=" text-neutral-800 border-neutral-300 font-semibold"
+                  className=" text-neutral-800 border-neutral-300 hover:border-neutral-900 font-semibold"
                 >
                   Sign In
                 </Button>
