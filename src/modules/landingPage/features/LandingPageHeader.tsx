@@ -23,11 +23,11 @@ const drawerWidth = 300;
 
 const navItems = [
   {
-    href: "/",
+    href: "#products",
     displayText: "Products",
   },
   {
-    href: "",
+    href: "#about-us",
     displayText: "About us",
   },
 ];
