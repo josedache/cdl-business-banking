@@ -1,0 +1,81 @@
+.bg-custom-gradient {
+  background:
+    linear-gradient(192deg, rgba(246, 247, 250, 0) 67.77%, #ffe9d4 99.59%),
+    linear-gradient(46deg, #f6f7fa 26.62%, #ffe9d4 156.28%);
+}
+.bg-header-gradient {
+  background:
+    linear-gradient(182deg, rgba(0, 0, 0, 0) 0.1%, #ffe9d4 156.28%),
+    linear-gradient(46deg, #f6f7fa 46.62%, #ffe9d4 156.28%);
+}
+@keyframes cssmarquee {
+  0% {
+    transform: translateX(10%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .scrollingAnimate {
+    width: 150%;
+    animation: cssmarquee 30s linear infinite;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+}
+@media screen and (max-width: 640px) {
+  .scrollingAnimate {
+    width: 100%;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.linearGradientText {
+  background: var(
+    --Primary-gradients-CD-CTA,
+    linear-gradient(112deg, #ff6630 46.77%, #f89130 76.64%, #efc531 119.62%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.moreFeaturesBg-gradient {
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      0deg,
+      rgba(28, 32, 42, 0.72) 0%,
+      rgba(28, 32, 42, 0.72) 100%
+    ),
+    linear-gradient(150deg, #ff4f03 -36.14%, #402824 1.67%, #1c202a 52.77%);
+  transition: background 0.4s ease;
+}
+
+.moreFeaturesBg-gradient:hover {
+  background: linear-gradient(
+    299deg,
+    #402824 -31.66%,
+    #2b2327 10.46%,
+    #1c202a 103.22%
+  );
+}
+.herobuttonhover:hover {
+  background: linear-gradient(
+    112deg,
+    #ff6630 46.77%,
+    #f89130 111.5%,
+    #efc531 168.7%
+  );
+}
