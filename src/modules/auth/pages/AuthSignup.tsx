@@ -168,7 +168,7 @@ function AuthSignup() {
         <div className="grid gap-4 my-8">
           <TextField
             fullWidth
-            label="Owner's Email Address"
+            label="Business Owner's Email Address"
             placeholder="Enter your Email Address"
             {...getTextFieldProps(formik, "email")}
           />
