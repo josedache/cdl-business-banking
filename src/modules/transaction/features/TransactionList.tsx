@@ -62,6 +62,7 @@ function TransactionList(props: TransactionListProps) {
             page: pagination?.pageIndex + 1,
             limit: filter?.limit,
             accountNumber: debouncedSearchQ || undefined,
+            accountName: debouncedSearchQ || undefined,
             transactionType: filter?.transactionType || undefined,
             dateFormat: DateFormat.HYPHEN_yyyy_MM_dd,
             fromDate: filter?.startDate
@@ -70,6 +71,8 @@ function TransactionList(props: TransactionListProps) {
             toDate: filter?.endDate
               ? dfns.format(filter?.endDate, DateFormat.HYPHEN_yyyy_MM_dd)
               : undefined,
+            minAmount: filter?.minimumAmount || undefined,
+            maxAmount: filter?.maximumAmount || undefined,
           },
         }),
         [

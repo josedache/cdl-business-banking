@@ -18,6 +18,9 @@ export type GetTransactionSavingsHistoryApiRequest = ApiRequest<
     page?: number | string;
     limit?: number | string;
     accountNumber?: number | string;
+    accountName?: number | string;
+    minAmount?: number | string;
+    maxAmount?: number | string;
   }
 >;
 
