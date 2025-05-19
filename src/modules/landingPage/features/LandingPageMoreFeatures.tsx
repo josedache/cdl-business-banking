@@ -39,7 +39,7 @@ const LandingPageMoreFeatures = () => {
     {
       id: 5,
       title: "Invoice management",
-      note: "Track, organize, and manage your invoices effortlessly, fueling your financial growth with Buddie.",
+      note: "Track, organize, and manage your invoices effortlessly, fueling your financial growth with Credit Direct Business.",
       icon: InvoiceLogo,
     },
     {

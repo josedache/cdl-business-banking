@@ -31,7 +31,7 @@ const LandingPageFooter = () => {
       name: "Terms of Service",
       href: "https://yield.creditdirect.ng/terms-and-conditions",
     },
-    { name: "About", href: "https://www.creditdirect.ng/about-us/" },
+    { name: "About Us", href: "https://www.creditdirect.ng/about-us/" },
   ];
 
   return (
