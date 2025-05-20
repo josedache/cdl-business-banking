@@ -54,6 +54,12 @@ const LandingPageFooter = () => {
           <Link to="https://www.creditdirect.ng/contact-us" target="_blank">
             <Typography className="font-normal mt-2">Contact Us</Typography>
           </Link>
+          <Typography className="font-normal mt-2">
+            Email: CDLbusiness@creditdirect.ng
+          </Typography>
+          <Typography className="font-normal mt-2">
+            Phone: 02014482225
+          </Typography>
         </div>
       </div>
 
