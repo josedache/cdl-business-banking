@@ -7,7 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import { Icon as Iconify } from "@iconify/react/dist/iconify.js";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -25,10 +24,12 @@ const navItems = [
   {
     href: "#products",
     displayText: "Products",
+    target: "_self",
   },
   {
-    href: "#about-us",
+    href: "https://www.creditdirect.ng/about-us/",
     displayText: "About us",
+    target: "_blank",
   },
 ];
 
@@ -51,12 +52,40 @@ export default function LandingPageHeader(props: Props) {
       <Divider />
       <List>
         {navItems.map((item, index) => (
-          <ListItem key={index} disablePadding>
+          <ListItem key={index}>
             <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item.displayText} />
+              <Link
+                to={item.href}
+                key={item.displayText}
+                target={item.target}
+                className="font-semibold "
+              >
+                {item.displayText}
+              </Link>
             </ListItemButton>
           </ListItem>
         ))}
+
+        <ListItem className="flex flex-col gap-4">
+          <Button
+            href="/signin"
+            variant="outlined"
+            size="large"
+            fullWidth
+            className=" text-neutral-800 border-neutral-300 hover:border-neutral-900 font-semibold"
+          >
+            Sign In
+          </Button>
+          <Button
+            href="/signup"
+            variant="gradient"
+            size="large"
+            fullWidth
+            className="font-semibold "
+          >
+            Create business account
+          </Button>
+        </ListItem>
       </List>
     </Box>
   );
@@ -93,6 +122,7 @@ export default function LandingPageHeader(props: Props) {
                   <Link
                     to={item.href}
                     key={item.displayText}
+                    target={item.target}
                     className="font-semibold "
                   >
                     {item.displayText}
