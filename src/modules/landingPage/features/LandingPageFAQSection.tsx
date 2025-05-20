@@ -28,19 +28,20 @@ const LandingPageFAQSection = () => {
         "Any registered business (e.g., sole proprietorship, limited liability company, or partnership) with valid documentation (CAC certificate, TIN) can open an account.",
     },
     {
-      question: "Are there any hidden fees?",
-      answer:
-        "No hidden charges. We operate a transparent fee structure — with no maintenance fees on standard accounts.",
-    },
-    {
-      question: "What do I need to create an account??",
+      question: "What documents are required to sign up?",
       answer:
         "You’ll need Corporate Affairs Commission (CAC) registration documents,Tax Identification Number (TIN), Valid ID of business owner(s), and Bank Verification Number (BVN)",
     },
     {
-      question: "How safe are my details?",
+      question: "How long does it take to open a business account?",
       answer:
-        "We use bank-grade encryption, multi-factor authentication (MFA), and secure cloud infrastructure to protect your data.",
+        "The process typically takes 24–48 hours once all documents are submitted.",
+    },
+
+    {
+      question: "How long does it take to open a business account?",
+      answer:
+        "The process typically takes 24–48 hours once all documents are submitted.",
     },
   ];
   return (
